@@ -13,6 +13,9 @@ import PolicyScreen from './Screens/PolicyScreen';
 import LandingScreen from './Screens/LandingScreen';
 import Start from './Components/Start';
 import SampleScreen from './Screens/SampleScreen';
+import Profile from './Screens/Profile';
+import Chapter from './Screens/ChapterDropdown';
+
 function App() {
   return (
     <Router>
@@ -22,18 +25,19 @@ function App() {
         <Container>
           <Routes>
             <Route path='/' element={<HomeScreen />} exact />
+            <Route path='/start' element={<Start />} />
             <Route path='/product/:id' element={<ProductScreen />} />
+            <Route path='/chapter' element={<Chapter />} />
             <Route path='/popular' element={<PopularScreen />} />
-            <Route path='/latest' element={<LatestScreen />} />     
-            <Route path='/about' element={<AboutScreen />} />     
-            <Route path='/contact' element={<ContactScreen />} />        
-            <Route path='/terms' element={<TermsScreen />} />     
-            <Route path='/policy' element={<PolicyScreen />} />     
             <Route path='/latest' element={<LatestScreen />} />
-            <Route path='/landing' element={<LandingScreen />} /> 
-            <Route path='/sample' element={<SampleScreen />} />     
-    
-
+            <Route path='/about' element={<AboutScreen />} />
+            <Route path='/contact' element={<ContactScreen />} />
+            <Route path='/terms' element={<TermsScreen />} />
+            <Route path='/policy' element={<PolicyScreen />} />
+            <Route path='/latest' element={<LatestScreen />} />
+            <Route path='/landing' element={<LandingScreen />} />
+            <Route path='/sample' element={<SampleScreen />} />
+            <Route path='/Profile/:UserId' element={<Profile />} />
           </Routes>
         </Container>
 

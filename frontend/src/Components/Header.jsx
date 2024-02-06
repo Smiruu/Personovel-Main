@@ -26,7 +26,7 @@ function Header() {
             navbarScroll
           >
             <Link to="/" className="link-no-underline">
-              <Nav.Link style={{ color: "#002960" }} href="#action2">
+              <Nav.Link style={{ color: "#BC1823" }} href="#action2">
                 Home
               </Nav.Link>
             </Link>
@@ -64,7 +64,7 @@ function Header() {
               <i className="fa-solid fa-magnifying-glass" />
             </Button>
           </Form>
-          <Link to="/" className="link-no-underline">
+          <Link to="/Profile/:UserId" className="link-no-underline">
             <Nav.Link style={{ color: "#002960" }} href="#action2">
               <Image
                 src="/Icon.png"
