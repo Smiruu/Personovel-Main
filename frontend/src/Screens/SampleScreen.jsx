@@ -31,7 +31,7 @@ function SampleScreen() {
             </h1>
 
             <div
-              style={{ height: "500px", overflow: "hidden", margin: "10px" }}
+              style={{ height: "450px", overflow: "hidden", margin: "10px" }}
             >
               <Row className="g-2">
                 {products.map((product) => (
@@ -46,6 +46,7 @@ function SampleScreen() {
                 textAlign: "center",
                 fontFamily: "Indie Flower",
                 color: "#AB0043",
+                marginBottom: '2%'
               }}
             >
               What if the key to unlocking your wildest dreams lies hidden
@@ -78,7 +79,7 @@ function SampleScreen() {
               revelation?
             </h1>
             <div
-              style={{ height: "500px", overflow: "hidden", margin: "10px" }}
+              style={{ height: "450px", overflow: "hidden", margin: "10px" }}
             >
               <Row className="g-2">
                 {products.map((product) => (
@@ -108,12 +109,11 @@ function SampleScreen() {
             <Nav.Link as={Link} to="/register">
               <Button
                 style={{
-                  fontSize: "24px",
+                  fontSize: "35px",
                   fontWeight: "1",
                   width: "300px",
-                  height: "60px",
+                  height: "65px",
                   textAlign: "center",
-                  margin: "20px auto",
                   fontFamily: "Protest Guerrilla",
                   backgroundColor: "#BC1823",
                   borderRadius: "50px",
