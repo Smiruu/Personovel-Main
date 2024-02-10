@@ -1,19 +1,23 @@
-import React, { useState, useEffect} from "react";
-import Product from "../Components/Product";
+import React, { useState, useEffect } from "react";
 import { Row, Col, Container, Nav, Button } from "react-bootstrap";
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { listBooks } from "../actions/bookActions";
+import Loader from "../Components/Loader";
+import Message from "../Components/Message";
+import Book from "../Components/Book";
 import { Link } from "react-router-dom";
-import axios from 'axios'
+
+
 
 function SampleScreen() {
-  const [products, setProducts] = useState([])
-
+  const dispatch = useDispatch();
+  const bookList = useSelector((state) => state.bookList);
+  const { loading, error, books } = bookList;
   useEffect(() => {
-    async function fetchProducts() {
-      const {data} = await axios.get('http://127.0.0.1:8000/api/products/')
-      setProducts(data)
-    }
-    fetchProducts()
-  }, [])
+    dispatch(listBooks());
+  }, []);
+
   return (
     <Container fluid>
       <div>
@@ -33,13 +37,21 @@ function SampleScreen() {
             <div
               style={{ height: "500px", overflow: "hidden", margin: "10px" }}
             >
-              <Row className="g-2">
-                {products.map((product) => (
-                  <Col key={product._id}>
-                    <Product product={product} />
-                  </Col>
-                ))}
-              </Row>
+                {loading ? (
+        <Loader />
+      ) : error ? (
+        <Message variant="danger">{error}</Message>
+      ) : (
+        <Row>
+      
+      {books.map((book) => (
+            <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
+              <Book book={book} />
+            </Col>
+        ))}
+      </Row>
+      
+      )}
             </div>
             <h1
               style={{
@@ -80,13 +92,21 @@ function SampleScreen() {
             <div
               style={{ height: "500px", overflow: "hidden", margin: "10px" }}
             >
-              <Row className="g-2">
-                {products.map((product) => (
-                  <Col key={product._id}>
-                    <Product product={product} />
-                  </Col>
-                ))}
-              </Row>
+               {loading ? (
+        <Loader />
+      ) : error ? (
+        <Message variant="danger">{error}</Message>
+      ) : (
+        <Row>
+      
+        {[...books].reverse().map((book) => (
+          <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
+            <Book book={book} />
+          </Col>
+        ))}
+      </Row>
+      
+      )}
             </div>
           </section>
           <h1
