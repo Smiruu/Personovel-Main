@@ -1,70 +1,77 @@
-import React from 'react';
+import React from "react";
 
-function Rating({value, text, color}) {
+function Rating({ value, text, color }) {
   return (
-    <div className='rating'>
-        <div className='items-center text-center'>
-            <span>
-                <i style={{color}} className={
-                    value >= 1
-                    ? 'fas fa-star'
-                    : value >= 0.5
-                    ? 'fas fa-star-half-alt'
-                    : 'far fa-star'
-                }>
+    <div>
+      <div>
+        <span>
+          <i
+            style={{ color }}
+            className={
+              value >= 1
+                ? "fas fa-star"
+                : value >= 0.5
+                ? "fas fa-star-half-alt"
+                : "far fa-star"
+            }
+          ></i>
+        </span>
 
-                </i>
-            </span>
+        <span>
+          <i
+            style={{ color }}
+            className={
+              value >= 2
+                ? "fas fa-star"
+                : value >= 1.5
+                ? "fas fa-star-half-alt"
+                : "far fa-star"
+            }
+          ></i>
+        </span>
 
-            <span>
-                <i style={{color}} className={
-                    value >= 2
-                    ? 'fas fa-star'
-                    : value >= 1.5
-                    ? 'fas fa-star-half-alt'
-                    : 'far fa-star'
-                }>
+        <span>
+          <i
+            style={{ color }}
+            className={
+              value >= 3
+                ? "fas fa-star"
+                : value >= 2.5
+                ? "fas fa-star-half-alt"
+                : "far fa-star"
+            }
+          ></i>
+        </span>
 
-                </i>
-            </span>
+        <span>
+          <i
+            style={{ color }}
+            className={
+              value >= 4
+                ? "fas fa-star"
+                : value >= 3.5
+                ? "fas fa-star-half-alt"
+                : "far fa-star"
+            }
+          ></i>
+        </span>
 
-            <span>
-                <i style={{color}} className={
-                    value >= 3
-                    ? 'fas fa-star'
-                    : value >= 2.5
-                    ? 'fas fa-star-half-alt'
-                    : 'far fa-star'
-                }>
-
-                </i>
-            </span>
-
-            <span>
-                <i style={{color}} className={
-                    value >= 4
-                    ? 'fas fa-star'
-                    : value >= 3.5
-                    ? 'fas fa-star-half-alt'
-                    : 'far fa-star'
-                }>
-
-                </i>
-            </span>
-
-            <span>
-                <i style={{color}} className={
-                    value >= 5
-                    ? 'fas fa-star'
-                    : value >= 4.5
-                    ? 'fas fa-star-half-alt'
-                    : 'far fa-star'
-                }>
-
-                </i>
-            </span>
-        </div>
-        <div className='text-center bottom-text'>{text && text}</div>
+        <span>
+          <i
+            style={{ color }}
+            className={
+              value >= 5
+                ? "fas fa-star"
+                : value >= 4.5
+                ? "fas fa-star-half-alt"
+                : "far fa-star"
+            }
+          ></i>
+        </span>
+      </div>
+      <div className="mb-0" style={{ marginLeft: "5px" }}>
+        {text && text}
+      </div>
     </div>
   );
 }

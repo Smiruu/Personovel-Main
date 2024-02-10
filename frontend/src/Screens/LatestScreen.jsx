@@ -1,6 +1,6 @@
 import React, { useState, useEffect} from "react";
-import { Row, Col} from 'react-bootstrap'
-import Product from '../Components/Product'
+import { Row, Col } from 'react-bootstrap';
+import Product from '../Components/Product';
 import axios from 'axios'
 
 function LatestScreen() {
@@ -14,15 +14,25 @@ function LatestScreen() {
     fetchProducts()
   }, [])
   return (
-    <div>
-      <h1 style={{ textAlign: "center" }}>Latest Novels</h1>  
-        <Row>
-          {products.map((product) => (
-            <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
-              <Product product={product} />
-            </Col>
-          ))}
-        </Row>
+    <div className="mb-5">
+      <h1 style={{ 
+        textAlign: "center", 
+        fontWeight: "1",
+        color: "#BC1823",
+        fontFamily: "Permanent Marker",
+        textDecoration: "underline",
+        fontSize: "60px",
+        marginTop: "20px",
+      }}>
+        Latest Novels
+      </h1>
+      <Row className="mx-2 g-2">
+        {products.map((product) => (
+          <Col key={product._id} sm={12} md={6} lg={4} xl={3} className="mb-4">
+            <Product product={product} />
+          </Col>
+        ))}
+      </Row>
     </div>
   );
 }

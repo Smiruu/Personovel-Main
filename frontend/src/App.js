@@ -13,6 +13,7 @@ import PolicyScreen from './Screens/PolicyScreen';
 import LandingScreen from './Screens/LandingScreen';
 import Start from './Components/Start';
 import SampleScreen from './Screens/SampleScreen';
+import BrowseScreen from './Screens/BrowseScreen';
 import Profile from './Screens/Profile';
 import Chapter from './Screens/ChapterDropdown';
 
@@ -34,10 +35,10 @@ function App() {
             <Route path='/contact' element={<ContactScreen />} />
             <Route path='/terms' element={<TermsScreen />} />
             <Route path='/policy' element={<PolicyScreen />} />
-            <Route path='/latest' element={<LatestScreen />} />
             <Route path='/landing' element={<LandingScreen />} />
             <Route path='/sample' element={<SampleScreen />} />
             <Route path='/Profile/:UserId' element={<Profile />} />
+            <Route path='/browse' element={<BrowseScreen />} />
           </Routes>
         </Container>
 

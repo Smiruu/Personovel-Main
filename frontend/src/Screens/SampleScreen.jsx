@@ -1,9 +1,9 @@
 import React, { useState, useEffect} from "react";
-
 import Product from "../Components/Product";
 import { Row, Col, Container, Nav, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import axios from 'axios'
+
 function SampleScreen() {
   const [products, setProducts] = useState([])
 
@@ -15,53 +15,53 @@ function SampleScreen() {
     fetchProducts()
   }, [])
   return (
-    <Container>
-    
+    <Container fluid>
       <div>
-        <Col style={{ backgroundColor: "#FCD5CE", marginBottom:'80px'}}>
-            <section id="Popular">
-            
-          <h1
-            style={{
-              textAlign: "center",
-              marginRight: "20px",
-              marginLeft: "20px",
-              marginBlockStart: "40px",
-              color: '#bc5350',
-              
-            }}
-          >
-            Ever wondered what secrets the night holds and whether they could
-            change the course of your destiny?
-          </h1>
+        <Col style={{ backgroundColor: "#FCD5CE", padding: "20px" }}>
+          <section id="Popular">
+            <h1
+              style={{
+                textAlign: "center",
+                color: "#AB0043",
+                fontFamily: "Indie Flower",
+              }}
+            >
+              Ever wondered what secrets the night holds and whether they could
+              change the course of your destiny?
+            </h1>
 
-          <div style={{ height: "400px", overflow: "scroll", margin: "30px" }}>
-            <Row>
-              {products.map((product) => (
-                <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
-                  <Product product={product} />
-                </Col>
-              ))}
-            </Row>
-          </div>
-          <h1
-           style={{
-            textAlign: "center",
-            marginRight: "20px",
-            marginLeft: "20px",
-           
-            color: '#bc5350',
-          }}
-          >
-            What if the key to unlocking your wildest dreams lies hidden within
-            the pages of a novel, waiting for you to turn them?
-            
-          </h1>
-          
+            <div
+              style={{ height: "500px", overflow: "hidden", margin: "10px" }}
+            >
+              <Row className="g-2">
+                {products.map((product) => (
+                  <Col key={product._id}>
+                    <Product product={product} />
+                  </Col>
+                ))}
+              </Row>
+            </div>
+            <h1
+              style={{
+                textAlign: "center",
+                fontFamily: "Indie Flower",
+                color: "#AB0043",
+              }}
+            >
+              What if the key to unlocking your wildest dreams lies hidden
+              within the pages of a novel, waiting for you to turn them?
+            </h1>
           </section>
         </Col>
 
-        <Col style={{ backgroundColor: "#FCD5CE", }}>
+        <Col
+          style={{
+            backgroundColor: "#FCD5CE",
+            padding: "20px",
+            marginTop: "10%",
+            marginBottom: "10%",
+          }}
+        >
           <section id="Latest">
             <h1
               style={{
@@ -69,7 +69,8 @@ function SampleScreen() {
                 marginRight: "20px",
                 marginLeft: "20px",
                 marginTop: "40px",
-                color: '#bc5350'
+                color: "#AB0043",
+                fontFamily: "Indie Flower",
               }}
             >
               Are you ready to embark on an adventure that transcends reality
@@ -77,11 +78,11 @@ function SampleScreen() {
               revelation?
             </h1>
             <div
-              style={{ height: "400px", overflow: "scroll", margin: "30px" }}
+              style={{ height: "500px", overflow: "hidden", margin: "10px" }}
             >
-              <Row>
+              <Row className="g-2">
                 {products.map((product) => (
-                  <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
+                  <Col key={product._id}>
                     <Product product={product} />
                   </Col>
                 ))}
@@ -89,22 +90,34 @@ function SampleScreen() {
             </div>
           </section>
           <h1
+            className="mt-5"
             style={{
               textAlign: "center",
               marginRight: "20px",
               marginLeft: "20px",
               marginBlockEnd: "40px",
-              color: '#bc5350'
+              color: "#AB0043",
+              fontFamily: "Montserrat",
             }}
           >
             Unlock a world of exclusive content and personalized experiences –
             register now and be part of a community where every page turned
             reveals new connections and possibilities.
           </h1>
-          <h1 style={{ textAlign: "center", marginBottom:'60px' ,}}>
+          <h1 style={{ textAlign: "center", marginBottom: "60px" }}>
             <Nav.Link as={Link} to="/register">
               <Button
-                style={{ fontSize: "24px", width: "300px", height: "60px", marginBlockEnd: "40px",}}
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "1",
+                  width: "300px",
+                  height: "60px",
+                  textAlign: "center",
+                  margin: "20px auto",
+                  fontFamily: "Protest Guerrilla",
+                  backgroundColor: "#BC1823",
+                  borderRadius: "50px",
+                }}
                 variant="primary"
               >
                 GET STARTED
