@@ -16,6 +16,8 @@ import SampleScreen from './Screens/SampleScreen';
 import BrowseScreen from './Screens/BrowseScreen';
 import Profile from './Screens/Profile';
 import Chapter from './Screens/ChapterDropdown';
+import RegisterScreen from './Screens/RegisterScreen';
+import LoginScreen from './Screens/LoginScreen';
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
           <Routes>
             <Route path='/' element={<HomeScreen />} exact />
             <Route path='/start' element={<Start />} />
+            <Route path='/login' element={<LoginScreen />} />
+            <Route path='/register' element={<RegisterScreen />} />
             <Route path='/product/:id' element={<ProductScreen />} />
             <Route path='/chapter' element={<Chapter />} />
             <Route path='/popular' element={<PopularScreen />} />

@@ -15,6 +15,8 @@ urlpatterns = [
     path('authors/<str:pk>', views.getAuthor, name="author"),
     path('feedbacks/', views.getFeedbacks, name="feedbacks"),
     path('interactions/', views.getInteractions, name="interactions"),
+    path('users/login/', views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('users/profile/', views.getUserProfile, name='users-profile'),
     
    
 
