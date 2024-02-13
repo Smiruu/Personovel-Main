@@ -5,20 +5,20 @@ import { useDispatch } from 'react-redux';
 import { register } from '../actions/registerActions';
 import FormContainer from '../Components/FormContainer';
 
-function RegisterScreen() {
+const RegisterScreen = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [password2, setPassword2] = useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const submitHandler = (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
+    if (password !== password2) {
       alert('Passwords do not match');
     } else {
-      dispatch(register(name, email, password));
+      dispatch(register(name, email, password, password2)); // Dispatch the register action
       navigate('/login');
     }
   };
@@ -59,8 +59,8 @@ function RegisterScreen() {
           <Form.Control
             type='password'
             placeholder='Confirm password'
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            value={password2}
+            onChange={(e) => setPassword2(e.target.value)}
           />
         </Form.Group>
         <Button type='submit' variant='primary'>
