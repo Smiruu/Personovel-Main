@@ -312,7 +312,9 @@ export default function EditButton() {
                           </div>
                           <div>
                             <h1 className="reply-username">JaneDoe</h1>
-                            <p className="reply-p">Reply to JohnDoe's comment.</p>
+                            <p className="reply-p">
+                              Reply to JohnDoe's comment.
+                            </p>
                             <p className="reply-text">
                               Lorem ipsum dolor sit amet, consectetur adipiscing
                               elit.

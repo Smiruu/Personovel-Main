@@ -8,14 +8,13 @@ import PopularScreen from './Screens/PopularScreen';
 import LatestScreen from './Screens/LatestScreen';
 import AboutScreen from './Screens/AboutScreen';
 import ContactScreen from './Screens/ContactScreen';
-import TermsScreen from './Screens/TermsScreen';
-import PolicyScreen from './Screens/PolicyScreen';
 import LandingScreen from './Screens/LandingScreen';
 import Start from './Components/Start';
 import SampleScreen from './Screens/SampleScreen';
 import BrowseScreen from './Screens/BrowseScreen';
 import Profile from './Screens/Profile';
 import Chapter from './Screens/ChapterDropdown';
+import Login from './Screens/Login';
 
 function App() {
   return (
@@ -33,12 +32,11 @@ function App() {
             <Route path='/latest' element={<LatestScreen />} />
             <Route path='/about' element={<AboutScreen />} />
             <Route path='/contact' element={<ContactScreen />} />
-            <Route path='/terms' element={<TermsScreen />} />
-            <Route path='/policy' element={<PolicyScreen />} />
             <Route path='/landing' element={<LandingScreen />} />
             <Route path='/sample' element={<SampleScreen />} />
             <Route path='/Profile/:UserId' element={<Profile />} />
             <Route path='/browse' element={<BrowseScreen />} />
+            <Route path='/login' element={<Login />} />
           </Routes>
         </Container>
 

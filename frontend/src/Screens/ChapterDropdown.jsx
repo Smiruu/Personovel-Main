@@ -1,83 +1,305 @@
-import React, { useState, useEffect } from 'react';
-import { Dropdown, Pagination } from 'react-bootstrap';
-import './ChapterDropdown.css';
+import React, { useState, useEffect } from "react";
+import { Dropdown, Pagination, Container, Col } from "react-bootstrap";
+import {
+  CaretDownFill,
+  ChevronLeft,
+  ChevronRight,
+} from "react-bootstrap-icons";
 
+// Sample book data
 const bookData = {
-  name: 'Sample Book',
-  chapters: ['Chapter 1:', 'Chapter 2:', 'Chapter 3:', 'Chapter 4:'],
+  name: "HARRY POTTER",
+  author: "J.K. Rowling",
+  coverImage: "/images/sample.jpg",
+  chapters: [
+    "Chapter 1: Introduction",
+    "Chapter 2: The Adventure Begins",
+    "Chapter 3: Unveiling Mysteries",
+    "Chapter 4: The Final Chapter",
+  ],
 };
 
-const pageContent = [
-  "Harry Potter is a popular fantasy book series written by British author J.K. Rowling. The series follows the life and adventures of a young wizard named Harry Potter and his friends Hermione Granger and Ron Weasley, who are students at Hogwarts School of Witchcraft and Wizardry. The series is known for its magical world, complex characters, and intricate plot.",
-  "Harry Potter is a popular fantasy book series written by British author J.K. Rowling. The series follows the life and adventures of a young wizard named Harry Potter and his friends Hermione Granger and Ron Weasley, who are students at Hogwarts School of Witchcraft and Wizardry. The series is known for its magical world, complex characters, and intricate plot.",
-];
+const ChapterPage = () => {
+  const [selectedChapter, setSelectedChapter] = useState(0);
+  const [borderWidth, setBorderWidth] = useState("2px");
 
-const ChapterDropdown = () => {
-  const [selectedChapter, setSelectedChapter] = useState('Chapter 1:');
-
-  const handleChapterChange = (chapter) => {
-    setSelectedChapter(chapter);
+  const updateBorderWidth = () => {
+    const bookNameWidth = document.getElementById("bookName").offsetWidth;
+    setBorderWidth(`${bookNameWidth}px`);
   };
 
   useEffect(() => {
-    setSelectedChapter(bookData.chapters[0]);
+    updateBorderWidth();
+    window.addEventListener("resize", updateBorderWidth);
+
+    return () => {
+      window.removeEventListener("resize", updateBorderWidth);
+    };
   }, []);
 
+  const handleChapterChange = (index) => {
+    setSelectedChapter(index);
+  };
+
+  const handleNextChapter = () => {
+    setSelectedChapter((prevChapter) =>
+      Math.min(prevChapter + 1, bookData.chapters.length - 1)
+    );
+  };
+
+  const handlePrevChapter = () => {
+    setSelectedChapter((prevChapter) => Math.max(prevChapter - 1, 0));
+  };
+
   return (
-    <div className="chapter-container">
-      <Dropdown onSelect={handleChapterChange} className="custom-dropdown">
-        <Dropdown.Toggle variant="success" id="dropdown-basic" className="transparent-background">
-          {bookData.name}
-        </Dropdown.Toggle>
+    <Container>
+      <Col
+        className="chapter-page"
+        style={{
+          position: "",
+          top: 0,
+          left: 0,
+          width: "100%",
+          zIndex: 1000,
+        }}
+      >
+        <Dropdown>
+          <Dropdown.Toggle
+            variant="outline-none"
+            id="dropdown-basic"
+            className="mb-4 chapter-info"
+            style={{
+              border: `2px solid #000`,
+              display: "flex",
+              alignItems: "center",
+              width: "auto",
+              borderRadius: "0",
+              backgroundColor: "rgba(255, 255, 255, 0.8)",
+            }}
+            toggleIcon={null}
+          >
+            <img
+              src={bookData.coverImage}
+              alt="Book Cover"
+              style={{
+                width: "100px",
+                height: "auto",
+                marginRight: "10px",
+              }}
+            />
+            <div id="bookName" style={{ textAlign: "left" }}>
+              <h4
+                style={{
+                  fontFamily: "Blinker",
+                  fontWeight: "bold",
+                  marginBottom: "5px",
+                }}
+              >
+                {bookData.name.toUpperCase()}
+              </h4>
+              <p style={{ fontFamily: "Lato", fontSize: "14px", margin: "0" }}>
+                BY {bookData.author.toUpperCase()}
+              </p>
+            </div>
+            <CaretDownFill
+              size={24}
+              style={{ marginLeft: "auto", visibility: "hidden" }}
+            />
+          </Dropdown.Toggle>
 
-        <Dropdown.Menu className="text-center">
-          {bookData.chapters.map((chapter, index) => (
-            <Dropdown.Item key={index} eventKey={chapter} className="text-center transparent-chapter">
-              {chapter}
-            </Dropdown.Item>
-          ))}
-        </Dropdown.Menu>
-      </Dropdown>
+          <Dropdown.Menu
+            style={{
+              width: "340px",
+              position: "absolute",
+              left: 0,
+              top: "100%",
+            }}
+          >
+            {bookData.chapters.map((chapter, index) => (
+              <Dropdown.Item
+                key={index}
+                onClick={() => handleChapterChange(index)}
+                style={{
+                  textAlign: "center",
+                  border: "1px solid",
+                  borderTop: "none",
+                }}
+              >
+                {chapter}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        </Dropdown>
+      </Col>
 
-      {selectedChapter && <DisplayChapter selectedChapter={selectedChapter} />}
-    </div>
+      <div className="content">
+        <h2
+          style={{
+            textAlign: "center",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "20px",
+          }}
+        >
+          {bookData.chapters[selectedChapter]}
+        </h2>
+
+        <Pagination
+          style={{
+            justifyContent: "space-between",
+            backgroundColor: "transparent",
+          }}
+        >
+          <Pagination.Prev
+            onClick={handlePrevChapter}
+            disabled={selectedChapter === 0}
+            style={{
+              backgroundColor: "none",
+              fontFamily: "Comic Sans MS",
+              boxShadow: "none",
+            }}
+          >
+            <ChevronLeft size={24} /> PREV
+          </Pagination.Prev>
+
+          <Pagination.Next
+            onClick={handleNextChapter}
+            disabled={selectedChapter === bookData.chapters.length - 1}
+            style={{
+              backgroundColor: "transparent",
+              fontFamily: "Comic Sans MS",
+              boxShadow: "none",
+            }}
+          >
+            NEXT <ChevronRight size={24} />
+          </Pagination.Next>
+        </Pagination>
+
+        <div
+          style={{
+            height: "2px",
+            width: "50%",
+            backgroundColor: "#000",
+            marginBottom: "30px",
+            marginTop: "20px",
+            marginLeft: "auto",
+            marginRight: "auto",
+          }}
+        ></div>
+
+        <p
+          style={{
+            textAlign: "justify",
+          }}
+        >
+          Harry Potter is a popular fantasy book series written by British
+          author J.K. Rowling. The series follows the life and adventures of a
+          young wizard named Harry Potter and his friends Hermione Granger and
+          Ron Weasley, who are students at Hogwarts School of Witchcraft and
+          Wizardry. The series is known for its magical world, complex
+          characters, and intricate plot. Harry Potter is a popular fantasy book
+          series written by British author J.K. Rowling. The series follows the
+          life and adventures of a young wizard named Harry Potter and his
+          friends Hermione Granger and Ron Weasley, who are students at Hogwarts
+          School of Witchcraft and Wizardry. The series is known for its magical
+          world, complex characters, and intricate plot. Harry Potter is a
+          popular fantasy book series written by British author J.K. Rowling.
+          The series follows the life and adventures of a young wizard named
+          Harry Potter and his friends Hermione Granger and Ron Weasley, who are
+          students at Hogwarts School of Witchcraft and Wizardry. The series is
+          known for its magical world, complex characters, and intricate plot.
+          Harry Potter is a popular fantasy book series written by British
+          author J.K. Rowling. The series follows the life and adventures of a
+          young wizard named Harry Potter and his friends Hermione Granger and
+          Ron Weasley, who are students at Hogwarts School of Witchcraft and
+          Wizardry. The series is known for its magical world, complex
+          characters, and intricate plot. Harry Potter is a popular fantasy book
+          series written by British author J.K. Rowling. The series follows the
+          life and adventures of a young wizard named Harry Potter and his
+          friends Hermione Granger and Ron Weasley, who are students at Hogwarts
+          School of Witchcraft and Wizardry. The series is known for its magical
+          world, complex characters, and intricate plot. Harry Potter is a
+          popular fantasy book series written by British author J.K. Rowling.
+          The series follows the life and adventures of a young wizard named
+          Harry Potter and his friends Hermione Granger and Ron Weasley, who are
+          students at Hogwarts School of Witchcraft and Wizardry. The series is
+          known for its magical world, complex characters, and intricate plot.
+          Harry Potter is a popular fantasy book series written by British
+          author J.K. Rowling. The series follows the life and adventures of a
+          young wizard named Harry Potter and his friends Hermione Granger and
+          Ron Weasley, who are students at Hogwarts School of Witchcraft and
+          Wizardry. The series is known for its magical world, complex
+          characters, and intricate plot. Harry Potter is a popular fantasy book
+          series written by British author J.K. Rowling. The series follows the
+          life and adventures of a young wizard named Harry Potter and his
+          friends Hermione Granger and Ron Weasley, who are students at Hogwarts
+          School of Witchcraft and Wizardry. The series is known for its magical
+          world, complex characters, and intricate plot. Harry Potter is a
+          popular fantasy book series written by British author J.K. Rowling.
+          The series follows the life and adventures of a young wizard named
+          Harry Potter and his friends Hermione Granger and Ron Weasley, who are
+          students at Hogwarts School of Witchcraft and Wizardry. The series is
+          known for its magical world, complex characters, and intricate plot.
+          Harry Potter is a popular fantasy book series written by British
+          author J.K. Rowling. The series follows the life and adventures of a
+          young wizard named Harry Potter and his friends Hermione Granger and
+          Ron Weasley, who are students at Hogwarts School of Witchcraft and
+          Wizardry. The series is known for its magical world, complex
+          characters, and intricate plot. Harry Potter is a popular fantasy book
+          series written by British author J.K. Rowling. The series follows the
+          life and adventures of a young wizard named Harry Potter and his
+          friends Hermione Granger and Ron Weasley, who are students at Hogwarts
+          School of Witchcraft and Wizardry. The series is known for its magical
+          world, complex characters, and intricate plot. Harry Potter is a
+          popular fantasy book series written by British author J.K. Rowling.
+          The series follows the life and adventures of a young wizard named
+          Harry Potter and his friends Hermione Granger and Ron Weasley, who are
+          students at Hogwarts School of Witchcraft and Wizardry. The series is
+          known for its magical world, complex characters, and intricate plot.
+        </p>
+
+        <div
+          style={{
+            height: "2px",
+            width: "50%",
+            backgroundColor: "#000",
+            marginBottom: "30px",
+            marginTop: "20px",
+            marginLeft: "auto",
+            marginRight: "auto",
+          }}
+        ></div>
+
+        <Pagination
+          style={{ justifyContent: "space-between", backgroundColor: "none" }}
+        >
+          <Pagination.Prev
+            onClick={handlePrevChapter}
+            disabled={selectedChapter === 0}
+            style={{
+              backgroundColor: "none",
+              fontFamily: "Comic Sans MS",
+              boxShadow: "none",
+            }}
+          >
+            <ChevronLeft size={24} /> PREV
+          </Pagination.Prev>
+
+          <Pagination.Next
+            onClick={handleNextChapter}
+            disabled={selectedChapter === bookData.chapters.length - 1}
+            style={{
+              backgroundColor: "transparent",
+              fontFamily: "Comic Sans MS",
+              boxShadow: "none",
+            }}
+          >
+            NEXT <ChevronRight size={24} />
+          </Pagination.Next>
+        </Pagination>
+      </div>
+    </Container>
   );
 };
 
-const DisplayChapter = ({ selectedChapter }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const handleNextPage = () => {
-    setCurrentPage((prevPage) => Math.min(prevPage + 1, bookData.chapters.length));
-  };
-
-  const handlePrevPage = () => {
-    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
-  };
-
-  const totalPages = bookData.chapters.length;
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedChapter]);
-
-  return (
-    <div className="display-chapter">
-      <h1>{selectedChapter}</h1>
-      <p>
-        Page {currentPage} of {totalPages}
-      </p>
-      <p>{pageContent[currentPage - 1]}</p>
-      <Pagination className="pagination ">
-        <Pagination.Prev onClick={handlePrevPage} disabled={currentPage === 1}>
-          Prev
-        </Pagination.Prev>
-        <Pagination.Next onClick={handleNextPage} disabled={currentPage === totalPages}>
-          Next
-        </Pagination.Next>
-      </Pagination>
-    </div>
-  );
-};
-
-export default ChapterDropdown;
+export default ChapterPage;

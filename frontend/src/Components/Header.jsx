@@ -15,14 +15,13 @@ function Header() {
   };
 
   const customNavbarToggleStyle = {
-    marginLeft: "32%",
+    marginLeft: "2%",
     border: "2px solid #002960",
     backgroundColor: "transparent",
     borderRadius: "10px",
     borderColor: "#002960",
-    boxShadow: 'none'
+    boxShadow: "none",
   };
-
 
   return (
     <Navbar expand="lg" style={{ backgroundColor: "#F9DCC4" }}>
@@ -32,21 +31,18 @@ function Header() {
             <Link to="/landing">
               <Image
                 src="/PERSONOVEL.png"
-                className="logo img-fluid"
-                style={{ width: "200px", height: "50px", marginLeft: "70px" }}
+                className="logo img-fluid mb-2"
+                style={{ width: "250px", height: "70px" }}
                 alt="Brand Logo"
               />
             </Link>
           </Navbar.Brand>
         </Link>
 
-        <Navbar.Toggle aria-controls="navbarScroll" style={customNavbarToggleStyle} />
-
         <Navbar.Collapse id="navbarScroll">
           <Nav
-            className="mb-2 mb-lg-0"
+            className="mb-lg-0"
             style={{
-              maxHeight: "100px",
               marginLeft: "50px",
               fontFamily: "Fira Mono",
               display: "flex",
@@ -119,7 +115,7 @@ function Header() {
           </Nav>
         </Navbar.Collapse>
 
-        <Form className="d-flex ms-auto">
+        <Form className="d-flex ms-auto mt-3">
           {isSearchExpanded ? (
             <Form.Control
               type="search"
@@ -153,6 +149,11 @@ function Header() {
               />
             </Nav.Link>
           </Link>
+
+          <Navbar.Toggle
+            aria-controls="navbarScroll"
+            style={customNavbarToggleStyle}
+          />
         </Form>
       </Container>
     </Navbar>

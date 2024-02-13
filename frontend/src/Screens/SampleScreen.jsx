@@ -1,23 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect} from "react";
+import Product from "../Components/Product";
 import { Row, Col, Container, Nav, Button } from "react-bootstrap";
-import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
-import { listBooks } from "../actions/bookActions";
-import Loader from "../Components/Loader";
-import Message from "../Components/Message";
-import Book from "../Components/Book";
 import { Link } from "react-router-dom";
-
-
+import axios from 'axios'
 
 function SampleScreen() {
-  const dispatch = useDispatch();
-  const bookList = useSelector((state) => state.bookList);
-  const { loading, error, books } = bookList;
-  useEffect(() => {
-    dispatch(listBooks());
-  }, []);
+  const [products, setProducts] = useState([])
 
+  useEffect(() => {
+    async function fetchProducts() {
+      const {data} = await axios.get('http://127.0.0.1:8000/api/products/')
+      setProducts(data)
+    }
+    fetchProducts()
+  }, [])
   return (
     <Container fluid>
       <div>
@@ -35,29 +31,22 @@ function SampleScreen() {
             </h1>
 
             <div
-              style={{ height: "500px", overflow: "hidden", margin: "10px" }}
+              style={{ height: "450px", overflow: "hidden", margin: "10px" }}
             >
-                {loading ? (
-        <Loader />
-      ) : error ? (
-        <Message variant="danger">{error}</Message>
-      ) : (
-        <Row>
-      
-      {books.map((book) => (
-            <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
-              <Book book={book} />
-            </Col>
-        ))}
-      </Row>
-      
-      )}
+              <Row className="g-2">
+                {products.map((product) => (
+                  <Col key={product._id}>
+                    <Product product={product} />
+                  </Col>
+                ))}
+              </Row>
             </div>
             <h1
               style={{
                 textAlign: "center",
                 fontFamily: "Indie Flower",
                 color: "#AB0043",
+                marginBottom: '2%'
               }}
             >
               What if the key to unlocking your wildest dreams lies hidden
@@ -90,23 +79,15 @@ function SampleScreen() {
               revelation?
             </h1>
             <div
-              style={{ height: "500px", overflow: "hidden", margin: "10px" }}
+              style={{ height: "450px", overflow: "hidden", margin: "10px" }}
             >
-               {loading ? (
-        <Loader />
-      ) : error ? (
-        <Message variant="danger">{error}</Message>
-      ) : (
-        <Row>
-      
-        {[...books].reverse().map((book) => (
-          <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
-            <Book book={book} />
-          </Col>
-        ))}
-      </Row>
-      
-      )}
+              <Row className="g-2">
+                {products.map((product) => (
+                  <Col key={product._id}>
+                    <Product product={product} />
+                  </Col>
+                ))}
+              </Row>
             </div>
           </section>
           <h1
@@ -128,12 +109,11 @@ function SampleScreen() {
             <Nav.Link as={Link} to="/register">
               <Button
                 style={{
-                  fontSize: "24px",
+                  fontSize: "35px",
                   fontWeight: "1",
                   width: "300px",
-                  height: "60px",
+                  height: "65px",
                   textAlign: "center",
-                  margin: "20px auto",
                   fontFamily: "Protest Guerrilla",
                   backgroundColor: "#BC1823",
                   borderRadius: "50px",
