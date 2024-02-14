@@ -1,6 +1,10 @@
 import React, { useState } from "react";
-import { Navbar, Nav, Container, Form, Button, Image } from "react-bootstrap";
+import { Navbar, Nav, Container, Form, Button, Image, NavDropdown } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { LinkContainer } from "react-router-bootstrap";
+
+import { logout } from "../actions/userActions";
 
 function Header() {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -15,12 +19,21 @@ function Header() {
   };
 
   const customNavbarToggleStyle = {
-    marginLeft: "2%",
+    marginLeft: "32%",
     border: "2px solid #002960",
     backgroundColor: "transparent",
     borderRadius: "10px",
     borderColor: "#002960",
-    boxShadow: "none",
+    boxShadow: 'none'
+  };
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+  const dispatch = useDispatch();
+
+  const logoutHandler = () => {
+    dispatch(logout());
+    // Additional logout logic if needed
   };
 
   return (
@@ -31,18 +44,21 @@ function Header() {
             <Link to="/landing">
               <Image
                 src="/PERSONOVEL.png"
-                className="logo img-fluid mb-2"
-                style={{ width: "250px", height: "70px" }}
+                className="logo img-fluid"
+                style={{ width: "200px", height: "50px", marginLeft: "70px" }}
                 alt="Brand Logo"
               />
             </Link>
           </Navbar.Brand>
         </Link>
 
+        <Navbar.Toggle aria-controls="navbarScroll" style={customNavbarToggleStyle} />
+
         <Navbar.Collapse id="navbarScroll">
           <Nav
-            className="mb-lg-0"
+            className="mb-2 mb-lg-0"
             style={{
+              maxHeight: "100px",
               marginLeft: "50px",
               fontFamily: "Fira Mono",
               display: "flex",
@@ -61,6 +77,7 @@ function Header() {
               </Nav.Link>
             </Link>
 
+            {/* Your existing navigation links */}
             <span style={{ color: "#BC1823", margin: "0 10px" }}>|</span>
 
             <Link to="/browse" className="link-no-underline">
@@ -102,20 +119,30 @@ function Header() {
 
             <span style={{ color: "#BC1823", margin: "0 10px" }}>|</span>
 
-            <Link to="/" className="link-no-underline">
-              <Nav.Link
-                style={navLinkStyle}
-                href="#action2"
-                onMouseEnter={(e) => (e.target.style.color = "#002960")}
-                onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
-              >
-                LOGOUT
-              </Nav.Link>
-            </Link>
+            {userInfo ? (
+              <Nav title={userInfo.name} id="username">
+                {/* <LinkContainer to="/profile">
+                  <Nav.Item>Profile</Nav.Item>
+                </LinkContainer> */}
+                <Nav.Item onClick={logoutHandler}>
+                  LOGOUT
+                </Nav.Item>
+              </Nav>
+            ) : (
+              <LinkContainer to="/login">
+                <Nav.Link
+                  style={navLinkStyle}
+                  onMouseEnter={(e) => (e.target.style.color = "#002960")}
+                  onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
+                >
+                  <i></i>LOGIN
+                </Nav.Link>
+              </LinkContainer>
+            )}
           </Nav>
         </Navbar.Collapse>
 
-        <Form className="d-flex ms-auto mt-3">
+        <Form className="d-flex ms-auto">
           {isSearchExpanded ? (
             <Form.Control
               type="search"
@@ -149,11 +176,6 @@ function Header() {
               />
             </Nav.Link>
           </Link>
-
-          <Navbar.Toggle
-            aria-controls="navbarScroll"
-            style={customNavbarToggleStyle}
-          />
         </Form>
       </Container>
     </Navbar>

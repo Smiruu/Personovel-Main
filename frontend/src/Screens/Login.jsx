@@ -32,13 +32,13 @@ const signupHandler = (e) => {
     alert('Passwords do not match');
   } else {
     dispatch(register(name, email, password, password2)); // Dispatch the register action
-    navigate('/');
+    navigate('/home');
   }
 };
 
 useEffect(() => {
   if (userInfo) {
-      navigate('/')
+      navigate('/home')
   }
 }, [navigate, redirect, userInfo])
 

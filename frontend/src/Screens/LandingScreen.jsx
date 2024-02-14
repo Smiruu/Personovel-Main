@@ -50,7 +50,7 @@ function LandingScreen() {
               </h4>
 
               <h1 style={{ marginBlockEnd: "160px" }}>
-                <Nav.Link as={Link} to="/register">
+                <Nav.Link as={Link} to="/login">
                   <Button
                     style={{
                       fontSize: "24px",

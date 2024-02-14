@@ -5,7 +5,7 @@ from user.serializers import SendPasswordResetEmailSerializer, UserChangePasswor
 from django.contrib.auth import authenticate
 from user.renderers import UserRenderer
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 #Generate token Manually
 def get_tokens_for_user(user):
@@ -43,6 +43,7 @@ class UserLoginView(APIView):
 class UserProfileView(APIView):
     renderer_classes = [UserRenderer]
     permission_classes = [IsAuthenticated]
+
     def get(self, request, format=None):
         serializer= UserProfileSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
