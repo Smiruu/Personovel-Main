@@ -11,8 +11,8 @@ def get_filename_ext(filepath):
 def upload_image_path(instance, filename):
     new_filename = random.randint(1, 3910209312)
     name, ext = get_filename_ext(filename)
-    final_filename = "{new_filename}{ext}".format(new_filename=new_filename, ext=ext)
-    return "img/{new_filename}/{final_filename}".format(new_filename=new_filename, final_filename=final_filename)
+    final_filename = f"{new_filename}{ext}"
+    return f"static_my_project{new_filename}/{final_filename}"
 # Create your models here.
 
 class Genre(models.Model):
@@ -54,7 +54,10 @@ class Feedback(models.Model):
 
 class Interaction(models.Model):
     book = models.ForeignKey(Book, on_delete=models.SET_NULL, null=True)
-    chapters = models.TextField()
+    chapter = models.FileField(upload_to='chapters')
 
     def __str__(self):
-        return self.chapters
+        if self.book:
+            return f"{self.book.title} - {self.chapter.name}" if self.chapter else f"{self.book.title} - No chapters"
+        else:
+            return f"No book - {self.chapter.name}" if self.chapter else "No book - No chapters"

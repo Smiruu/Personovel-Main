@@ -23,7 +23,6 @@ function Book({ book }) {
             <strong>{book.title}</strong>
           </Card.Title>
        
-       {/*
         <Card.Text as="div">
           <div className="my-3">
            Author: {book.author}
@@ -34,7 +33,7 @@ function Book({ book }) {
            Genre: {book.genre}
           </div>
         </Card.Text>
-  */}
+  
       </Card.Body>
     </Card>
   

@@ -17,6 +17,8 @@ import BrowseScreen from './Screens/BrowseScreen';
 import Profile from './Screens/Profile';
 import Chapter from './Screens/ChapterDropdown';
 import Login from './Screens/Login';
+import BrowseScreenExp from './Screens/BrowseScreenExp';
+import ChapterScreen from './Screens/ChapterScreen';
 
 
 
@@ -43,6 +45,8 @@ function App() {
             <Route path='/Profile/:UserId' element={<Profile />} />
             <Route path='/browse' element={<BrowseScreen />} />
             <Route path='/login' element={<Login />} />
+            <Route path='/browseExp' element={<BrowseScreenExp />} />
+            <Route path='/chapterScreen' element={<ChapterScreen />} />
           </Routes>
         </Container>
 
