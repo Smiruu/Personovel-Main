@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Navbar, Nav, Container, Form, Button, Image, NavDropdown } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -8,6 +8,15 @@ import { logout } from "../actions/userActions";
 
 function Header() {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Check if the user is logged in on component mount
+    const userInfoFromStorage = localStorage.getItem("userInfo");
+    if (userInfoFromStorage) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const handleSearchToggle = () => {
     setIsSearchExpanded(!isSearchExpanded);
@@ -33,7 +42,8 @@ function Header() {
 
   const logoutHandler = () => {
     dispatch(logout());
-    // Additional logout logic if needed
+    localStorage.removeItem("userInfo"); // Remove user info from localStorage
+    setIsLoggedIn(false);
   };
 
   return (
