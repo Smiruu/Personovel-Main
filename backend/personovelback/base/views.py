@@ -99,3 +99,14 @@ def getInteractions(request):
     interactions = Interaction.objects.all()
     serializer = InteractionSerializer(interactions, many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def getInteraction(request, pk):
+    try:
+        interaction = Interaction.objects.get(pk=pk)
+        serializer = InteractionSerializer(interaction, many=False)
+        return Response(serializer.data)
+    except Interaction.DoesNotExist:
+        return Response({'detail': 'Interaction does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+    except ValueError:
+        return Response({'detail': 'Invalid Interaction ID'}, status=status.HTTP_400_BAD_REQUEST)

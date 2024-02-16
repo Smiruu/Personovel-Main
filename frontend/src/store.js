@@ -3,11 +3,19 @@ import {thunk} from 'redux-thunk';
 import { bookListReducer } from './reducers/bookReducers';import { combineReducers } from 'redux';
 import { userRegisterReducer } from './reducers/registerReducers';
 import { userLoginReducer } from './reducers/userReducers';
+import { genreListReducer } from './reducers/genreReducers';
+import { interactionListReducer } from './reducers/interactionReducers';
+import { interactionDetailsReducer } from './reducers/interactionReducers';
+
 
 const reducer = combineReducers({
     bookList: bookListReducer,
     userRegister: userRegisterReducer,
-    userLogin: userLoginReducer
+    userLogin: userLoginReducer, 
+    genreList: genreListReducer,
+    interactionList: interactionListReducer,
+    interactionDetails: interactionDetailsReducer,
+    
 })
 
 const userInfoFromStorage = localStorage.getItem('userinfo') ?
