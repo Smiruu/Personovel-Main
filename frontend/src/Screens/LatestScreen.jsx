@@ -6,6 +6,7 @@ import { listBooks } from '../actions/bookActions'
 import Loader from '../Components/Loader'
 import Message from '../Components/Message'
 import Book from '../Components/Book'
+import Author from '../Components/Author'
 
 function LatestScreen() {
   const dispatch = useDispatch();
@@ -32,6 +33,7 @@ function LatestScreen() {
       {[...books].reverse().map((book) => (
         <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
           <Book book={book} />
+          <Author author={book.author} />
         </Col>
       ))}
     </Row>

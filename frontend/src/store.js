@@ -6,6 +6,7 @@ import { userLoginReducer } from './reducers/userReducers';
 import { genreListReducer } from './reducers/genreReducers';
 import { interactionListReducer } from './reducers/interactionReducers';
 import { interactionDetailsReducer } from './reducers/interactionReducers';
+import { authorListReducer } from './reducers/authorReducers';
 
 
 const reducer = combineReducers({
@@ -15,6 +16,7 @@ const reducer = combineReducers({
     genreList: genreListReducer,
     interactionList: interactionListReducer,
     interactionDetails: interactionDetailsReducer,
+    authorList: authorListReducer,  
     
 })
 
