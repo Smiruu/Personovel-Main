@@ -7,7 +7,7 @@ import { genreListReducer } from './reducers/genreReducers';
 import { interactionListReducer } from './reducers/interactionReducers';
 import { interactionDetailsReducer } from './reducers/interactionReducers';
 import { authorListReducer } from './reducers/authorReducers';
-
+import { feedbackReducer } from './reducers/feedbackReducers';
 
 const reducer = combineReducers({
     bookList: bookListReducer,
@@ -16,7 +16,9 @@ const reducer = combineReducers({
     genreList: genreListReducer,
     interactionList: interactionListReducer,
     interactionDetails: interactionDetailsReducer,
-    authorList: authorListReducer,  
+    authorList: authorListReducer,
+    feedback: feedbackReducer,
+    
     
 })
 
