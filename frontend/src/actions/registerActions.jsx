@@ -5,6 +5,10 @@ import {
   USER_REGISTER_FAIL,
 } from "../constants/registerConstants";
 
+const instance = axios.create({
+  baseURL: 'http://127.0.0.1:8000/',
+});
+
 export const register = (name, email, password, password2) => async (dispatch) => {
   try {
     dispatch({ type: USER_REGISTER_REQUEST });
@@ -13,8 +17,8 @@ export const register = (name, email, password, password2) => async (dispatch) =
         "Content-Type": "application/json",
       },
     };
-    const { data } = await axios.post(
-      "http://127.0.0.1:8000/api/user/register/",
+    const { data } = await axios.instance(
+      "api/user/register/",
       { name, email, password, password2 },
       config
     );

@@ -8,15 +8,6 @@ import { logout } from "../actions/userActions";
 
 function Header() {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    // Check if the user is logged in on component mount
-    const userInfoFromStorage = localStorage.getItem("userInfo");
-    if (userInfoFromStorage) {
-      setIsLoggedIn(true);
-    }
-  }, []);
 
   const handleSearchToggle = () => {
     setIsSearchExpanded(!isSearchExpanded);
@@ -43,7 +34,6 @@ function Header() {
   const logoutHandler = () => {
     dispatch(logout());
     localStorage.removeItem("userInfo"); // Remove user info from localStorage
-    setIsLoggedIn(false);
   };
 
   return (
@@ -87,7 +77,6 @@ function Header() {
               </Nav.Link>
             </Link>
 
-            {/* Your existing navigation links */}
             <span style={{ color: "#BC1823", margin: "0 10px" }}>|</span>
 
             <Link to="/browse" className="link-no-underline">
@@ -131,9 +120,6 @@ function Header() {
 
             {userInfo ? (
               <Nav title={userInfo.name} id="username">
-                {/* <LinkContainer to="/profile">
-                  <Nav.Item>Profile</Nav.Item>
-                </LinkContainer> */}
                 <Nav.Item onClick={logoutHandler}>
                   LOGOUT
                 </Nav.Item>
@@ -145,7 +131,7 @@ function Header() {
                   onMouseEnter={(e) => (e.target.style.color = "#002960")}
                   onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
                 >
-                  <i></i>LOGIN
+                  LOGIN
                 </Nav.Link>
               </LinkContainer>
             )}

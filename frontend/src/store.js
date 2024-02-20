@@ -10,7 +10,7 @@ const reducer = combineReducers({
     userLogin: userLoginReducer
 })
 
-const userInfoFromStorage = localStorage.getItem('userinfo') ?
+const userInfoFromStorage = localStorage.getItem('userInfo') ?
 JSON.parse(localStorage.getItem('userInfo')) : null
 
 const initalState = {
@@ -20,7 +20,7 @@ const initalState = {
 
 const store = configureStore({
     reducer, 
-    initalState, 
+    preloadedState:initalState, 
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk), 
 })
 

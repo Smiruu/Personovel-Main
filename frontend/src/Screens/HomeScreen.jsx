@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Card, Container } from "react-bootstrap";
 import Product from "../Components/Product";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import axios from 'axios'
+import { useSelector } from 'react-redux';
 
 function LandingScreen() {
   const [products, setProducts] = useState([])
+  const userInfo = useSelector((state) => state.userLogin.userInfo);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -32,6 +34,9 @@ function LandingScreen() {
   const hasPrevProducts = (index) => index > 0;
   const hasNextProducts = (index) => index + 4 < products.length;
 
+  if (!userInfo) {
+    return <Navigate to="/login" />
+  }
   return (
     <Container fluid>
       <Row className="mt-3">
@@ -59,7 +64,7 @@ function LandingScreen() {
               margin: "0",
             }}
           >
-            USER!!
+            {userInfo.token.name}!
           </h1>
 
           <Card.Img

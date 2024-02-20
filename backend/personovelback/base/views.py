@@ -36,6 +36,7 @@ def getProduct(request, pk):
     return Response(product)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def getBooks(request):
     books = Book.objects.all()
     serializer = BookSerializer(books, many=True)

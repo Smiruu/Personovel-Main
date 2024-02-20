@@ -6,16 +6,21 @@ import {
     USER_LOGOUT,
 } from '../constants/userConstants';
 
+const instance = axios.create({
+    baseURL: 'http://127.0.0.1:8000/',
+  });
+
 export const login = (email, password) => async (dispatch) => {
     try {
         dispatch({ type: USER_LOGIN_REQUEST });
         const config = {
             headers: {
                 'Content-Type': 'application/json',
+                'Accept': 'application/json',
             },
         };
-        const { data } = await axios.post(
-            'http://127.0.0.1:8000/api/user/login/',
+        const { data } = await instance.post(
+            'api/user/login/',
             {email, password },
             config
         );

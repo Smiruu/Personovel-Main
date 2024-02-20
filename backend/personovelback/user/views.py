@@ -4,17 +4,24 @@ from rest_framework.views import APIView
 from user.serializers import SendPasswordResetEmailSerializer, UserChangePasswordSerializer, UserPasswordResetSerializer, UserRegistrationSerializers, UserLoginSerializer, UserProfileSerializer
 from django.contrib.auth import authenticate
 from user.renderers import UserRenderer
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken, Token
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
-#Generate token Manually
+
+# Generate token Manually
 def get_tokens_for_user(user):
+    # Generate refresh token
     refresh = RefreshToken.for_user(user)
 
-    return {
+    # Include user's name and email in the token payload
+    access_token_payload = {
         'refresh': str(refresh),
         'access': str(refresh.access_token),
+        'name': user.name,  # Assuming 'name' is a field in your user model
+        'email': user.email  # Assuming 'email' is a field in your user model
     }
+
+    return access_token_payload
 
 class UserRegistrationView(APIView):
     renderer_classes = [UserRenderer]

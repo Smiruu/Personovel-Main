@@ -1,11 +1,19 @@
 import React from "react";
 import { Nav, Container, Button } from "react-bootstrap";
 import { Row, Col, Card } from "react-bootstrap";
-import { Link } from "react-router-dom";
-// import Start from "../Components/Start";
+import { Link, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import SampleScreen from "./SampleScreen";
 
+
 function LandingScreen() {
+  const userInfo = useSelector((state) => state.userLogin.userInfo);
+
+  // If user is logged in, redirect to home page
+  if (userInfo) {
+    return <Navigate to="/home" />;
+  }
+
   return (
     <Container fluid>
       <Card className="border-0">
