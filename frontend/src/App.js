@@ -17,7 +17,6 @@ import Chapter from './Screens/ChapterDropdown';
 import Login from './Screens/Login';
 import BrowseScreenExp from './Screens/BrowseScreenExp';
 import ChapterScreen from './Screens/ChapterScreen';
-
 function App() {
   return (
     <Router>
@@ -42,6 +41,9 @@ function App() {
             <Route path='/login' element={<Login />} />
             <Route path='/browseExp' element={<BrowseScreenExp />} />
             <Route path='/chapterScreen' element={<ChapterScreen />} />
+
+
+
           </Routes>
         </Container>
 
