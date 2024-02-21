@@ -1,10 +1,29 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { submitFeedback, resetFeedback } from "../actions/feedbackActions";
 
 function ContactScreen() {
+  const dispatch = useDispatch();
+  const feedbackState = useSelector((state) => state.feedback);
+
+  const [email, setEmail] = useState("");
+  const [subject, setSubject] = useState("");
+  const [concern, setConcern] = useState("");
   const [hover, setHover] = useState(false);
 
   const toggleHover = () => {
     setHover(!hover);
+  };
+
+  const handleFeedbackSubmit = () => {
+    dispatch(submitFeedback(email, subject, concern));
+  };
+
+  const resetForm = () => {
+    setEmail("");
+    setSubject("");
+    setConcern("");
+    dispatch(resetFeedback());
   };
 
   return (
@@ -39,6 +58,8 @@ function ContactScreen() {
         <input
           type="text"
           placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           style={{
             marginBottom: "20px",
             width: "100%",
@@ -51,6 +72,8 @@ function ContactScreen() {
         <input
           type="text"
           placeholder="Subject"
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
           style={{
             marginBottom: "20px",
             width: "100%",
@@ -62,6 +85,8 @@ function ContactScreen() {
         />
         <textarea
           placeholder="What is your concern?"
+          value={concern}
+          onChange={(e) => setConcern(e.target.value)}
           style={{
             width: "100%",
             height: "150px",
@@ -87,12 +112,23 @@ function ContactScreen() {
           }}
           onMouseEnter={toggleHover}
           onMouseLeave={toggleHover}
-          onClick={() =>
-            (window.location.href = "mailto:personovel@gmail.com")
-          }
+          onClick={() => {
+            handleFeedbackSubmit();
+            resetForm();
+          }}
         >
-          SUBMIT
+          {feedbackState.loading ? "Submitting..." : "SUBMIT"}
         </button>
+        {feedbackState.success && (
+          <p style={{ color: "green", marginTop: "10px" }}>
+            Feedback submitted successfully!
+          </p>
+        )}
+        {feedbackState.error && (
+          <p style={{ color: "red", marginTop: "10px" }}>
+            Error: {feedbackState.error}
+          </p>
+        )}
       </div>
     </div>
   );

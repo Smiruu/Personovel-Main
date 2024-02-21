@@ -48,13 +48,17 @@ class Feedback(models.Model):
     email = models.EmailField()
     subject = models.CharField(max_length=100)
     concern = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.subject
 
 class Interaction(models.Model):
     book = models.ForeignKey(Book, on_delete=models.SET_NULL, null=True)
-    chapters = models.TextField()
+    chapter = models.FileField(upload_to='chapters')
 
     def __str__(self):
-        return self.chapters
+        if self.book:
+            return f"{self.book.title} - {self.chapter.name}" if self.chapter else f"{self.book.title} - No chapters"
+        else:
+            return f"No book - {self.chapter.name}" if self.chapter else "No book - No chapters"
