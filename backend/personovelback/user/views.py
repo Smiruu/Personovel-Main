@@ -6,7 +6,8 @@ from django.contrib.auth import authenticate
 from user.renderers import UserRenderer
 from rest_framework_simplejwt.tokens import RefreshToken, Token
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-
+from .models import UserProfile
+from .serializers import UserProfileSerializer
 
 # Generate token Manually
 def get_tokens_for_user(user):
@@ -82,3 +83,17 @@ class UserPasswordResetView(APIView):
             return Response({'msg':"Password Reset Succesfully"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class UserProfileView(APIView):
+    def get(self, request):
+        user_profile = UserProfile.objects.get(user=request.user)
+        serializer = UserProfileSerializer(user_profile)
+        return Response(serializer.data)
+
+    def put(self, request):
+        user_profile = UserProfile.objects.get(user=request.user)
+        serializer = UserProfileSerializer(user_profile, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
