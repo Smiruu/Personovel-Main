@@ -13,6 +13,15 @@ def upload_image_path(instance, filename):
     name, ext = get_filename_ext(filename)
     final_filename = "{new_filename}{ext}".format(new_filename=new_filename, ext=ext)
     return "img/{new_filename}/{final_filename}".format(new_filename=new_filename, final_filename=final_filename)
+
+def upload_chapter_path(instance, filename):
+    name, ext = get_filename_ext(filename)
+
+    book_name = instance.book.title.replace(" ", "_")  
+    chapter_number = instance.chapter_number if instance.chapter_number else "Unknown"  
+    
+    return os.path.join("chapters", book_name, f"Chapter_{chapter_number}{ext}")
+
 # Create your models here.
 
 class Genre(models.Model):
@@ -54,11 +63,18 @@ class Feedback(models.Model):
         return self.subject
 
 class Interaction(models.Model):
-    book = models.ForeignKey(Book, on_delete=models.SET_NULL, null=True)
-    chapter = models.FileField(upload_to='chapters')
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, null=True)
+    chapter_number = models.PositiveIntegerField()  # Assuming chapter number is stored as a positive integer
+    chapter = models.FileField(upload_to=upload_chapter_path)
 
     def __str__(self):
         if self.book:
-            return f"{self.book.title} - {self.chapter.name}" if self.chapter else f"{self.book.title} - No chapters"
+            return f"{self.book.title} - Chapter {self.chapter_number}" if self.chapter_number else f"{self.book.title} - No chapters"
         else:
-            return f"No book - {self.chapter.name}" if self.chapter else "No book - No chapters"
+            return f"No book - Chapter {self.chapter_number}" if self.chapter_number else "No book - No chapters"
+
+    def save(self, *args, **kwargs):
+        if not self.chapter_number:
+            total_chapters = Interaction.objects.filter(book=self.book).count() + 1
+            self.chapter_number = total_chapters
+        super().save(*args, **kwargs)
