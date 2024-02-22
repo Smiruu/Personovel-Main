@@ -15,9 +15,10 @@ export const register = (name, email, password, password2) => async (dispatch) =
     const config = {
       headers: {
         "Content-Type": "application/json",
+        'Accept': 'application/json',
       },
     };
-    const { data } = await axios.instance(
+    const { data } = await instance.post(
       "api/user/register/",
       { name, email, password, password2 },
       config
@@ -31,8 +32,8 @@ export const register = (name, email, password, password2) => async (dispatch) =
     dispatch({
       type: USER_REGISTER_FAIL,
       payload:  
-        error.response && error.response.data.details
-          ? error.response.data.details
+        error.response && error.response.data
+          ? error.response.data
           : error.message,
     });
   }

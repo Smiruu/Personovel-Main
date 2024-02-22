@@ -26,17 +26,17 @@ function LoginScreen() {
   e.preventDefault()
   dispatch(login(email, password))
 }
-const signupHandler = (e) => {
+const signupHandler = async (e) => { // Declare the function as async
   e.preventDefault();
   if (password !== password2) {
     alert('Passwords do not match');
   } else {
-    dispatch(register(name, email, password, password2)); // Dispatch the register action
-    navigate('/home');
+    console.log('user registered')
+    dispatch(register(name, email, password, password2)); // Wait for the register action to complete
   }
 };
-
 useEffect(() => {
+  console.log('triggered')
   if (userInfo) {
       navigate('/home')
   }

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager,AbstractBaseUser
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 #Custom User Manager
 class UserManager(BaseUserManager):
     def create_user(self, email, name,  password=None, password2=None):
@@ -69,4 +70,22 @@ class User(AbstractBaseUser):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
+    
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    # Remove the username field from Profile since it's already present in User model
+    bio = models.TextField(max_length=500, blank=True)
+    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True)
+    background_picture = models.ImageField(upload_to='background_pics/', blank=True)
+    
+    def __str__(self):
+        return self.user.email  # Return the username from the associated User model
+    
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+# Connect the signal
+post_save.connect(create_user_profile, sender=User)
 
