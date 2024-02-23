@@ -3,6 +3,10 @@ import { Navbar, Nav, Container, Form, Button, Image } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 function Header() {
+  const [profileIcon, setProfileIcon] = useState(
+    localStorage.getItem("profileIcon") || ""
+  );
+
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const handleSearchToggle = () => {
@@ -142,10 +146,15 @@ function Header() {
               href="#action2"
             >
               <Image
-                src="/Icon.png"
-                className="me-1"
+                src={profileIcon}
+                className="me-1 rounded-circle"
                 alt="User Icon"
-                style={{ width: "45px", height: "45px" }}
+                style={{
+                  width: "45px",
+                  height: "45px",
+                  objectFit: "cover",
+                  border: "3px solid #002960",
+                }}
               />
             </Nav.Link>
           </Link>
