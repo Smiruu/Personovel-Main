@@ -12,7 +12,7 @@ import {
 import "./Profile.css";
 
 export default function EditButton() {
-  const [name, setName] = useState(localStorage.getItem("name") || "Mario");
+  const [name, setName] = useState("Mario");
   const [nameError, setNameError] = useState("");
   const [activeTab, setActiveTab] = useState("ABOUT");
   const [bio, setBio] = useState(localStorage.getItem("bio") || "");
@@ -95,8 +95,6 @@ export default function EditButton() {
     const newName = e.target.value;
     setName(newName);
     setNameError(newName.trim() === "" ? "Name cannot be empty" : "");
-
-    localStorage.setItem("name", newName);
   };
 
   const saveChanges = () => {
@@ -314,9 +312,7 @@ export default function EditButton() {
                           </div>
                           <div>
                             <h1 className="reply-username">JaneDoe</h1>
-                            <p className="reply-p">
-                              Reply to JohnDoe's comment.
-                            </p>
+                            <p className="reply-p">Reply to JohnDoe's comment.</p>
                             <p className="reply-text">
                               Lorem ipsum dolor sit amet, consectetur adipiscing
                               elit.

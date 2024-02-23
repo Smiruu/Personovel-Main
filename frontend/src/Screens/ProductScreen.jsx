@@ -13,7 +13,7 @@ function ProductScreen() {
       setProduct(data)
     }
     fetchProduct()
-  }, [id])
+  }, [])
   return (
     <Container fluid>
       <Row className="mt-5 mb-5 h-full w-full">
@@ -47,7 +47,7 @@ function ProductScreen() {
               color: "#6F1D1B",
             }}
           >
-            {product?.name?.toUpperCase()}
+            {product.name.toUpperCase()}
           </h4>
 
           <h5
@@ -68,7 +68,7 @@ function ProductScreen() {
                 fontWeight: "1",
               }}
             >
-              {product?.author?.toUpperCase()}
+              {product.author.toUpperCase()}
             </span>
           </h5>
 
@@ -89,7 +89,7 @@ function ProductScreen() {
                 fontWeight: "1",
               }}
             >
-              {product?.genre?.toUpperCase()}
+              {product.genre.toUpperCase()}
             </span>
           </h5>
 
@@ -110,7 +110,7 @@ function ProductScreen() {
                 fontWeight: "1",
               }}
             >
-              {product?.language?.toUpperCase()}
+              {product.language.toUpperCase()}
             </span>
           </h5>
 

@@ -103,7 +103,7 @@ function LandingScreen() {
             <div
               style={{
                 position: "absolute",
-                top: "33%",
+                top: "38%",
                 margin: "2%",
                 display: "flex",
                 justifyContent: "flex-start",

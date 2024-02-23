@@ -3,10 +3,6 @@ import { Navbar, Nav, Container, Form, Button, Image } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 function Header() {
-  const [profileIcon, setProfileIcon] = useState(
-    localStorage.getItem("profileIcon") || ""
-  );
-
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const handleSearchToggle = () => {
@@ -19,13 +15,14 @@ function Header() {
   };
 
   const customNavbarToggleStyle = {
-    marginLeft: "2%",
+    marginLeft: "32%",
     border: "2px solid #002960",
     backgroundColor: "transparent",
     borderRadius: "10px",
     borderColor: "#002960",
-    boxShadow: "none",
+    boxShadow: 'none'
   };
+
 
   return (
     <Navbar expand="lg" style={{ backgroundColor: "#F9DCC4" }}>
@@ -35,18 +32,21 @@ function Header() {
             <Link to="/landing">
               <Image
                 src="/PERSONOVEL.png"
-                className="logo img-fluid mb-2"
-                style={{ width: "250px", height: "70px" }}
+                className="logo img-fluid"
+                style={{ width: "200px", height: "50px", marginLeft: "70px" }}
                 alt="Brand Logo"
               />
             </Link>
           </Navbar.Brand>
         </Link>
 
+        <Navbar.Toggle aria-controls="navbarScroll" style={customNavbarToggleStyle} />
+
         <Navbar.Collapse id="navbarScroll">
           <Nav
-            className="mb-lg-0"
+            className="mb-2 mb-lg-0"
             style={{
+              maxHeight: "100px",
               marginLeft: "50px",
               fontFamily: "Fira Mono",
               display: "flex",
@@ -119,7 +119,7 @@ function Header() {
           </Nav>
         </Navbar.Collapse>
 
-        <Form className="d-flex ms-auto mt-3">
+        <Form className="d-flex ms-auto">
           {isSearchExpanded ? (
             <Form.Control
               type="search"
@@ -146,23 +146,13 @@ function Header() {
               href="#action2"
             >
               <Image
-                src={profileIcon}
-                className="me-1 rounded-circle"
+                src="/Icon.png"
+                className="me-1"
                 alt="User Icon"
-                style={{
-                  width: "45px",
-                  height: "45px",
-                  objectFit: "cover",
-                  border: "3px solid #002960",
-                }}
+                style={{ width: "45px", height: "45px" }}
               />
             </Nav.Link>
           </Link>
-
-          <Navbar.Toggle
-            aria-controls="navbarScroll"
-            style={customNavbarToggleStyle}
-          />
         </Form>
       </Container>
     </Navbar>

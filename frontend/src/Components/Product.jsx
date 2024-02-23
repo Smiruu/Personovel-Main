@@ -32,7 +32,7 @@ function Product({ product }) {
       <Card.Body>
         <Link to={`/product/${product._id}`} style={linkStyle}>
           <Card.Title as="div" className="text-center mb-3">
-            <strong>{product?.name?.toUpperCase()}</strong>
+            <strong>{product.name.toUpperCase()}</strong>
           </Card.Title>
         </Link>
 
