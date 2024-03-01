@@ -17,10 +17,10 @@ export const bookListReducer = (state = { books: [] }, action) => {
         }
 }
 
-export const bookDetailsReducer = (state = { book: { reviews: [] } }, action) => {
+export const bookDetailsReducer = (state = { loading: false, book: { reviews: [] } }, action) => {
     switch (action.type) {
         case BOOK_DETAILS_REQUEST:
-            return { loading: true, ...state };
+            return { loading: true, book: { reviews: [] } }; // Reset book details when requesting
         case BOOK_DETAILS_SUCCESS:
             return { loading: false, book: action.payload };
         case BOOK_DETAILS_FAIL:
@@ -28,4 +28,4 @@ export const bookDetailsReducer = (state = { book: { reviews: [] } }, action) =>
         default:
             return state;
     }
-}
+};
