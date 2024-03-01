@@ -16,7 +16,8 @@ def upload_image_path(instance, filename):
 
 def upload_chapter_path(instance, filename):
     name, ext = get_filename_ext(filename)
-
+    
+    
     book_name = instance.book.title.replace(" ", "_")  
     chapter_number = instance.chapter_number if instance.chapter_number else "Unknown"  
     

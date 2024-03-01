@@ -18,6 +18,7 @@ const reducer = combineReducers({
     interactionDetails: interactionDetailsReducer,
     authorList: authorListReducer,
     feedback: feedbackReducer,
+
     
     
 })

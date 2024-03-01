@@ -33,12 +33,18 @@ function Chapter() {
                                 <div>
                                     <h3>{interaction.book.title}</h3>
                                     <Document
-                                        
                                         file={interaction.chapter}
                                         options={{ workerSrc: pdfjs.GlobalWorkerOptions.workerSrc }}
                                     >
-                                        
-                                        <Page pageNumber={1} renderTextLayer={false} renderAnnotationLayer={false} width={300} />
+                                        {Array.apply(null, Array(1)).map((x, i) => i + 1).map((page) => (
+                                            <Page
+                                                key={page}
+                                                pageNumber={page}
+                                                renderTextLayer={false}
+                                                renderAnnotationLayer={false}
+                                                width={300}
+                                            />
+                                        ))}
                                     </Document>
                                 </div>
                             ) : (
