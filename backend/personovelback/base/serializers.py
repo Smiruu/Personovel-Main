@@ -32,6 +32,10 @@ class FeedbackSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class InteractionSerializer(serializers.ModelSerializer):
+    book = serializers.SlugRelatedField(
+    slug_field='title',
+    queryset=Author.objects.all()
+    )
     class Meta:
         model = Interaction
-        fields = '__all__'
+        fields = '__all__'  

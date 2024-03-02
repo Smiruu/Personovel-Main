@@ -1,11 +1,11 @@
 import React from 'react'
-import Chapter from '../Components/Chapter'
+import ChapterDetail from '../Components/ChapterDetail'
 
 function ChapterScreen() {
   return (
     <div>
-        <h1>Chapters</h1>
-        <Chapter />
+        <h1></h1>
+        <ChapterDetail />
     </div>
   )
 }

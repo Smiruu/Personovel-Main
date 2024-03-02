@@ -20,6 +20,7 @@ import Login from './Screens/Login';
 import BrowseScreenExp from './Screens/BrowseScreenExp';
 import ChapterScreen from './Screens/ChapterScreen';
 import BookScreen from './Screens/BookScreen';
+import ChapterDetailScreen from './Screens/ChapterDetailScreen';
 
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
             <Route path='/browseExp' element={<BrowseScreenExp />} />
             <Route path='/chapterScreen' element={<ChapterScreen />} />
             <Route path='/books/:_id' element={<BookScreen />} />
+            <Route path='/chapters/:_id' element={<ChapterDetailScreen />} />
 
 
 

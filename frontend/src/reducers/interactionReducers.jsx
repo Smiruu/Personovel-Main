@@ -14,10 +14,7 @@ export const interactionListReducer = (state = { interactions: [] }, action) => 
   }
 }
 
-export const interactionDetailsReducer = (
-  state = { interaction: { books: [] } },
-  action
-) => {
+export const interactionDetailsReducer = (state = { interaction: {} }, action) => {
   switch (action.type) {
     case INTERACTION_DETAILS_REQUEST:
       return { loading: true, ...state };
@@ -28,4 +25,4 @@ export const interactionDetailsReducer = (
     default:
       return state;
   }
-};
+}
