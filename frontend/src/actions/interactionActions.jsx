@@ -40,41 +40,41 @@ export const listInteractions = () => async (dispatch) => {
 };
 
 export const listInteractionDetails = (id) => async (dispatch) => {
-    try {
-      dispatch({ type: INTERACTION_DETAILS_REQUEST });
-    
-      // Check if ID is valid (e.g., not null or undefined)
-      if (!id) {
-        throw new Error('Invalid Interaction ID');
-      }
-  
-      const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-      const token = userInfo ? userInfo.token.access : null;
-  
-      const config = token ? {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json', 
-          'Authorization': `Bearer ${token}`
-        }
-      } : {};
-  
-      const { data } = await instance.get(`/api/interactions/${id}`, config);
-      const updatedData = {
-        ...data,
-      };
-  
-      dispatch({
-        type: INTERACTION_DETAILS_SUCCESS,
-        payload: updatedData,
-      });
-    } catch (error) {
-      dispatch({
-        type: INTERACTION_DETAILS_FAIL,
-        payload: error.response && error.response.data.detail
-          ? error.response.data.detail
-          : error.message,
-      });
+  try {
+    // Dispatch action to indicate the start of the request
+    dispatch({ type: INTERACTION_DETAILS_REQUEST });
+
+    // Check if ID is valid
+    if (!id && id !== 0) {
+      throw new Error('Invalid Interaction ID');
     }
-  };
-  
+
+    // Get user token from localStorage
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const token = userInfo ? userInfo.token.access : null;
+
+    // Configure Axios request headers with token
+    const config = {
+      headers: {
+        'Authorization': token ? `Bearer ${token}` : '',
+      }
+    };
+
+    // Make GET request to fetch interaction details
+    const { data } = await instance.get(`/api/interactions/${id}`, config);
+
+    // Dispatch action with fetched data
+    dispatch({
+      type: INTERACTION_DETAILS_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    // Dispatch action with error message
+    dispatch({
+      type: INTERACTION_DETAILS_FAIL,
+      payload: error.response && error.response.data.detail
+        ? error.response.data.detail
+        : error.message,
+    });
+  }
+};

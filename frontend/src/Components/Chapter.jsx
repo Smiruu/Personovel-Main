@@ -6,56 +6,65 @@ import Message from '../Components/Message';
 import Loader from '../Components/Loader';
 import { Document, Page, pdfjs } from 'react-pdf'; // Import Document, Page, and pdfjs from react-pdf
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'; // Import CSS for react-pdf
+import { listInteractionDetails } from '../actions/interactionActions';
+import { useParams } from 'react-router-dom';
 
 // Set the worker source for react-pdf
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 function Chapter() {
+    const { id } = useParams();
     const dispatch = useDispatch();
-    const interactionList = useSelector((state) => state.interactionList);
-    const { loading, error, interactions } = interactionList;
+    const [interaction, setInteraction] = useState({});
+   
+  
+    useEffect(() => {
+      dispatch(listInteractionDetails(id)); // Use id to fetch interaction details
+    }, [dispatch, id]);
+    
+    const interactionDetails = useSelector(state => state.interactionDetails);
+    const { loading, error,} = interactionDetails || {};
 
     useEffect(() => {
-        dispatch(listInteractions());
-    }, [dispatch]);
-
+        if (!loading && !error) {
+            setInteraction(interactionDetails.interaction);
+        }
+        }, [interactionDetails, loading, error]);
+  
     return (
-        <div>
-            <Row>
-                {loading ? (
-                    <Loader />
-                ) : error ? (
-                    <Message variant='danger'>{error}</Message>
-                ) : (
-                    interactions.map((interaction) => (
-                        <Col key={interaction.id} sm={12} md={6} lg={4} xl={3}>
-                            {interaction.chapter ? (
-                                <div>
-                                    <h3>{interaction.book.title}</h3>
-                                    <Document
-                                        file={interaction.chapter}
-                                        options={{ workerSrc: pdfjs.GlobalWorkerOptions.workerSrc }}
-                                    >
-                                        {Array.apply(null, Array(1)).map((x, i) => i + 1).map((page) => (
-                                            <Page
-                                                key={page}
-                                                pageNumber={page}
-                                                renderTextLayer={false}
-                                                renderAnnotationLayer={false}
-                                                width={300}
-                                            />
-                                        ))}
-                                    </Document>
-                                </div>
-                            ) : (
-                                <Message variant='warning'>No chapters available</Message>
-                            )}
-                        </Col>
-                    ))
-                )}
-            </Row>
-        </div>
-    );
-}
+      <div>
+        {loading ? (
+          <Loader />
+        ) : error ? (
+          <Message variant="danger">{error}</Message>
+        ) : (
+          <div>
+            <h2>Interaction Details</h2>
+            <p>ID: {interaction.id}</p>
+            <p>Chapter: {interaction.chapter_number}</p>
+            <p>Book: {interaction.book}</p>
+            {/* Display additional details as needed */}
+            <Document
+              file={interaction.chapter}
+              options={{ workerSrc: pdfjs.GlobalWorkerOptions.workerSrc }}
+            >
+                {Array.apply(null, Array(1)).map((x, i) => i + 1).map((page) => (
+                    <Page
+                    key={page}
+                    pageNumber={page}
+                    renderTextLayer={false}
+                    renderAnnotationLayer={false}
+                    />
+                ))}
+            </Document>
 
+                    
+
+
+          </div>
+          
+        )}
+      </div>
+    );
+  }
 export default Chapter;

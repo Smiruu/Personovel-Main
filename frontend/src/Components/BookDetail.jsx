@@ -155,7 +155,7 @@ function BookDetail() {
           </h5>
 
           <Link
-            to="/chapter"
+            to="/chapters/"
             className="d-flex justify-content-center"
             style={{ textDecoration: "none" }}
           >

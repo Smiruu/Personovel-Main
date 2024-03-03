@@ -17,8 +17,8 @@ export const interactionListReducer = (state = { interactions: [] }, action) => 
 export const interactionDetailsReducer = (state = { interaction: {} }, action) => {
   switch (action.type) {
     case INTERACTION_DETAILS_REQUEST:
-      return { loading: true, ...state };
-    case INTERACTION_DETAILS_SUCCESS:
+      return { loading: true, interaction:{}};
+    case INTERACTION_DETAILS_SUCCESS: 
       return { loading: false, interaction: action.payload };
     case INTERACTION_DETAILS_FAIL:
       return { loading: false, error: action.payload };

@@ -49,7 +49,7 @@ function App() {
             <Route path='/browseExp' element={<BrowseScreenExp />} />
             <Route path='/chapterScreen' element={<ChapterScreen />} />
             <Route path='/books/:_id' element={<BookScreen />} />
-            <Route path='/chapters/:_id' element={<ChapterDetailScreen />} />
+            <Route path='/chapters/:id' element={<ChapterDetailScreen />} />
 
 
 
