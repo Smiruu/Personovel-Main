@@ -3,8 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Popup from '../Components/Popup';
 import { fetchUserDetails, updateUserDetails } from '../actions/profileActions';
+import { useParams } from 'react-router-dom';
 
 const ProfilePage = () => {
+
+  const { id } = useParams()
+  console.log('User Id', id)
   const userInfo = useSelector((state) => state.userLogin.userInfo);
   const dispatch = useDispatch();
 
@@ -14,9 +18,13 @@ const ProfilePage = () => {
   const [newProfilePhoto, setNewProfilePhoto] = useState(userInfo.profilePhoto || '');
   const [newCoverPhoto, setNewCoverPhoto] = useState(userInfo.coverPhoto || '');
 
+  const userProfileInfo = useSelector((state) => state.profile);
+  const { userInfo: userProfileInfoState } = userProfileInfo;
+  console.log('Profile', userProfileInfoState)
+
   // Fetch user details on component mount
   useEffect(() => {
-    dispatch(fetchUserDetails());
+    dispatch(fetchUserDetails(id));
   }, [dispatch]);
 
   const handleEditProfile = () => {
@@ -52,9 +60,9 @@ const ProfilePage = () => {
 
   return (
     <div>
-      {userInfo ? (
+      {userProfileInfoState ? (
         <div>
-          <p>Username: {newUsername}</p>
+          <p>Username: {userProfileInfoState.name}</p>
           <p>Bio: {newBio}</p>
           <p>Profile Photo: <img src={newProfilePhoto} alt="Profile" style={{ borderRadius: '50%' }} /></p>
           <p>Cover Photo: <img src={newCoverPhoto} alt="Cover" style={{ width: '100%' }} /></p>

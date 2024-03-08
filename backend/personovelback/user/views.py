@@ -8,6 +8,7 @@ from rest_framework_simplejwt.tokens import RefreshToken, Token
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .models import UserProfile
 from .serializers import UserProfileSerializer
+from rest_framework.decorators import api_view
 
 # Generate token Manually
 def get_tokens_for_user(user):
@@ -18,6 +19,7 @@ def get_tokens_for_user(user):
     access_token_payload = {
         'refresh': str(refresh),
         'access': str(refresh.access_token),
+        'user_id': user.id,
         'name': user.name,  # Assuming 'name' is a field in your user model
         'email': user.email  # Assuming 'email' is a field in your user model
     }
@@ -48,13 +50,24 @@ class UserLoginView(APIView):
             else: 
                 return Response({'errors':{'non_field_errors':['Email or Password is not valid']}}, status=status.HTTP_400_BAD_REQUEST)
 
-class UserProfileView(APIView):
-    renderer_classes = [UserRenderer]
-    permission_classes = [IsAuthenticated]
+# class UserProfileView(APIView):
+#     renderer_classes = [UserRenderer]
+#     permission_classes = [IsAuthenticated]
 
-    def get(self, request, format=None):
-        serializer= UserProfileSerializer(request.user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+#     def get(self, request, format=None):
+#         serializer= UserProfileSerializer(request.user)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+
+from .models import User
+@api_view(['GET'])
+def get_user_profile(request, pk):
+    print(pk)
+    user = User.objects.get(id=pk)
+    print(user)
+    user_profile = UserProfile.objects.get(user=user)
+    serializer = UserProfileSerializer(user_profile, many=False)
+    print(serializer.data)
+    return Response(serializer.data)
     
 
 class UserChangePasswordView(APIView):

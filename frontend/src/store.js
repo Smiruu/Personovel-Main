@@ -8,6 +8,7 @@ import { genreListReducer } from './reducers/genreReducers';
 import { interactionListReducer, interactionDetailsReducer } from './reducers/interactionReducers'; // Combine these reducers
 import { authorListReducer } from './reducers/authorReducers';
 import { feedbackReducer } from './reducers/feedbackReducers';
+import { userReducer } from './reducers/profileReducers'
 
 const reducer = combineReducers({
     bookList: bookListReducer,
@@ -18,6 +19,7 @@ const reducer = combineReducers({
     interactionDetails: interactionDetailsReducer, // Include interactionDetails here
     authorList: authorListReducer,
     feedback: feedbackReducer,
+    profile: userReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null;

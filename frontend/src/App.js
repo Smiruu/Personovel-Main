@@ -42,7 +42,7 @@ function App() {
             <Route path='/contact' element={<ContactScreen />} />
             <Route path='/landing' element={<LandingScreen />} />
             <Route path='/sample' element={<SampleScreen />} />
-            <Route path='/Profile/:UserId' element={<Profile />} />
+            <Route path='/Profile/:id' element={<Profile />} />
             <Route path='/browse' element={<BrowseScreen />} />
             <Route path='/login' element={<Login />} />
             <Route path='/browseExp' element={<BrowseScreenExp />} />

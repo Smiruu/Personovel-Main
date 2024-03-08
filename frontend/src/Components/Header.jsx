@@ -7,6 +7,7 @@ import { LinkContainer } from "react-router-bootstrap";
 import { logout } from "../actions/userActions";
 
 function Header() {
+  
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const handleSearchToggle = () => {
@@ -29,6 +30,7 @@ function Header() {
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
+  
   const dispatch = useDispatch();
 
   const logoutHandler = () => {
@@ -158,8 +160,8 @@ function Header() {
           >
             <i className="fa-solid fa-magnifying-glass" />
           </Button>
-
-          <Link to="/Profile/:UserId" className="link-no-underline">
+            
+          <Link to={`/Profile/${userInfo ? userInfo.token.user_id : ""}`} className="link-no-underline">
             <Nav.Link
               style={{ color: "#002960", marginLeft: "10px" }}
               href="#action2"

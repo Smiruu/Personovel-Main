@@ -6,10 +6,10 @@ const instance = axios.create({
   baseURL: 'http://127.0.0.1:8000/',
 });
 
-export const fetchUserDetails = () => async (dispatch) => {
+export const fetchUserDetails = (id) => async (dispatch) => {
   try {
     dispatch({ type: USER_DETAILS_REQUEST });
-    const { data } = await instance.get('api/user/details');
+    const { data } = await instance.get(`api/user/profile/${id}`);
     dispatch({
       type: USER_DETAILS_SUCCESS,
       payload: data,

@@ -4,7 +4,7 @@ import {
   USER_DETAILS_SUCCESS,
   USER_DETAILS_FAILURE,
   UPDATE_USER_DETAILS,
-} from '../actions/userActions';
+} from '../constants/profileConstants';
 
 const initialState = {
   loading: false,
@@ -12,7 +12,7 @@ const initialState = {
   error: null,
 };
 
-const userReducer = (state = initialState, action) => {
+export const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case USER_DETAILS_REQUEST:
       return { ...state, loading: true };
@@ -31,4 +31,4 @@ const userReducer = (state = initialState, action) => {
   }
 };
 
-export default userReducer;
+// export default userReducer;
