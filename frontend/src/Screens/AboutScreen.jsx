@@ -5,27 +5,27 @@ const teamMembers = [
   {
     name: "Depona, David Harry",
     email: "dqdepona1@student.hau.edu.ph",
-    imageSrc: "images/dep.jpg",
+    imageSrc: "images/dep.png",
   },
   {
     name: "De Vera, Justine Angelo",
     email: "jadevera@student.hau.edu.ph",
-    imageSrc: "images/jus.jpg",
+    imageSrc: "images/jus.png",
   },
   {
     name: "Linag, Lanz",
     email: "lplinag@student.hau.edu.ph",
-    imageSrc: "images/lanz.jpg",
+    imageSrc: "images/lanz.png",
   },
   {
     name: "Sanchez, Helaena",
     email: "hdsanchez1@student.hau.edu.ph",
-    imageSrc: "images/hel.jpg",
+    imageSrc: "images/hel.png",
   },
   {
     name: "Yabut, Reinael",
     email: "rbyabut@student.hau.edu.ph",
-    imageSrc: "images/yabs.jpg",
+    imageSrc: "images/yabs.png",
   },
 ];
 
