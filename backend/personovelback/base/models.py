@@ -15,6 +15,13 @@ def upload_image_path(instance, filename):
     return "img/{new_filename}/{final_filename}".format(new_filename=new_filename, final_filename=final_filename)
 # Create your models here.
 
+def upload_chapter_path(instance, filename):
+    name, ext = get_filename_ext(filename)
+    
+    
+    book_name = instance.book.title.replace(" ", "_")      
+    return os.path.join(f"Chapter_{name}{ext}")
+    
 class Genre(models.Model):
     name = models.CharField(max_length=100)
 
@@ -55,7 +62,7 @@ class Feedback(models.Model):
 
 class Interaction(models.Model):
     book = models.ForeignKey(Book, on_delete=models.SET_NULL, null=True)
-    chapter = models.FileField(upload_to='chapters')
+    chapter = models.FileField(upload_to=upload_chapter_path)
 
     def __str__(self):
         if self.book:

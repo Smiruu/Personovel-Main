@@ -33,7 +33,6 @@ function LatestScreen() {
       {[...books].reverse().map((book) => (
         <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
           <Book book={book} />
-          <Author author={book.author} />
         </Col>
       ))}
     </Row>
