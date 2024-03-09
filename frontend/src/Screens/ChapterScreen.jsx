@@ -7,13 +7,6 @@ import Loader from '../Components/Loader'
 import { Document, Page, pdfjs } from 'react-pdf';
 import Chapter from '../Components/Chapter';
 
-
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-    'pdfjs-dist/build/pdf.worker.min.js',
-    import.meta.url,
-).toString(); 
-
-
 function ChapterScreen() {
 
     return (
