@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager,AbstractBaseUser
+import pyotp
 
 #Custom User Manager
 class UserManager(BaseUserManager):
@@ -40,7 +41,7 @@ class User(AbstractBaseUser):
         unique=True,
     )
     name = models.CharField(max_length=200)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     is_paid = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -79,4 +80,20 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.username
     
+
+class OTP(models.Model):
+  user = models.ForeignKey(User, on_delete=models.CASCADE)
+  otp_secret = models.CharField(max_length=255)
+  is_verified = models.BooleanField(default=False)
+
+  def __str__(self):
+      return self.user.name
+  
+  def generate_otp(self):
+     totp = pyotp.TOTP(self.otp_secret)
+     return totp.now()
+  
+  def verify(self, entered_otp):
+     totp = pyotp.TOTP(self.otp_secret)
+     return totp.verify(entered_otp)
     
