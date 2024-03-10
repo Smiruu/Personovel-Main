@@ -23,7 +23,7 @@ def get_tokens_for_user(user):
         'access': str(refresh.access_token),
         'name': user.name,  # Assuming 'name' is a field in your user model
         'email': user.email,  # Assuming 'email' is a field in your user model
-        'id' : user.id
+        'user_id' : user.id
     }
 
     return access_token_payload
@@ -44,7 +44,7 @@ class UserRegistrationView(APIView):
             send_otp_email(user.email, otp_code)
 
 
-            return Response({'otp_id': otp.id, 'token': token, 'msg':'Register Succcess'}, status=status.HTTP_201_CREATED)
+            return Response({'otp_id': otp.id, 'user_id' : user.id, 'token': token, 'msg':'Register Succcess'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 def send_otp_email(email, otp_code):

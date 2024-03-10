@@ -32,7 +32,7 @@ const signupHandler = (e) => {
     alert('Passwords do not match');
   } else {
     dispatch(register(name, email, password, password2)); // Dispatch the register action
-    navigate('/home');
+    navigate('/otp');
   }
 };
 
