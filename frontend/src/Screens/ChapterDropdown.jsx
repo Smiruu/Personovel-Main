@@ -63,74 +63,74 @@ const ChapterPage = () => {
           zIndex: 1000,
         }}
       >
-        <Dropdown>
-          <Dropdown.Toggle
-            variant="outline-none"
-            id="dropdown-basic"
-            className="mb-4 chapter-info"
-            style={{
-              border: `2px solid #000`,
-              display: "flex",
-              alignItems: "center",
-              width: "auto",
-              borderRadius: "0",
-              backgroundColor: "rgba(255, 255, 255, 0.8)",
-            }}
-            toggleIcon={null}
-          >
-            <img
-              src={bookData.coverImage}
-              alt="Book Cover"
+          <Dropdown>
+            <Dropdown.Toggle
+              variant="outline-none"
+              id="dropdown-basic"
+              className="mb-4 chapter-info"
               style={{
-                width: "100px",
-                height: "auto",
-                marginRight: "10px",
+                border: `2px solid #000`,
+                display: "flex",
+                alignItems: "center",
+                width: "auto",
+                borderRadius: "0",
+                backgroundColor: "rgba(255, 255, 255, 0.8)",
               }}
-            />
-            <div id="bookName" style={{ textAlign: "left" }}>
-              <h4
+              toggleIcon={null}
+            >
+              <img
+                src={bookData.coverImage}
+                alt="Book Cover"
                 style={{
-                  fontFamily: "Blinker",
-                  fontWeight: "bold",
-                  marginBottom: "5px",
+                  width: "100px",
+                  height: "auto",
+                  marginRight: "10px",
                 }}
-              >
-                {bookData.name.toUpperCase()}
-              </h4>
-              <p style={{ fontFamily: "Lato", fontSize: "14px", margin: "0" }}>
-                BY {bookData.author.toUpperCase()}
-              </p>
-            </div>
-            <CaretDownFill
-              size={24}
-              style={{ marginLeft: "auto", visibility: "hidden" }}
-            />
-          </Dropdown.Toggle>
+              />
+              <div id="bookName" style={{ textAlign: "left" }}>
+                <h4
+                  style={{
+                    fontFamily: "Blinker",
+                    fontWeight: "bold",
+                    marginBottom: "5px",
+                  }}
+                >
+                  {bookData.name.toUpperCase()}
+                </h4>
+                <p style={{ fontFamily: "Lato", fontSize: "14px", margin: "0" }}>
+                  BY {bookData.author.toUpperCase()}
+                </p>
+              </div>
+              <CaretDownFill
+                size={24}
+                style={{ marginLeft: "auto", visibility: "hidden" }}
+              />
+            </Dropdown.Toggle>
 
-          <Dropdown.Menu
-            style={{
-              width: "340px",
-              position: "absolute",
-              left: 0,
-              top: "100%",
-            }}
-          >
-            {bookData.chapters.map((chapter, index) => (
-              <Dropdown.Item
-                key={index}
-                onClick={() => handleChapterChange(index)}
-                style={{
-                  textAlign: "center",
-                  border: "1px solid",
-                  borderTop: "none",
-                }}
-              >
-                {chapter}
-              </Dropdown.Item>
-            ))}
-          </Dropdown.Menu>
-        </Dropdown>
-      </Col>
+            <Dropdown.Menu
+              style={{
+                width: "340px",
+                position: "absolute",
+                left: 0,
+                top: "100%",
+              }}
+            >
+              {bookData.chapters.map((chapter, index) => (
+                <Dropdown.Item
+                  key={index}
+                  onClick={() => handleChapterChange(index)}
+                  style={{
+                    textAlign: "center",
+                    border: "1px solid",
+                    borderTop: "none",
+                  }}
+                >
+                  {chapter}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+        </Col>
 
       <div className="content">
         <h2

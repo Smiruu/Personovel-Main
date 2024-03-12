@@ -18,9 +18,14 @@ def upload_image_path(instance, filename):
 def upload_chapter_path(instance, filename):
     name, ext = get_filename_ext(filename)
     
+    # Replace spaces with underscores in the book title
+    book_name = instance.book.title.replace(" ", "_")
     
-    book_name = instance.book.title.replace(" ", "_")      
-    return os.path.join(f"Chapter_{name}{ext}")
+    # Construct the folder path including the book title
+    folder_path = os.path.join("book_chapters", book_name)
+    
+    # Return the full file path
+    return os.path.join(folder_path, f"Chapter_{name}{ext}")
     
 class Genre(models.Model):
     name = models.CharField(max_length=100)
@@ -59,13 +64,15 @@ class Feedback(models.Model):
 
     def __str__(self):
         return self.subject
-
 class Interaction(models.Model):
     book = models.ForeignKey(Book, on_delete=models.SET_NULL, null=True)
     chapter = models.FileField(upload_to=upload_chapter_path)
+    chapter_number = models.PositiveIntegerField(default=1)  # Add chapter number field
 
     def __str__(self):
         if self.book:
-            return f"{self.book.title} - {self.chapter.name}" if self.chapter else f"{self.book.title} - No chapters"
+            return f"{self.book.title} - Chapter {self.chapter_number}" if self.chapter else f"{self.book.title} - No chapters"
         else:
-            return f"No book - {self.chapter.name}" if self.chapter else "No book - No chapters"
+            return f"No book - Chapter {self.chapter_number}" if self.chapter else "No book - No chapters"
+
+
