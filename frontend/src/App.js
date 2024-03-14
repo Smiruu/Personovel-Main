@@ -17,11 +17,14 @@ import BrowseScreen from './Screens/BrowseScreen';
 import Profile from './Screens/Profile';
 import Chapter from './Screens/ChapterDropdown';
 import Login from './Screens/Login';
+<<<<<<< HEAD
 import BrowseScreenExp from './Screens/BrowseScreenExp';
 import ChapterScreen from './Screens/ChapterScreen';
 
 
 
+=======
+>>>>>>> aa17ea6bc6be7971daa933d8f22f11724ad105f2
 function App() {
 
   return (
