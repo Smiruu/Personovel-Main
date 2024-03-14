@@ -36,6 +36,26 @@ def getProduct(request, pk):
     return Response(product)
 
 @api_view(['GET'])
+def search(request):
+    query = request.query_params.get('query', '')
+
+    # Search for books based on title, author, or genre
+    books_by_title = Book.objects.filter(title__icontains=query)
+    books_by_author = Book.objects.filter(author__name__icontains=query)
+    books_by_genre = Book.objects.filter(genre__name__icontains=query)
+    
+    # Combine the querysets and remove duplicates
+    books = (books_by_title | books_by_author | books_by_genre).distinct()
+    
+    # Serialize the results
+    books_serializer = BookSerializer(books, many=True)
+    
+    # Return the results as JSON response
+    return Response({
+        'books': books_serializer.data,
+    })
+
+@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getBooks(request):
     books = Book.objects.all()
