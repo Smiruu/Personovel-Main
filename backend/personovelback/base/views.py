@@ -6,6 +6,7 @@ from .models import Genre, Author, Feedback, Interaction, Book
 from .serializers import *
 import rest_framework.status as status
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 @api_view(['GET'])
@@ -21,6 +22,28 @@ def getRoutes(request):
 
 from base.products import products
 
+@csrf_exempt
+@api_view(['POST'])
+def searchBooks(request):
+    data = request.data
+
+    title = data.get('title', '')
+    genre_name = data.get('genre', '')
+    author_name = data.get('author', '')
+
+    books = Book.objects.all()
+
+    if title:
+        books = books.filter(title__icontains=title)
+
+    if genre_name:
+        books = books.filter(genre__name__icontains=genre_name)
+
+    if author_name:
+        books = books.filter(author__name__icontains=author_name)
+
+    serializer = BookSerializer(books, many=True)
+    return Response(serializer.data)
 
 @api_view(['GET'])
 def getProducts(request):
@@ -36,7 +59,7 @@ def getProduct(request, pk):
     return Response(product)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+
 def getBooks(request):
     books = Book.objects.all()
     serializer = BookSerializer(books, many=True)

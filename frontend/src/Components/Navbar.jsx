@@ -1,8 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { Navbar, Nav, Container, Form, Button, Image } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { searchBooks } from "./actions";
 
 function Navbar() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleSearch = (e) => {
+    e.preventDefault(); // Prevent default form submission behavior
+    console.log("Search Query:", searchQuery); // Debugging: Log the search query
+    dispatch(searchBooks({ title: searchQuery }));
+    navigate("/search");
+  };
+
   return (
     <Navbar expand="lg" style={{ backgroundColor: "#F9DCC4" }}>
       <Container fluid>
@@ -23,42 +36,24 @@ function Navbar() {
             style={{ maxHeight: "100px" }}
             navbarScroll
           >
-            <Link to="/" className="link-no-underline">
-              <Nav.Link style={{ color: "#002960" }} href="#action2">
-                Home
-              </Nav.Link>
-            </Link>
-
-            <Nav.Link style={{ color: "#BC1823" }}>Browse</Nav.Link>
-
-            <Link to="/popular" className="link-no-underline">
-              <Nav.Link style={{ color: "#BC1823" }} href="#action">
-                Popular
-              </Nav.Link>
-            </Link>
-            <Link to="/latest" className="link-no-underline">
-              <Nav.Link
-                style={{ color: "#BC1823" }}
-                className="custom-link"
-                href="#action"
-              >
-                Latest
-              </Nav.Link>
-            </Link>
-            <Link to="/" className="link-no-underline">
-              <Nav.Link style={{ color: "#BC1823" }} href="#action2">
-                Logout
-              </Nav.Link>
-            </Link>
+            {/* Add your Nav links here */}
           </Nav>
-          <Form className="d-flex ms-auto">
+          <Form onSubmit={handleSearch} className="d-flex ms-auto">
             <Form.Control
               type="search"
               placeholder="Search"
               className="me-2"
               aria-label="Search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <Button class="btn btn-lg btn-info">Search</Button>
+            <Button type="submit" className="btn btn-lg btn-info">
+              Search
+            </Button>
+            {/* Debugging: Display current search query */}
+            <div style={{ marginLeft: "10px" }}>
+              <small>Search Query: {searchQuery}</small>
+            </div>
           </Form>
         </Navbar.Collapse>
       </Container>
