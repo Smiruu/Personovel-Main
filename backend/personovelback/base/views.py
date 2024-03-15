@@ -22,28 +22,28 @@ def getRoutes(request):
 
 from base.products import products
 
-@csrf_exempt
-@api_view(['POST'])
-def searchBooks(request):
-    data = request.data
+@api_view(['GET'])
+def search(request):
+    print("Request:", request)
+    query = request.query_params.get('query', '')
+    print("Received query:", query)
 
-    title = data.get('title', '')
-    genre_name = data.get('genre', '')
-    author_name = data.get('author', '')
-
-    books = Book.objects.all()
-
-    if title:
-        books = books.filter(title__icontains=title)
-
-    if genre_name:
-        books = books.filter(genre__name__icontains=genre_name)
-
-    if author_name:
-        books = books.filter(author__name__icontains=author_name)
+    # Search for books based on title, author, or genre
+    books_by_title = Book.objects.filter(title__icontains=query)
+    books_by_author = Book.objects.filter(author__name__icontains=query)
+    books_by_genre = Book.objects.filter(genre__name__icontains=query)
+    
+    # Combine the querysets and remove duplicates
+    books = (books_by_title | books_by_author | books_by_genre).distinct()
+    
+    # Serialize the results
+    books_serializer = BookSerializer(books, many=True)
 
     serializer = BookSerializer(books, many=True)
-    return Response(serializer.data)
+    return Response({
+        'books': books_serializer.data,
+    })
+
 
 @api_view(['GET'])
 def getProducts(request):

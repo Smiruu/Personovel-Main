@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Navbar, Nav, Container, Form, Button, Image, NavDropdown } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
-
+import {searchBooks} from "../actions/searchActions"
 import { logout } from "../actions/userActions";
 
 function Header() {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-
+  const [searchQuery, setSearchQuery] = useState(""); // Define searchQuery state
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const handleSearchToggle = () => {
     setIsSearchExpanded(!isSearchExpanded);
   };
@@ -29,11 +31,17 @@ function Header() {
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
-  const dispatch = useDispatch();
 
   const logoutHandler = () => {
     dispatch(logout());
     localStorage.removeItem("userInfo"); // Remove user info from localStorage
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault(); // Prevent the default form submission behavior
+    console.log("Search Query:", searchQuery); // Debugging: Log the search query
+    dispatch(searchBooks({ query: searchQuery }));
+    navigate("/search");
   };
 
   return (
@@ -52,7 +60,7 @@ function Header() {
           </Navbar.Brand>
         </Link>
 
-        <Navbar.Toggle aria-controls="navbarScroll" style={customNavbarToggleStyle} />
+        <Navbar.Toggle aria-controls="navbarScroll" />
 
         <Navbar.Collapse id="navbarScroll">
           <Nav
@@ -66,86 +74,111 @@ function Header() {
             }}
             navbarScroll
           >
-            <Link to="/" className="link-no-underline">
-              <Nav.Link
-                style={navLinkStyle}
-                href="#action2"
-                onMouseEnter={(e) => (e.target.style.color = "#002960")}
-                onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
-              >
-                HOME
-              </Nav.Link>
-            </Link>
-
-            <span style={{ color: "#BC1823", margin: "0 10px" }}>|</span>
-
-            <Link to="/browse" className="link-no-underline">
-              <Nav.Link
-                style={navLinkStyle}
-                href="#action2"
-                onMouseEnter={(e) => (e.target.style.color = "#002960")}
-                onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
-              >
-                BROWSE
-              </Nav.Link>
-            </Link>
-
-            <span style={{ color: "#BC1823", margin: "0 10px" }}>|</span>
-
-            <Link to="/popular" className="link-no-underline">
-              <Nav.Link
-                style={navLinkStyle}
-                href="#action2"
-                onMouseEnter={(e) => (e.target.style.color = "#002960")}
-                onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
-              >
-                POPULAR
-              </Nav.Link>
-            </Link>
-
-            <span style={{ color: "#BC1823", margin: "0 10px" }}>|</span>
-
-            <Link to="/latest" className="link-no-underline">
-              <Nav.Link
-                style={navLinkStyle}
-                href="#action2"
-                onMouseEnter={(e) => (e.target.style.color = "#002960")}
-                onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
-              >
-                LATEST
-              </Nav.Link>
-            </Link>
-
-            <span style={{ color: "#BC1823", margin: "0 10px" }}>|</span>
-
             {userInfo ? (
-              <Nav title={userInfo.name} id="username">
-                <Nav.Item onClick={logoutHandler}>
-                  LOGOUT
-                </Nav.Item>
-              </Nav>
+              <>
+                <Link to="/" className="link-no-underline">
+                  <Nav.Link
+                    style={navLinkStyle}
+                    href="#action2"
+                    onMouseEnter={(e) => (e.target.style.color = "#002960")}
+                    onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
+                  >
+                    HOME
+                  </Nav.Link>
+                </Link>
+
+                <span style={{ color: "#BC1823", margin: "0 10px" }}>|</span>
+
+                <Link to="/browse" className="link-no-underline">
+                  <Nav.Link
+                    style={navLinkStyle}
+                    href="#action2"
+                    onMouseEnter={(e) => (e.target.style.color = "#002960")}
+                    onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
+                  >
+                    BROWSE
+                  </Nav.Link>
+                </Link>
+
+                <span style={{ color: "#BC1823", margin: "0 10px" }}>|</span>
+
+                <Link to="/popular" className="link-no-underline">
+                  <Nav.Link
+                    style={navLinkStyle}
+                    href="#action2"
+                    onMouseEnter={(e) => (e.target.style.color = "#002960")}
+                    onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
+                  >
+                    POPULAR
+                  </Nav.Link>
+                </Link>
+
+                <span style={{ color: "#BC1823", margin: "0 10px" }}>|</span>
+
+                <Link to="/latest" className="link-no-underline">
+                  <Nav.Link
+                    style={navLinkStyle}
+                    href="#action2"
+                    onMouseEnter={(e) => (e.target.style.color = "#002960")}
+                    onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
+                  >
+                    LATEST
+                  </Nav.Link>
+                </Link>
+
+                <span style={{ color: "#BC1823", margin: "0 10px" }}>|</span>
+
+                <Nav title={userInfo.name} id="username">
+                  <Nav.Item
+                    style={navLinkStyle}
+                    href="#action2"
+                    onClick={logoutHandler}
+                    onMouseEnter={(e) => (e.target.style.color = "#002960")}
+                    onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
+                  >
+                    LOGOUT
+                  </Nav.Item>
+                </Nav>
+              </>
             ) : (
-              <LinkContainer to="/login">
-                <Nav.Link
-                  style={navLinkStyle}
-                  onMouseEnter={(e) => (e.target.style.color = "#002960")}
-                  onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
-                >
-                  LOGIN
-                </Nav.Link>
-              </LinkContainer>
+              <>
+                <LinkContainer to="/login">
+                  <Nav.Link
+                    href="#action2"
+                    onMouseEnter={(e) => (e.target.style.color = "#002960")}
+                    onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
+                  >
+                    LOGIN
+                  </Nav.Link>
+                </LinkContainer>
+
+                <span style={{ color: "#BC1823", margin: "0 10px" }}>|</span>
+
+                <LinkContainer to="/login">
+                  <Nav.Link
+                    href="#action2"
+                    onMouseEnter={(e) => (e.target.style.color = "#BC1823")}
+                    onMouseLeave={(e) => (e.target.style.color = "#002960")}
+                  >
+                    REGISTER
+                  </Nav.Link>
+                </LinkContainer>
+              </>
             )}
           </Nav>
         </Navbar.Collapse>
 
-        <Form className="d-flex ms-auto">
+        <Form onSubmit={handleSearch} className="d-flex ms-auto">
           {isSearchExpanded ? (
             <Form.Control
-              type="search"
-              placeholder="Search titles, authors, language, genres..."
-              className="me-2"
-              aria-label="Search"
-            />
+            type="search"
+            placeholder="Search"
+            className="me-2"
+            aria-label="Search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+
           ) : null}
           <Button
             class="btn btn-lg btn-info"

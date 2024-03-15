@@ -16,7 +16,7 @@ urlpatterns = [
     path('feedbacks/', views.getFeedbacks, name="feedbacks"),
     path('interactions/', views.getInteractions, name="interactions"),
     path('interactions/<str:pk>', views.getInteraction, name="interaction"),
-    path('search/', views.searchBooks, name='search_books'),
+    path('search/', views.search, name='search_books'),
     
    
 

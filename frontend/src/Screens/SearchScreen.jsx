@@ -1,31 +1,44 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { searchBooks } from '../actions/searchActions';
+import Book from '../Components/Book';
+import Loader from '../Components/Loader';
+import Message from '../Components/Message';
 
-function SearchPage() {
-  const searchResults = useSelector((state) => state.search.results);
-  const loading = useSelector((state) => state.search.loading);
-  const error = useSelector((state) => state.search.error);
+const SearchPage = () => {
+  const [query, setQuery] = useState('');
+  const dispatch = useDispatch();
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const { loading, books, error } = useSelector((state) => state.search);
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  const handleSearch = () => {
+    dispatch(searchBooks({ query }));
+  };
 
   return (
     <div>
-      <h1>Search Results</h1>
-      {searchResults.map((result) => (
-        <div key={result.id}>
-          {/* Render each search result item */}
-          <h2>{result.title}</h2>
-          <p>{result.description}</p>
+      {loading ? (
+        <Loader />
+      ) : error ? (
+        <Message variant="danger">{error}</Message>
+      ) : (
+        <div>
+          <h2>Search Results</h2>
+          <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+            {books ? (
+              books.map((book) => (
+                <div key={book.id} sm={12} md={6} lg={4} xl={3}>
+                  <Book book={book} />
+                </div>
+              ))
+            ) : (
+              <Message>No books found.</Message>
+            )}
+          </div>
         </div>
-      ))}
+      )}
     </div>
   );
-}
+};
 
 export default SearchPage;
