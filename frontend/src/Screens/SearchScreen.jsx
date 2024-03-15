@@ -25,7 +25,7 @@ const SearchPage = () => {
         <div>
           <h2>Search Results</h2>
           <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-            {books ? (
+            {books && books.length > 0 ? (
               books.map((book) => (
                 <div key={book.id} sm={12} md={6} lg={4} xl={3}>
                   <Book book={book} />
