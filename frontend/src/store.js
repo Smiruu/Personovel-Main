@@ -9,6 +9,7 @@ import { interactionListReducer, interactionDetailsReducer } from './reducers/in
 import { authorListReducer } from './reducers/authorReducers';
 import { feedbackReducer } from './reducers/feedbackReducers';
 import { bookDetailsReducer } from './reducers/bookReducers';
+import searchReducer from './reducers/searchReducers';
 
 const reducer = combineReducers({
     bookList: bookListReducer,
@@ -20,6 +21,7 @@ const reducer = combineReducers({
     authorList: authorListReducer,
     feedback: feedbackReducer,
     bookDetails: bookDetailsReducer,
+    search: searchReducer,
 
 });
 

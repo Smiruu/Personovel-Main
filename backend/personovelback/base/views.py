@@ -6,6 +6,7 @@ from .models import Genre, Author, Feedback, Interaction, Book
 from .serializers import *
 import rest_framework.status as status
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 @api_view(['GET'])
@@ -20,6 +21,28 @@ def getRoutes(request):
     return Response(routes)
 
 from base.products import products
+
+@api_view(['GET'])
+def search(request):
+    print("Request:", request)
+    query = request.query_params.get('query', '')
+    print("Received query:", query)
+
+    # Search for books based on title, author, or genre
+    books_by_title = Book.objects.filter(title__icontains=query)
+    books_by_author = Book.objects.filter(author__name__icontains=query)
+    books_by_genre = Book.objects.filter(genre__name__icontains=query)
+    
+    # Combine the querysets and remove duplicates
+    books = (books_by_title | books_by_author | books_by_genre).distinct()
+    
+    # Serialize the results
+    books_serializer = BookSerializer(books, many=True)
+
+    serializer = BookSerializer(books, many=True)
+    return Response({
+        'books': books_serializer.data,
+    })
 
 
 @api_view(['GET'])
@@ -36,7 +59,7 @@ def getProduct(request, pk):
     return Response(product)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+
 def getBooks(request):
     books = Book.objects.all()
     serializer = BookSerializer(books, many=True)

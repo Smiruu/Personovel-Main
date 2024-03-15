@@ -1,8 +1,20 @@
-import React from "react";
-import { Navbar, Nav, Container, Form, Button, Image } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Navbar, Nav, Container, Button, Image } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { searchBooks } from "./actions";
 
 function Navbar() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    console.log("Search Query:", searchQuery); // Debugging: Log the search query
+    dispatch(searchBooks({ title: searchQuery }));
+    navigate("/search");
+  };
+
   return (
     <Navbar expand="lg" style={{ backgroundColor: "#F9DCC4" }}>
       <Container fluid>
@@ -23,43 +35,23 @@ function Navbar() {
             style={{ maxHeight: "100px" }}
             navbarScroll
           >
-            <Link to="/" className="link-no-underline">
-              <Nav.Link style={{ color: "#002960" }} href="#action2">
-                Home
-              </Nav.Link>
-            </Link>
-
-            <Nav.Link style={{ color: "#BC1823" }}>Browse</Nav.Link>
-
-            <Link to="/popular" className="link-no-underline">
-              <Nav.Link style={{ color: "#BC1823" }} href="#action">
-                Popular
-              </Nav.Link>
-            </Link>
-            <Link to="/latest" className="link-no-underline">
-              <Nav.Link
-                style={{ color: "#BC1823" }}
-                className="custom-link"
-                href="#action"
-              >
-                Latest
-              </Nav.Link>
-            </Link>
-            <Link to="/" className="link-no-underline">
-              <Nav.Link style={{ color: "#BC1823" }} href="#action2">
-                Logout
-              </Nav.Link>
-            </Link>
           </Nav>
-          <Form className="d-flex ms-auto">
-            <Form.Control
+          <div className="d-flex ms-auto align-items-center">
+            <input
               type="search"
               placeholder="Search"
-              className="me-2"
-              aria-label="Search"
+              className="form-control me-2"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <Button class="btn btn-lg btn-info">Search</Button>
-          </Form>
+            <Button
+              variant="info"
+              className="btn-lg"
+              onClick={handleSearch}
+            >
+              Search
+            </Button>
+          </div>
         </Navbar.Collapse>
       </Container>
     </Navbar>
