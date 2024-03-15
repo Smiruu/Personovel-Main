@@ -16,6 +16,7 @@ urlpatterns = [
     path('feedbacks/', views.getFeedbacks, name="feedbacks"),
     path('interactions/', views.getInteractions, name="interactions"),
     path('interactions/<str:pk>', views.getInteraction, name="interaction"),
+    path('interactions/book/<int:book_id>', views.getInteractionsByBook, name='book-interactions'),
     
    
 

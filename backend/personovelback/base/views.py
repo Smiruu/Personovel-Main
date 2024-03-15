@@ -6,6 +6,7 @@ from .models import Genre, Author, Feedback, Interaction, Book
 from .serializers import *
 import rest_framework.status as status
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from django.http import Http404
 
 # Create your views here.
 @api_view(['GET'])
@@ -15,6 +16,7 @@ def getRoutes(request):
     'http://127.0.0.1:8000/api/genres/',
     'http://127.0.0.1:8000/api/authors/',
     'http://127.0.0.1:8000/api/interactions/',
+    'http://127.0.0.1:8000/api/interactions/book/',
     'http://127.0.0.1:8000/api/feedbacks/',
 ]
     return Response(routes)
@@ -118,3 +120,15 @@ def getInteraction(request, pk):
         return Response({'detail': 'Interaction does not exist'}, status=status.HTTP_400_BAD_REQUEST)
     except ValueError:
         return Response({'detail': 'Invalid Interaction ID'}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+def getInteractionsByBook(request, book_id):
+    try:
+        interactions = Interaction.objects.filter(book_id=book_id)
+        serializer = InteractionSerializer(interactions, many=True)
+        return Response(serializer.data)
+    except ValueError:
+        return Response({'detail': 'Invalid Book ID'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+    

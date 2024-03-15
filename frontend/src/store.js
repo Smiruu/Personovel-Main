@@ -9,17 +9,20 @@ import { interactionListReducer, interactionDetailsReducer } from './reducers/in
 import { authorListReducer } from './reducers/authorReducers';
 import { feedbackReducer } from './reducers/feedbackReducers';
 import { bookDetailsReducer } from './reducers/bookReducers';
+import { interactionListByBookReducer } from './reducers/interactionReducers';
 
 const reducer = combineReducers({
     bookList: bookListReducer,
     userRegister: userRegisterReducer,
     userLogin: userLoginReducer,
     genreList: genreListReducer,
+    interactionListByBook: interactionListByBookReducer,
     interactionList: interactionListReducer,
     interactionDetails: interactionDetailsReducer, 
     authorList: authorListReducer,
     feedback: feedbackReducer,
     bookDetails: bookDetailsReducer,
+   
 
 });
 

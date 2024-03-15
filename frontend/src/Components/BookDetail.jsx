@@ -5,12 +5,13 @@ import Loader from '../Components/Loader';
 import Message from '../Components/Message';
 import { useParams } from 'react-router-dom';
 import { Button, Modal, Container, Row, Col } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import { Card } from 'react-bootstrap';
 
 function BookDetail() {
   const { _id } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Initialize navigate
   const [book, setBook] = useState({});
 
   useEffect(() => {
@@ -25,6 +26,10 @@ function BookDetail() {
       setBook(bookDetails.book);
     }
   }, [bookDetails, loading, error]);
+
+  const handleReadNow = () => {
+    navigate(`/chapters/${_id}`); // Navigate to ChapterByBook component with book id
+  };
 
   return (
     <Container fluid>
@@ -154,27 +159,22 @@ function BookDetail() {
             </p>
           </h5>
 
-          <Link
-            to="/chapters/"
-            className="d-flex justify-content-center"
-            style={{ textDecoration: "none" }}
+          <Button
+            className="btn-block customButton"
+            type="button"
+            style={{
+              width: "90%",
+              fontWeight: "1",
+              fontSize: "30px",
+              color: "white",
+              fontFamily: "Protest Guerrilla",
+              borderRadius: "50px",
+              backgroundColor: "#6F1D1B",
+            }}
+            onClick={handleReadNow} // Call handleReadNow function on button click
           >
-            <Button
-              className="btn-block customButton"
-              type="button"
-              style={{
-                width: "90%",
-                fontWeight: "1",
-                fontSize: "30px",
-                color: "white",
-                fontFamily: "Protest Guerrilla",
-                borderRadius: "50px",
-                backgroundColor: "#6F1D1B",
-              }}
-            >
-              READ NOW!
-            </Button>
-          </Link>
+            READ NOW!
+          </Button>
         </Col>
       </Row>
     </Container>
