@@ -5,7 +5,7 @@ import { bookListReducer } from './reducers/bookReducers';
 import { userRegisterReducer } from './reducers/registerReducers';
 import { userLoginReducer } from './reducers/userReducers';
 import { genreListReducer } from './reducers/genreReducers';
-import { interactionListReducer, interactionDetailsReducer } from './reducers/interactionReducers'; 
+import { interactionListReducer, interactionDetailsReducer, interactionListByBookReducer} from './reducers/interactionReducers'; 
 import { authorListReducer } from './reducers/authorReducers';
 import { feedbackReducer } from './reducers/feedbackReducers';
 import { bookDetailsReducer } from './reducers/bookReducers';
@@ -16,6 +16,7 @@ const reducer = combineReducers({
     userRegister: userRegisterReducer,
     userLogin: userLoginReducer,
     genreList: genreListReducer,
+    interactionListByBook: interactionListByBookReducer,
     interactionList: interactionListReducer,
     interactionDetails: interactionDetailsReducer, 
     authorList: authorListReducer,
