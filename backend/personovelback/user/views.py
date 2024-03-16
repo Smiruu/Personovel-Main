@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .models import User, UserProfile, OTP
 from .serializers import UserProfileSerializer
 import pyotp
-
+from rest_framework.permissions import IsAdminUser
 # Generate token Manually
 def get_tokens_for_user(user):
     # Generate refresh token
@@ -128,13 +128,17 @@ class UserLoginView(APIView):
             else: 
                 return Response({'errors':{'non_field_errors':['Email or Password is not valid']}}, status=status.HTTP_400_BAD_REQUEST)
 
-class UserProfileView(APIView):
+
+
+class UserLists(APIView):
     renderer_classes = [UserRenderer]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]  # Only admin users can access this view
 
     def get(self, request, format=None):
-        serializer= UserProfileSerializer(request.user)
+        users = User.objects.all()  # Assuming User model is imported correctly
+        serializer = UserProfileSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
     
 
 class UserChangePasswordView(APIView):
