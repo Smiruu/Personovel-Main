@@ -1,73 +1,87 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { verifyOTP, resendOTP } from '../actions/otpActions';
-import { VERIFY_OTP_REQUEST, RESEND_OTP_REQUEST } from '../constants/otpConstants';
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { verifyOTP, resendOTP } from "../actions/otpActions";
+import {
+  VERIFY_OTP_REQUEST,
+  RESEND_OTP_REQUEST,
+} from "../constants/otpConstants";
+import { useParams, useNavigate } from 'react-router-dom';
+
 
 const OTPScreen = () => {
-  const [otpCode, setOtpCode] = useState('');
-  const [resendDisabled, setResendDisabled] = useState(true);
+  const [otpCode, setOtpCode] = useState("");
+  const [resendDisabled, setResendDisabled] = useState(false);
   const [countdown, setCountdown] = useState(300); // Countdown starts from 300 seconds
+  const [resendClicked, setResendClicked] = useState(false); // State to track if resend button has been clicked
 
   const dispatch = useDispatch();
-  const userId = localStorage.getItem('user_id');
-  const otpId = localStorage.getItem('otp_id');
-  console.log(localStorage.getItem('user_id'));
-console.log(localStorage.getItem('otp_id'));
-    
+
+  // Retrieving userInfo from Redux store
+  const userInfo = useSelector((state) => state.userRegister.userInfo);
+  const userId = userInfo ? userInfo.user_id : null;
+  const otpId = userInfo ? userInfo.otp_id : null;
+  const navigate = useNavigate();
 
   const otpState = useSelector((state) => state.otp);
-  const { verifyOtpLoading, verifyOtpError, resendOtpLoading, resendOtpError } = otpState;
+  const { verifyOtpLoading, verifyOtpError, resendOtpLoading, resendOtpError } =
+    otpState;
 
-  const handleVerifyOTP = () => {
-    if (userId && otpId) {
-      dispatch(verifyOTP(userId, otpId, otpCode)); // Pass userId, otpId, and otpCode to verifyOTP action
-    } else {
-      // Handle the case when userId or otpId is not set
-      console.error("userId or otpId is not set in localStorage");
+  const handleVerifyOTP = async (event) => {
+    event.preventDefault();
+    try {
+      await dispatch(verifyOTP(userId, otpId, otpCode));
+      navigate('/home');
+    } catch (error) {
+      console.error("userId or otpId is not set in userInfo");
     }
   };
-  
+
   const handleResendOTP = () => {
     if (userId && otpId) {
-      dispatch(resendOTP(userId, otpId, otpCode)); // Pass userId, otpId, and otpCode to resendOTP action
-      setResendDisabled(true); // Disable resend button
-      setCountdown(300); // Reset countdown to 300 seconds
+      dispatch(resendOTP(userId, otpId, otpCode));
+      setResendDisabled(true);
+      setResendClicked(true); // Set resendClicked to true when resend button is clicked
+      setCountdown(300);
     } else {
-      // Handle the case when userId or otpId is not set
-      console.error("userId or otpId is not set in localStorage");
+      console.error("userId or otpId is not set in userInfo");
     }
   };
-  
 
-  // Countdown timer effect
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCountdown((prevCountdown) => prevCountdown - 1);
-    }, 1000);
+    if (countdown > 0 && resendClicked) {
+      // Start countdown only if resend button has been clicked
+      const interval = setInterval(() => {
+        setCountdown((prevCountdown) => prevCountdown - 1);
+      }, 1000);
 
-    return () => clearInterval(interval);
-  }, []);
+      return () => clearInterval(interval);
+    }
 
-  // Effect to enable resend button after countdown reaches 0
-  useEffect(() => {
+    // Update resendDisabled when countdown finishes
     if (countdown === 0) {
       setResendDisabled(false);
     }
-  }, [countdown]);
+  }, [countdown, resendClicked]);
 
   return (
     <div>
       <h2>OTP Verification</h2>
       {verifyOtpLoading && <p>Verifying OTP...</p>}
       {verifyOtpError && <p>Error: {verifyOtpError}</p>}
-      <input type="text" value={otpCode} onChange={(e) => setOtpCode(e.target.value)} />
+      <input
+        type="text"
+        value={otpCode}
+        onChange={(e) => setOtpCode(e.target.value)}
+      />
       <button onClick={handleVerifyOTP}>Verify OTP</button>
 
       <h2>Resend OTP</h2>
       <p>Resend OTP in: {countdown} seconds</p>
       {resendOtpLoading && <p>Resending OTP...</p>}
       {resendOtpError && <p>Error: {resendOtpError}</p>}
-      <button onClick={handleResendOTP} disabled={resendDisabled}>Resend OTP</button>
+      <button onClick={handleResendOTP} disabled={resendDisabled}>
+        Resend OTP
+      </button>
     </div>
   );
 };
