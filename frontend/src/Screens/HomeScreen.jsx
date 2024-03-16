@@ -7,7 +7,10 @@ import { useSelector } from 'react-redux';
 
 function LandingScreen() {
   const [products, setProducts] = useState([])
-  const userInfo = useSelector((state) => state.userLogin.userInfo);
+  const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
+  const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
+  const userInfo = userLoginInfo || userRegisterInfo;
+  
 
   useEffect(() => {
     async function fetchProducts() {

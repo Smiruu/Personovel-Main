@@ -17,7 +17,7 @@ export const register = (name, email, password, password2) => async (dispatch) =
         "Content-Type": "application/json",
       },
     };
-    const { data } = await axios.instance(
+    const { data } = await instance.post(
       "api/user/register/",
       { name, email, password, password2 },
       config

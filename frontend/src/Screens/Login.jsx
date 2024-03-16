@@ -11,7 +11,8 @@ function LoginScreen() {
   const [password, setPassword] = useState('')
   const [password2, setPassword2] = useState('');
   const userLogin = useSelector(state => state.userLogin)
-  const { error, loading, userInfo } = userLogin
+  const userRegister = useSelector((state) => state.userRegister.userInfo);
+  const { error, loading, userInfo } = userLogin || userRegister
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [signIn, toggle] = React.useState(true);
@@ -32,7 +33,7 @@ const signupHandler = (e) => {
     alert('Passwords do not match');
   } else {
     dispatch(register(name, email, password, password2)); // Dispatch the register action
-    navigate('/home');
+    navigate('/otp');
   }
 };
 

@@ -29,8 +29,10 @@ function Header() {
     boxShadow: 'none'
   };
 
-  const userLogin = useSelector((state) => state.userLogin);
-  const { userInfo } = userLogin;
+  const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
+  const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
+  const userInfo = userLoginInfo || userRegisterInfo;
+  
 
   const logoutHandler = () => {
     dispatch(logout());
@@ -130,7 +132,6 @@ function Header() {
 
                 <Nav title={userInfo.name} id="username">
                   <Nav.Item
-                    style={navLinkStyle}
                     href="#action2"
                     onClick={logoutHandler}
                     onMouseEnter={(e) => (e.target.style.color = "#002960")}
