@@ -72,8 +72,7 @@ function BrowseScreen() {
   };
 
   const filterBooksByGenre = (genre) => {
-    setSelectedGenre(genre); // Update the selected genre
-    // Filter books based on the selected genre
+    setSelectedGenre(genre); 
     const filteredBooks = genre === "All" ? [...books] : books.filter(book => book.genre.includes(genre));
     setSortedBooks(filteredBooks);
   };
