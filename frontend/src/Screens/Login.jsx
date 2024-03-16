@@ -27,15 +27,29 @@ function LoginScreen() {
   e.preventDefault()
   dispatch(login(email, password))
 }
-const signupHandler = (e) => {
+const signupHandler = async (e) => {
   e.preventDefault();
   if (password !== password2) {
     alert('Passwords do not match');
   } else {
-    dispatch(register(name, email, password, password2)); // Dispatch the register action
-    navigate('/otp');
+    try {
+      const success = await dispatch(register(name, email, password, password2));
+      if (success) {
+        navigate('/otp');
+      } else {
+        alert('Registration failed. Please check your information and try again.');
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        alert('User with this email already exists. Please log in instead.');
+      } else {
+        alert('An error occurred while processing your registration. Please try again later.');
+        console.error('Registration error:', error);
+      }
+    }
   }
 };
+
 
 useEffect(() => {
   if (userInfo) {

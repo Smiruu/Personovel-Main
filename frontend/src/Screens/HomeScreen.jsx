@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Card, Container } from "react-bootstrap";
-import Product from "../Components/Product";
+import Book from "../Components/Book"; // Updated import
 import { Link, Navigate } from "react-router-dom";
 import axios from 'axios'
 import { useSelector } from 'react-redux';
 
 function LandingScreen() {
-  const [products, setProducts] = useState([])
+  const [books, setBooks] = useState([]); // Updated state name
   const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
   const userInfo = userLoginInfo || userRegisterInfo;
   
-
   useEffect(() => {
-    async function fetchProducts() {
-      const {data} = await axios.get('http://127.0.0.1:8000/api/products/')
-      setProducts(data)
+    async function fetchBooks() {
+      const { data } = await axios.get('http://127.0.0.1:8000/api/books/'); // Updated API endpoint
+      setBooks(data);
     }
-    fetchProducts()
-  }, [])
+    fetchBooks();
+  }, []);
 
   const [recommendedIndex, setRecommendedIndex] = useState(0);
   const [popularIndex, setPopularIndex] = useState(0);
@@ -34,12 +33,13 @@ function LandingScreen() {
     setIndex((prevIndex) => Math.max(prevIndex - 1, 0));
   };
 
-  const hasPrevProducts = (index) => index > 0;
-  const hasNextProducts = (index) => index + 4 < products.length;
+  const hasPrevBooks = (index) => index > 0;
+  const hasNextBooks = (index) => index + 4 < books.length;
 
   if (!userInfo) {
-    return <Navigate to="/login" />
+    return <Navigate to="/login" />;
   }
+
   return (
     <Container fluid>
       <Row className="mt-3">
@@ -100,11 +100,11 @@ function LandingScreen() {
             }}
           >
             <Row className="g-2">
-              {products
+              {books
                 .slice(recommendedIndex, recommendedIndex + 4)
-                .map((product) => (
-                  <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
-                    <Product product={product} />
+                .map((book) => (
+                  <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
+                    <Book book={book} />
                   </Col>
                 ))}
             </Row>
@@ -119,7 +119,7 @@ function LandingScreen() {
                 padding: "0 1% 0 3%",
               }}
             >
-              {hasPrevProducts(recommendedIndex) && hasClickedNext && (
+              {hasPrevBooks(recommendedIndex) && hasClickedNext && (
                 <button
                   onClick={() => handlePrev(setRecommendedIndex)}
                   style={{
@@ -134,7 +134,7 @@ function LandingScreen() {
                   {"<"}
                 </button>
               )}
-              {hasNextProducts(recommendedIndex) && (
+              {hasNextBooks(recommendedIndex) && (
                 <button
                   onClick={() => handleNext(setRecommendedIndex)}
                   style={{
@@ -180,9 +180,9 @@ function LandingScreen() {
           }}
         >
           <Row className="g-2">
-            {products.slice(popularIndex, popularIndex + 4).map((product) => (
-              <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
-                <Product product={product} />
+            {books.slice(popularIndex, popularIndex + 4).map((book) => (
+              <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
+                <Book book={book} />
               </Col>
             ))}
           </Row>
@@ -196,7 +196,7 @@ function LandingScreen() {
               padding: "0 2%",
             }}
           >
-            {hasPrevProducts(popularIndex) && hasClickedNext && (
+            {hasPrevBooks(popularIndex) && hasClickedNext && (
               <button
                 onClick={() => handlePrev(setPopularIndex)}
                 style={{
@@ -211,7 +211,7 @@ function LandingScreen() {
                 {"<"}
               </button>
             )}
-            {hasNextProducts(popularIndex) && (
+            {hasNextBooks(popularIndex) && (
               <button
                 onClick={() => handleNext(setPopularIndex)}
                 style={{
@@ -256,9 +256,9 @@ function LandingScreen() {
             }}
           >
             <Row className="g-2">
-              {products.slice(latestIndex, latestIndex + 4).map((product) => (
-                <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
-                  <Product product={product} />
+              {books.slice(latestIndex, latestIndex + 4).map((book) => (
+                <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
+                  <Book book={book} />
                 </Col>
               ))}
             </Row>
@@ -272,7 +272,7 @@ function LandingScreen() {
                 padding: "0 2%",
               }}
             >
-              {hasPrevProducts(latestIndex) && hasClickedNext && (
+              {hasPrevBooks(latestIndex) && hasClickedNext && (
                 <button
                   onClick={() => handlePrev(setLatestIndex)}
                   style={{
@@ -287,7 +287,7 @@ function LandingScreen() {
                   {"<"}
                 </button>
               )}
-              {hasNextProducts(latestIndex) && (
+              {hasNextBooks(latestIndex) && (
                 <button
                   onClick={() => handleNext(setLatestIndex)}
                   style={{

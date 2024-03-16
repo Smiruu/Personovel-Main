@@ -1,19 +1,20 @@
-import React, { useState, useEffect} from "react";
-import Product from "../Components/Product";
+import React, { useState, useEffect } from "react";
+import Book from "../Components/Book"; // Import Book component
 import { Row, Col, Container, Nav, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import axios from 'axios'
+import axios from "axios";
 
 function SampleScreen() {
-  const [products, setProducts] = useState([])
+  const [books, setBooks] = useState([]); // Change state name to 'books'
 
   useEffect(() => {
-    async function fetchProducts() {
-      const {data} = await axios.get('http://127.0.0.1:8000/api/products/')
-      setProducts(data)
+    async function fetchBooks() {
+      const { data } = await axios.get("http://127.0.0.1:8000/api/books/"); // Fetch books instead of products
+      setBooks(data);
     }
-    fetchProducts()
-  }, [])
+    fetchBooks();
+  }, []);
+
   return (
     <Container fluid>
       <div>
@@ -34,9 +35,9 @@ function SampleScreen() {
               style={{ height: "450px", overflow: "hidden", margin: "10px" }}
             >
               <Row className="g-2">
-                {products.map((product) => (
-                  <Col key={product._id}>
-                    <Product product={product} />
+                {books.map((book) => ( // Map through 'books' instead of 'products'
+                  <Col key={book._id}>
+                    <Book book={book} /> {/* Render Book component */}
                   </Col>
                 ))}
               </Row>
@@ -46,7 +47,7 @@ function SampleScreen() {
                 textAlign: "center",
                 fontFamily: "Indie Flower",
                 color: "#AB0043",
-                marginBottom: '2%'
+                marginBottom: "2%",
               }}
             >
               What if the key to unlocking your wildest dreams lies hidden
@@ -82,9 +83,9 @@ function SampleScreen() {
               style={{ height: "450px", overflow: "hidden", margin: "10px" }}
             >
               <Row className="g-2">
-                {products.map((product) => (
-                  <Col key={product._id}>
-                    <Product product={product} />
+                {books.map((book) => ( // Map through 'books' instead of 'products'
+                  <Col key={book._id}>
+                    <Book book={book} /> {/* Render Book component */}
                   </Col>
                 ))}
               </Row>
@@ -106,7 +107,7 @@ function SampleScreen() {
             reveals new connections and possibilities.
           </h1>
           <h1 style={{ textAlign: "center", marginBottom: "60px" }}>
-            <Nav.Link as={Link} to="/register">
+            <Nav.Link as={Link} to="/login">
               <Button
                 style={{
                   fontSize: "35px",

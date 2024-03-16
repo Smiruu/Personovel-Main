@@ -1,18 +1,23 @@
 import React, { useState, useEffect} from "react";
-import { Row, Col} from 'react-bootstrap'
-import Product from '../Components/Product'
-import axios from 'axios'
+import { Row, Col } from 'react-bootstrap';
+import Book from '../Components/Book'; // Import Book component
+import axios from 'axios';
 
 function PopularScreen() {
-  const [products, setProducts] = useState([])
+  const [books, setBooks] = useState([]);
 
   useEffect(() => {
-    async function fetchProducts() {
-      const {data} = await axios.get('http://127.0.0.1:8000/api/products/')
-      setProducts(data)
+    async function fetchBooks() {
+      try {
+        const { data } = await axios.get('http://127.0.0.1:8000/api/books/');
+        setBooks(data);
+      } catch (error) {
+        console.error('Error fetching books:', error);
+      }
     }
-    fetchProducts()
-  }, [])
+    fetchBooks();
+  }, []);
+
   return (
     <div className="mb-5">
       <h1
@@ -29,9 +34,9 @@ function PopularScreen() {
         Popular Novels
       </h1>
       <Row className="mx-2 g-2">
-        {products.map((product) => (
-          <Col key={product._id} sm={12} md={6} lg={4} xl={3} className="mb-4">
-            <Product product={product} />
+        {books.map((book) => (
+          <Col key={book._id} sm={12} md={6} lg={4} xl={3} className="mb-4">
+            <Book book={book} />
           </Col>
         ))}
       </Row>

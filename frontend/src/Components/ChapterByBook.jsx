@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { listInteractionsByBook } from '../actions/interactionActions';
 import { useParams } from 'react-router-dom';
-import { Row, Col, Button } from 'react-bootstrap';
+import { Row, Col, Button, Dropdown } from 'react-bootstrap';
 import Message from '../Components/Message';
 import Loader from '../Components/Loader';
 import { Document, Page, pdfjs } from 'react-pdf';
@@ -32,8 +32,27 @@ const ChapterByBook = () => {
     setNumPages(0); // Reset numPages when changing chapters
   };
 
+  const handleChapterChange = (chapterNumber) => {
+    setCurrentChapter(chapterNumber);
+    setNumPages(0); // Reset numPages when changing chapters
+  };
+
   return (
     <div>
+      <Dropdown className="mb-3">
+        <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+          Select Chapter
+        </Dropdown.Toggle>
+
+        <Dropdown.Menu>
+          {interactions.map((interaction) => (
+            <Dropdown.Item key={interaction.id} onClick={() => handleChapterChange(interaction.chapter_number)}>
+              Chapter {interaction.chapter_number}
+            </Dropdown.Item>
+          ))}
+        </Dropdown.Menu>
+      </Dropdown>
+
       <Row>
         {loading ? (
           <Loader />

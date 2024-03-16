@@ -1,20 +1,23 @@
-import React, { useState, useEffect} from "react";
+import React, { useEffect } from "react";
 import { Row, Col } from 'react-bootstrap';
-import axios from 'axios'
-import { useDispatch, useSelector } from 'react-redux'
-import { listBooks } from '../actions/bookActions'
-import Loader from '../Components/Loader'
-import Message from '../Components/Message'
-import Book from '../Components/Book'
-import Author from '../Components/Author'
+import { useDispatch, useSelector } from 'react-redux';
+import { listBooks } from '../actions/bookActions';
+import Loader from '../Components/Loader';
+import Message from '../Components/Message';
+import Book from '../Components/Book';
 
 function LatestScreen() {
   const dispatch = useDispatch();
   const bookList = useSelector((state) => state.bookList);
   const { loading, error, books } = bookList;
+
   useEffect(() => {
     dispatch(listBooks());
-  }, []);
+  }, [dispatch]);
+
+  // Sort books by date_added in descending order
+  const sortedBooks = [...books].sort((a, b) => new Date(b.date_added) - new Date(a.date_added));
+
   return (
     <div className="mb-5">
       <h1 style={{ 
@@ -29,13 +32,18 @@ function LatestScreen() {
         Latest Novels
       </h1>
       <Row>
-      
-      {[...books].reverse().map((book) => (
-        <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
-          <Book book={book} />
-        </Col>
-      ))}
-    </Row>
+        {loading ? (
+          <Loader />
+        ) : error ? (
+          <Message variant="danger">{error}</Message>
+        ) : (
+          sortedBooks.map((book) => (
+            <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
+              <Book book={book} />
+            </Col>
+          ))
+        )}
+      </Row>
     </div>
   );
 }

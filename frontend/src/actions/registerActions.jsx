@@ -26,7 +26,8 @@ export const register = (name, email, password, password2) => async (dispatch) =
       type: USER_REGISTER_SUCCESS,
       payload: data,
     });
-    localStorage.setItem("userInfo", JSON.stringify(data)); 
+    localStorage.setItem("userInfo", JSON.stringify(data));
+    return true; // Return true for success
   } catch (error) {
     dispatch({
       type: USER_REGISTER_FAIL,
@@ -35,5 +36,6 @@ export const register = (name, email, password, password2) => async (dispatch) =
           ? error.response.data.details
           : error.message,
     });
+    return false; // Return false for failure
   }
 };

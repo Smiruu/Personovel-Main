@@ -13,14 +13,13 @@ const OTPScreen = () => {
   const [resendDisabled, setResendDisabled] = useState(false);
   const [countdown, setCountdown] = useState(300); // Countdown starts from 300 seconds
   const [resendClicked, setResendClicked] = useState(false); // State to track if resend button has been clicked
-
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // Retrieving userInfo from Redux store
   const userInfo = useSelector((state) => state.userRegister.userInfo);
   const userId = userInfo ? userInfo.user_id : null;
   const otpId = userInfo ? userInfo.otp_id : null;
-  const navigate = useNavigate();
 
   const otpState = useSelector((state) => state.otp);
   const { verifyOtpLoading, verifyOtpError, resendOtpLoading, resendOtpError } =
@@ -42,16 +41,23 @@ const OTPScreen = () => {
       setResendDisabled(true);
       setResendClicked(true); // Set resendClicked to true when resend button is clicked
       setCountdown(300);
+      localStorage.setItem("countdown", countdown); // Store countdown value in local storage
     } else {
       console.error("userId or otpId is not set in userInfo");
     }
   };
 
   useEffect(() => {
+    const storedCountdown = localStorage.getItem("countdown");
+    if (storedCountdown) {
+      setCountdown(parseInt(storedCountdown, 10)); // Retrieve countdown value from local storage
+    }
+
     if (countdown > 0 && resendClicked) {
       // Start countdown only if resend button has been clicked
       const interval = setInterval(() => {
         setCountdown((prevCountdown) => prevCountdown - 1);
+        localStorage.setItem("countdown", countdown); // Update countdown value in local storage
       }, 1000);
 
       return () => clearInterval(interval);

@@ -14,6 +14,9 @@ function Header() {
   const handleSearchToggle = () => {
     setIsSearchExpanded(!isSearchExpanded);
   };
+  const logoutButtonStyle = {
+    cursor: "pointer",
+  };
 
   const navLinkStyle = {
     color: "#BC1823",
@@ -37,6 +40,7 @@ function Header() {
   const logoutHandler = () => {
     dispatch(logout());
     localStorage.removeItem("userInfo"); // Remove user info from localStorage
+    navigate('/login'); // Redirect the user to the login page
   };
 
   const handleSearch = (e) => {
@@ -134,6 +138,7 @@ function Header() {
                   <Nav.Item
                     href="#action2"
                     onClick={logoutHandler}
+                    style={logoutButtonStyle}
                     onMouseEnter={(e) => (e.target.style.color = "#002960")}
                     onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
                   >
