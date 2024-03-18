@@ -4,6 +4,11 @@ import {
     USER_FEEDBACK_FAIL,
     USER_FEEDBACK_RESET
 } from '../constants/feedbackConstants';
+import {
+    USER_FEEDBACK_LIST_REQUEST,
+    USER_FEEDBACK_LIST_SUCCESS,
+    USER_FEEDBACK_LIST_FAIL
+} from '../constants/feedbackConstants';
 
 const initialState = {
     loading: false,
@@ -25,3 +30,16 @@ export const feedbackReducer = (state = initialState, action) => {
             return state;
     }
 };
+
+export const feedbackListReducer = (state = { feedbacks: [] }, action) => {
+    switch (action.type) {
+        case USER_FEEDBACK_LIST_REQUEST:
+            return { loading: true, feedbacks: [] };
+        case USER_FEEDBACK_LIST_SUCCESS:
+            return { loading: false, feedbacks: action.payload };
+        case USER_FEEDBACK_LIST_FAIL:
+            return { loading: false, error: action.payload };
+        default:
+            return state;
+    }
+}

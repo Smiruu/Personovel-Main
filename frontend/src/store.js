@@ -6,8 +6,8 @@ import { userRegisterReducer } from './reducers/registerReducers';
 import { userLoginReducer } from './reducers/userReducers';
 import { genreListReducer } from './reducers/genreReducers';
 import { interactionListReducer, interactionDetailsReducer, interactionListByBookReducer} from './reducers/interactionReducers'; 
-import { authorListReducer } from './reducers/authorReducers';
-import { feedbackReducer } from './reducers/feedbackReducers';
+import { authorListReducer, authorDetailsReducer, authorCreateReducer} from './reducers/authorReducers';
+import { feedbackReducer, feedbackListReducer } from './reducers/feedbackReducers';
 import { bookDetailsReducer } from './reducers/bookReducers';
 import searchReducer from './reducers/searchReducers';
 import { otpReducer } from './reducers/otpReducers';
@@ -20,11 +20,16 @@ const reducer = combineReducers({
     interactionListByBook: interactionListByBookReducer,
     interactionList: interactionListReducer,
     interactionDetails: interactionDetailsReducer, 
-    authorList: authorListReducer,
     feedback: feedbackReducer,
     bookDetails: bookDetailsReducer,
     search: searchReducer,
     otp: otpReducer, 
+    feedbackList: feedbackListReducer,
+    authorList: authorListReducer,
+    authorDetails: authorDetailsReducer,
+    authorCreate: authorCreateReducer,
+
+
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null;

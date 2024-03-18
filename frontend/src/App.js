@@ -19,6 +19,7 @@ import ChapterDetailScreen from "./Screens/ChapterDetailScreen";
 import BookScreen from "./Screens/BookScreen";
 import SearchPage from "./Screens/SearchScreen";
 import OTPScreen from "./Screens/OtpScreen";
+import AdminScreen from "./Screens/AdminScreen";
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
               <Route path="/books/:_id" element={<BookScreen />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/otp" element={<OTPScreen />} />
+              <Route path="/admin" element={<AdminScreen />} />
             </Routes>
           </Container>
         </main>

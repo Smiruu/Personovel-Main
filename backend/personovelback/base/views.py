@@ -21,9 +21,6 @@ def getRoutes(request):
     'http://127.0.0.1:8000/api/feedbacks/',
 ]
     return Response(routes)
-
-from base.products import products
-
 @api_view(['GET'])
 def search(request):
     print("Request:", request)
@@ -48,20 +45,6 @@ def search(request):
 
 
 @api_view(['GET'])
-def getProducts(request):
-    return Response(products)
-
-@api_view(['GET'])
-def getProduct(request, pk):
-    product = None
-    for i in products:
-        if i['_id'] == pk:
-            product = i
-            break
-    return Response(product)
-
-@api_view(['GET'])
-
 def getBooks(request):
     books = Book.objects.all()
     serializer = BookSerializer(books, many=True)
@@ -108,12 +91,19 @@ def getGenres(request):
     serializer = GenreSerializer(genres, many=True)
     return Response(serializer.data)
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 def getAuthors(request):
-    authors = Author.objects.all()
-    serializer = AuthorSerializer(authors, many=True)
-    return Response(serializer.data)
-
+    if request.method == 'GET':
+        authors = Author.objects.all()
+        serializer = AuthorSerializer(authors, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = AuthorSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 @api_view(['GET', 'POST'])
 def getFeedbacks(request):
     if request.method == 'GET':
