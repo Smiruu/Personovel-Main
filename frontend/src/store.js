@@ -11,7 +11,7 @@ import { feedbackReducer } from './reducers/feedbackReducers';
 import { bookDetailsReducer } from './reducers/bookReducers';
 import searchReducer from './reducers/searchReducers';
 import { otpReducer } from './reducers/otpReducers';
-
+import ratingReducer from './reducers/ratingReducers';
 const reducer = combineReducers({
     bookList: bookListReducer,
     userRegister: userRegisterReducer,
@@ -25,6 +25,7 @@ const reducer = combineReducers({
     bookDetails: bookDetailsReducer,
     search: searchReducer,
     otp: otpReducer, 
+    ratings: ratingReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null;

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Genre, Author, Book, Feedback, Interaction 
+from .models import *
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,3 +36,13 @@ class InteractionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Interaction
         fields = '__all__'
+
+class RatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = '__all__'
+
+class RatingWithoutIdSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = ['created_at', 'rating']

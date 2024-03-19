@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from user.models import User
 import os
 import random
 
@@ -49,13 +49,19 @@ class Book(models.Model):
     author = models.ForeignKey(Author,on_delete=models.CASCADE)
     date_added = models.DateTimeField(auto_now_add=True)
     _id = models.AutoField(primary_key=True, editable=False)
+    
 
     
     def __str__(self):
         return self.title
 
+class Rating(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name = 'rating')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.PositiveIntegerField(choices=((1, '1 star'),(2, '2 star'),(3, '3 star'),(4, '4 star'),(5, '5 star')))
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    
+
 class Feedback(models.Model):
     email = models.EmailField()
     subject = models.CharField(max_length=100)
