@@ -1,0 +1,9 @@
+
+.divider-link::after {
+    content: "";
+    border-right: 1px solid #BC1823;
+    margin-left: 10px; /* Adjust the margin as needed */
+    height: 50%; /* Adjust the height of the border as needed */
+    position: absolute;
+    top: 25%;
+  }
