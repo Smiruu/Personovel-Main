@@ -40,7 +40,7 @@ export const login = (email, password) => async (dispatch) => {
 };
 
 export const logout = () => (dispatch) => {
-    localStorage.removeItem('userInfo');
+    const meanRating = localStorage.getItem("RatingMean");
+    localStorage.clear(); // Remove all items from local storage
     dispatch({ type: USER_LOGOUT });
 };
-

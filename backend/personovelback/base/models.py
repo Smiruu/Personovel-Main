@@ -2,7 +2,7 @@ from django.db import models
 from user.models import User
 import os
 import random
-
+from django.utils import timezone
 def get_filename_ext(filepath):
     base_name = os.path.basename(filepath)
     name, ext = os.path.splitext(base_name)
@@ -81,4 +81,20 @@ class Interaction(models.Model):
         else:
             return f"No book - Chapter {self.chapter_number}" if self.chapter else "No book - No chapters"
 
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)
 
+    def __str__(self):
+        return f"{self.user} commented on {self.book}: {self.content}"
+
+class Reply(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.user} replied to {self.comment.user}'s comment: {self.content}"

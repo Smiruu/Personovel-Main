@@ -29,10 +29,12 @@ const reducer = combineReducers({
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null;
+const currentRatingFromStorage = localStorage.getItem('CurrentRating') ? JSON.parse(localStorage.getItem('CurrentRating')) : null
 
 const initialState = {
     userLogin: { userInfo: userInfoFromStorage },
     userRegister: {userInfo: userInfoFromStorage},
+    ratings: {ratings: currentRatingFromStorage}
 };
 
 const store = configureStore({

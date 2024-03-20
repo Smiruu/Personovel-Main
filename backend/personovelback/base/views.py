@@ -166,6 +166,7 @@ class RatingViewSet(viewsets.ModelViewSet):
     # Other viewset methods...
     
     def get_rating_id_by_user_and_book(self, request, user_id, book_id):
+        print(request)
         # Retrieve the rating based on user_id and book_id
         rating = get_object_or_404(Rating, user_id=user_id, book_id=book_id)
 
@@ -174,6 +175,15 @@ class RatingViewSet(viewsets.ModelViewSet):
 
         # Return the rating ID as JSON response
         return JsonResponse({'rating_id': rating_id})
+    def get_rating_by_user_and_book(request, user_id, book_id):
+        # Retrieve the rating based on user_id and book_id
+        rating = get_object_or_404(Rating, user_id=user_id, book_id=book_id)
+
+        # Extract the rating value
+        rating_value = rating.rating  # Assuming 'rating' is the field containing the rating value
+
+        # Return the rating value as JSON response
+        return JsonResponse({'rating': rating_value})
 
         
 class ListRatingViewSet(viewsets.ModelViewSet):
@@ -203,6 +213,7 @@ class RetrieveRatingViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        print(queryset)
         rating_id = self.kwargs.get('pk')
         if rating_id:
             queryset = queryset.filter(id=rating_id)
@@ -264,3 +275,42 @@ def get_ratings_for_book(request, book_id):
         return Response(data)
     except ValueError:
         return Response({'detail': 'Invalid Book ID'}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_comment(request):
+    # Include the book ID in the request data
+    request_data = request.data.copy()
+    request_data['book'] = request.data.get('book')  # Assuming the book ID is passed as 'book_id'
+    
+    serializer = CommentSerializer(data=request_data)
+    if serializer.is_valid():
+        serializer.save(user=request.user, created_at=timezone.now())
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['GET'])
+def get_comments_for_book(request, book_id):
+    comments = Comment.objects.filter(book_id=book_id)
+    if not comments:
+        return Response({"message": "No comments found for the specified book."}, status=status.HTTP_204_NO_CONTENT)
+    
+    serializer = CommentSerializer(comments, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_reply(request):
+    serializer = ReplySerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(user=request.user, created_at=timezone.now())
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['GET'])
+def get_replies_for_comment(request, comment_id):
+    replies = Reply.objects.filter(comment_id=comment_id)
+    if not replies:
+        return Response({"message": "No replies found for the specified comment."}, status=status.HTTP_204_NO_CONTENT)
+    
+    serializer = ReplySerializer(replies, many=True)
+    return Response(serializer.data)
+

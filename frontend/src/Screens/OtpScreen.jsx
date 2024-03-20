@@ -25,22 +25,25 @@ const OTPScreen = () => {
   const { verifyOtpLoading, verifyOtpError, resendOtpLoading, resendOtpError } =
     otpState;
 
-  const handleVerifyOTP = async (event) => {
-    event.preventDefault();
-    try {
-      await dispatch(verifyOTP(userId, otpId, otpCode));
-      navigate('/home');
-    } catch (error) {
-      console.error("userId or otpId is not set in userInfo");
+    const handleVerifyOTP = async (event) => {
+      event.preventDefault();
+      try {
+        await dispatch(verifyOTP(userId, otpId, otpCode));
+        // Check if OTP is set to true in local storage
+        const otpVerified = localStorage.getItem("OTP");
+        if (otpVerified === "true") {
+          navigate('/home');
+        }
+      } catch (error) {
+        console.error("userId or otpId is not set in userInfo");
+      }
     }
-  };
-
   const handleResendOTP = () => {
     if (userId && otpId) {
       dispatch(resendOTP(userId, otpId, otpCode));
       setResendDisabled(true);
       setResendClicked(true); // Set resendClicked to true when resend button is clicked
-      setCountdown(300);
+      setCountdown(120);
       localStorage.setItem("countdown", countdown); // Store countdown value in local storage
     } else {
       console.error("userId or otpId is not set in userInfo");

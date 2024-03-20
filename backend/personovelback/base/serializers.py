@@ -46,3 +46,14 @@ class RatingWithoutIdSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rating
         fields = ['created_at', 'rating']
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ['id','user', 'book', 'content', 'created_at']
+
+class ReplySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reply
+        fields = ['id', 'user', 'comment', 'content', 'created_at']  # Change 'text' to 'content'
+        read_only_fields = ['user', 'created_at']

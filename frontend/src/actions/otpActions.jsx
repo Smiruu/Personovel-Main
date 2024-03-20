@@ -27,6 +27,9 @@ export const verifyOTP = (user_id, otp_id, otp_code) => async (dispatch) => {
       { user_id, otp_id, otp_code },
       config
     );
+    
+    // Set item in local storage if OTP verification is successful
+    localStorage.setItem("OTP", "true");
 
     dispatch({ type: VERIFY_OTP_SUCCESS, payload: data });
   } catch (error) {

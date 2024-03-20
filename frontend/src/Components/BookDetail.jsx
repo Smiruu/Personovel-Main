@@ -4,7 +4,7 @@ import { listBookDetails } from "../actions/bookActions";
 import Loader from "../Components/Loader";
 import Message from "../Components/Message";
 import { useParams } from "react-router-dom";
-import { Button, Container, Row, Col, Modal } from "react-bootstrap"; // Import Modal component
+import { Button, Container, Row, Col, Modal } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { Card } from "react-bootstrap";
 import {
@@ -12,7 +12,8 @@ import {
   deleteRating,
   getRatingId,
   updateRating,
-  retrieveRating
+  retrieveRating,
+  fetchMeanRatings,
 } from "../actions/ratingActions";
 
 function BookDetail() {
@@ -21,16 +22,45 @@ function BookDetail() {
   const navigate = useNavigate();
   const [book, setBook] = useState({});
   const [rating, setRating] = useState(0);
-  const [showModal, setShowModal] = useState(false); // State for showing/hiding the modal
+  const [showModal, setShowModal] = useState(false);
   const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
   const userInfo = userLoginInfo || userRegisterInfo;
   const user = userInfo ? userInfo.token.id : null;
   const [showSubmitButton, setShowSubmitButton] = useState(false);
-
   useEffect(() => {
     dispatch(listBookDetails(_id));
+    dispatch(fetchMeanRatings(_id));
   }, [dispatch, _id]);
+  useEffect(() => {
+    const checkUserRating = async () => {
+      try {
+        await dispatch(getRatingId(user, _id));
+        const ratingId = localStorage.getItem("ratingId");
+        await dispatch(retrieveRating(ratingId));
+        const response = localStorage.getItem("CurrentRating");
+        if (response) {
+          setShowSubmitButton(true);
+          const parsedRating = parseInt(response);
+          setRating(parsedRating);
+        } else {
+          setShowSubmitButton(false);
+        }
+      } catch (error) {
+        console.error("Error fetching user's rating:", error);
+      }
+    };
+
+    checkUserRating();
+
+    // Cleanup function to remove ratingId and currentRating from localStorage
+    return () => {
+      localStorage.removeItem("ratingId");
+      localStorage.removeItem("CurrentRating");
+    };
+  }, [dispatch, user, _id]);
+
+
 
   const bookDetails = useSelector((state) => state.bookDetails);
   const { loading, error } = bookDetails || {};
@@ -43,55 +73,53 @@ function BookDetail() {
   }, [bookDetails, loading, error]);
 
   useEffect(() => {
-    // Check if user has already rated the book
-    const checkUserRating = async () => {
-      try {
-        await dispatch(getRatingId(user, _id));
-        const ratingId = localStorage.getItem("ratingId");
-        console.log("Rating ID:", ratingId);
-        // Dispatch action to retrieve user's rating
-        await dispatch(retrieveRating(ratingId)); 
-        const response = localStorage.getItem("CurrentRating") // Assuming ratingId is correctly obtained
-        if (response) {
-          // If user has rated the book, enable submit button and set rating
-          setShowSubmitButton(true);
-          const parsedRating = parseInt(response); // Parse the rating as an integer
-          setRating(parsedRating);
-          console.log(parsedRating); // Check if rating is correctly obtained
-        } else {
-          // If user has not rated the book, disable submit button
-          setShowSubmitButton(false);
-        }
-      } catch (error) {
-        console.error("Error fetching user's rating:", error);
+    const handleStorageChange = () => {
+      const updatedRatingId = localStorage.getItem("ratingId");
+      const updatedCurrentRating = localStorage.getItem("CurrentRating");
+      // Update rating and submit button visibility based on changes in local storage
+      if (updatedCurrentRating) {
+        const parsedRating = parseInt(updatedCurrentRating);
+        setRating(parsedRating);
+        setShowSubmitButton(true);
+      } else {
+        setRating(0);
+        setShowSubmitButton(false);
       }
     };
 
-    if (user && _id) {
-      checkUserRating();
-    }
-  }, [dispatch, user, _id]);
+    // Listen for changes in local storage
+    window.addEventListener("storage", handleStorageChange);
+
+    // Cleanup function to remove event listener
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
+  const storedData = JSON.parse(localStorage.getItem("RatingMean"));
+  const meanRating = storedData ? storedData.meanRating : 0 ;
 
   const handleReadNow = () => {
     navigate(`/chapters/${_id}`);
   };
 
   const handleCreateRating = async () => {
-    if (rating > 0) { // Check if rating is greater than 0
+    if (rating > 0) {
       try {
-        // Check if the user has already rated the book
         await dispatch(getRatingId(user, _id));
         const ratingId = localStorage.getItem("ratingId");
-        console.log("Rating ID:", ratingId);
-  
+
         if (ratingId) {
-          // If user has already rated the book, update the rating
           await dispatch(updateRating(ratingId, { rating }));
         } else {
-          // If user has not rated the book, create a new rating
           await dispatch(createRating({ user, book: _id, rating }));
         }
-        setShowModal(false); // Close the modal after rating is created/updated
+
+        // Update UI with the new rating and show the submit button
+        setRating(rating);
+        setShowSubmitButton(true);
+
+        setShowModal(false);
       } catch (error) {
         console.error("Error creating/updating rating:", error);
       }
@@ -100,18 +128,17 @@ function BookDetail() {
 
   const handleDeleteRating = async () => {
     try {
-      // Dispatch action to get rating ID
       await dispatch(getRatingId(user, _id));
       const ratingId = localStorage.getItem("ratingId");
-      console.log("Rating ID:", ratingId);
-  
-      // If rating ID is retrieved successfully, dispatch action to delete rating
+
       if (ratingId) {
         await dispatch(deleteRating(ratingId));
-        localStorage.removeItem("ratingId"); // Remove rating ID from local storage
-        setRating(0); // Reset the rating to 0 after deletion
-        setShowSubmitButton(false); // Disable the submit button
-        setShowModal(false); // Close the modal after rating is deleted
+        localStorage.removeItem("ratingId"); // Remove ratingId
+        localStorage.removeItem("CurrentRating"); // Remove CurrentRating
+        setRating(0);
+        setShowSubmitButton(false);
+        setShowModal(false);
+        // No need to refresh the page as the local storage change will update the UI
       } else {
         console.error("Rating ID not found");
       }
@@ -122,7 +149,7 @@ function BookDetail() {
 
   const renderStarStaticRating = (value) => {
     const stars = [];
-    const roundedRating = Math.round(value); // Round the rating to the nearest integer
+    const roundedRating = Math.round(value);
     for (let i = 0; i < 5; i++) {
       if (i < roundedRating) {
         stars.push(
@@ -136,9 +163,10 @@ function BookDetail() {
     }
     return stars;
   };
+
   const renderStarRating = () => {
     const stars = [];
-    const roundedRating = Math.round(rating); // Round the rating to the nearest integer
+    const roundedRating = Math.round(rating);
     for (let i = 0; i < 5; i++) {
       if (i < roundedRating) {
         stars.push(
@@ -147,8 +175,8 @@ function BookDetail() {
             className="fas fa-star"
             style={{ color: "gold", cursor: "pointer" }}
             onClick={() => {
-              setRating(i + 1); // Update rating state when a star is clicked
-              setShowSubmitButton(i + 1 > 0); // Update button's disabled state
+              setRating(i + 1);
+              setShowSubmitButton(i + 1 > 0);
             }}
           ></i>
         );
@@ -159,8 +187,8 @@ function BookDetail() {
             className="far fa-star"
             style={{ color: "gold", cursor: "pointer" }}
             onClick={() => {
-              setRating(i + 1); // Update rating state when a star is clicked
-              setShowSubmitButton(i + 1 > 0); // Update button's disabled state
+              setRating(i + 1);
+              setShowSubmitButton(i + 1 > 0);
             }}
           ></i>
         );
@@ -263,7 +291,7 @@ function BookDetail() {
             }}
           >
             <strong style={{ fontFamily: "Blinker" }}>RATING: </strong>
-            {renderStarStaticRating(book.rating)}
+            {renderStarStaticRating(meanRating)}
           </h5>
           <h5
             style={{
@@ -323,7 +351,18 @@ function BookDetail() {
           >
             READ NOW!
           </Button>
-
+          <h5
+            style={{
+              textAlign: "left",
+              marginLeft: "3%",
+              fontSize: "25px",
+              color: "#6F1D1B",
+              marginBottom: "5px",
+            }}
+          >
+            <strong style={{ fontFamily: "Blinker" }}>YOUR RATING: </strong>
+            {renderStarStaticRating(meanRating)}
+          </h5>
           <Button
             className="customButton"
             type="button"
@@ -355,25 +394,25 @@ function BookDetail() {
           </h5>
 
           <div className="d-flex justify-content-between mt-3">
-          <Button
-  className="customButton"
-  type="button"
-  style={{
-    width: "45%",
-    fontWeight: "1",
-    fontSize: "20px",
-    color: "white",
-    fontFamily: "Protest Guerrilla",
-    borderRadius: "50px",
-    backgroundColor: "#6F1D1B",
-    opacity: showSubmitButton ? 1 : 0.6,
-    cursor: showSubmitButton ? "pointer" : "not-allowed",
-  }}
-  onClick={handleCreateRating}
-  disabled={!showSubmitButton}
->
-  Submit Rating
-</Button>
+            <Button
+              className="customButton"
+              type="button"
+              style={{
+                width: "45%",
+                fontWeight: "1",
+                fontSize: "20px",
+                color: "white",
+                fontFamily: "Protest Guerrilla",
+                borderRadius: "50px",
+                backgroundColor: "#6F1D1B",
+                opacity: showSubmitButton ? 1 : 0.6,
+                cursor: showSubmitButton ? "pointer" : "not-allowed",
+              }}
+              onClick={handleCreateRating}
+              disabled={!showSubmitButton}
+            >
+              Submit Rating
+            </Button>
             <Button
               className="customButton"
               type="button"

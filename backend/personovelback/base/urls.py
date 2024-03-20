@@ -25,5 +25,9 @@ urlpatterns = [
     path('ratings/<int:pk>/delete/', views.DestroyRatingViewSet.as_view({'delete': 'destroy'}), name='ratings-delete'),
     path('ratings/<int:user_id>/<int:book_id>/get-rating-id/', views.RatingViewSet.as_view({'get': 'get_rating_id_by_user_and_book'}), name='get_rating_id_by_user_and_book'),
     path('ratings/book/<int:book_id>/', views.get_ratings_for_book, name='book-ratings'),
+    path('comments/create/', views.create_comment, name='create_comment'),
+    path('books/<int:book_id>/comments/', views.get_comments_for_book, name='book-comments'),
+    path('replies/create/', views.create_reply, name='create_reply'),
+    path('comments/<int:comment_id>/replies/', views.get_replies_for_comment, name='comment-replies'),
 
 ]

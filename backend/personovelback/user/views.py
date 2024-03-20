@@ -31,6 +31,7 @@ def get_tokens_for_user(user):
 class UserRegistrationView(APIView):
     renderer_classes = [UserRenderer]
     def post(self, request, format=None):
+        print("Request data:", request.data)
         serializer = UserRegistrationSerializers(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
@@ -92,6 +93,11 @@ def verify_otp(request):
         message = {'message': str(e)}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
     
+from django.utils import timezone
+
+# Define a constant for the cooldown duration (2 minutes)
+COOLDOWN_DURATION = 120  # 2 minutes in seconds
+
 @api_view(['POST'])
 def resend_otp(request):
     try:
@@ -102,15 +108,27 @@ def resend_otp(request):
         if user.is_active:
             return Response({'message': 'Account is already active. Cannot resend OTP.'}, status=status.HTTP_400_BAD_REQUEST)
         
+        # Check if there's a previous OTP request within the cooldown duration
+        now = timezone.now()
+        last_otp_request_time = request.session.get('last_otp_request_time')
+        if last_otp_request_time and (now - last_otp_request_time).total_seconds() < COOLDOWN_DURATION:
+            time_remaining = COOLDOWN_DURATION - (now - last_otp_request_time).total_seconds()
+            return Response({'message': f'Please wait {time_remaining} seconds before requesting another OTP'}, status=status.HTTP_429_TOO_MANY_REQUESTS)
+        
         otp = OTP.objects.get(user=user)
         otp_key = otp.otp_secret
         otp_instance = pyotp.TOTP(otp_key, digits=6)
         otp_code = otp_instance.now()
         send_otp_email(user.email, otp_code)
+        
+        # Update the last OTP request time in the session
+        request.session['last_otp_request_time'] = now
+        
         return Response({'message': 'OTP has been sent to your email'}, status=status.HTTP_200_OK)
     
     except User.DoesNotExist:
         return Response({'message': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
 
 
 

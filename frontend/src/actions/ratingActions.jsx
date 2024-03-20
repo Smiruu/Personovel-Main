@@ -9,8 +9,12 @@ export const fetchMeanRatings = (bookid) => async (dispatch) => {
   try {
     dispatch({ type: types.FETCH_RATINGS_REQUEST });
 
-    const { data } = await instance.get(`api/ratings/${bookid}`);
-    dispatch({ type: types.FETCH_RATINGS_SUCCESS, payload: data });
+    const { data } = await instance.get(`api/ratings/book/${bookid}`);
+    const meanRating = data.average_rating; // Extract the average rating value
+    const numReviews = data.num_reviews; // Extract the number of reviews
+    const ratingData = { meanRating, numReviews }; // Create an object with rating data
+    localStorage.setItem("RatingMean", JSON.stringify(ratingData)); // Store the rating data as a JSON string
+    dispatch({ type: types.FETCH_RATINGS_SUCCESS, payload: ratingData });
   } catch (error) {
     dispatch({
       type: types.FETCH_RATINGS_FAILURE,
@@ -133,6 +137,8 @@ export const deleteRating = (ratingId) => async (dispatch) => {
       });
     }
   };
+
+  
   
   export const retrieveRating = (ratingId) => async (dispatch) => {
     try {
