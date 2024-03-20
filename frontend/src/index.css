@@ -1,0 +1,23 @@
+main {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+h3 {
+  padding: 1rem;
+}
+
+.bottom-text {
+  margin-top: auto;
+}
+
+.color{
+  background-color: #FFF1E6;
+}
+
+.link-no-underline{
+  text-decoration: none;
+}
