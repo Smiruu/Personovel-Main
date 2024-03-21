@@ -19,7 +19,8 @@ import ChapterDetailScreen from "./Screens/ChapterDetailScreen";
 import BookScreen from "./Screens/BookScreen";
 import SearchPage from "./Screens/SearchScreen";
 import OTPScreen from "./Screens/OtpScreen";
-
+import ConfirmChangePass from "./Screens/ConfirmChangePassScreen";
+import RequestChangePass from "./Screens/ReqChangePassScreen";
 function App() {
   return (
     <Router>
@@ -45,6 +46,8 @@ function App() {
               <Route path="/books/:_id" element={<BookScreen />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/otp" element={<OTPScreen />} />
+              <Route path="api/user/reset/:uid/:token" element={<ConfirmChangePass />} />
+              <Route path="/reset-password" element={<RequestChangePass />} />
             </Routes>
           </Container>
         </main>

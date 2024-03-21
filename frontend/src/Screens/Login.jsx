@@ -50,6 +50,10 @@ const signupHandler = async (e) => {
   }
 };
 
+const handleForgotPassword = () => {
+  navigate('/reset-password'); // Navigate to reset-password route
+};
+
 
 useEffect(() => {
   if (userInfo) {
@@ -100,7 +104,9 @@ useEffect(() => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     />
-                    <Components.Anchor href='#'>Forgot your password?</Components.Anchor>
+                    <Components.Anchor href='#' onClick={handleForgotPassword}>
+                      Forgot your password?
+                    </Components.Anchor>
 
                     <Components.Button2 type='submit'>LogIn</Components.Button2>
                 </Components.Form>
