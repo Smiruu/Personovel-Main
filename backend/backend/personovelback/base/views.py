@@ -261,6 +261,7 @@ def get_ratings_for_book(request, book_id):
             'average_rating': average_rating,
             'num_reviews': num_reviews
         }
+        print(data)
         return Response(data)
     except ValueError:
         return Response({'detail': 'Invalid Book ID'}, status=status.HTTP_400_BAD_REQUEST)

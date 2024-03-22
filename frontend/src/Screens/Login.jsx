@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import * as Components from "./LoginDesign";
-import {Link,  useNavigate, redirect} from 'react-router-dom'
+import {useNavigate} from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { login } from '../actions/userActions'
 import { register } from '../actions/registerActions';
@@ -12,7 +12,7 @@ function LoginScreen() {
   const [password2, setPassword2] = useState('');
   const userLogin = useSelector(state => state.userLogin)
   const userRegister = useSelector((state) => state.userRegister.userInfo);
-  const { error, loading, userInfo } = userLogin || userRegister
+  const { userInfo } = userLogin || userRegister
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [signIn, toggle] = React.useState(true);
@@ -55,7 +55,7 @@ useEffect(() => {
   if (userInfo) {
       navigate('/home')
   }
-}, [navigate, redirect, userInfo])
+}, [navigate, userInfo])
 
   return (
     <Components.Container>

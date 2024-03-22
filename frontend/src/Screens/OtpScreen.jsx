@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { verifyOTP, resendOTP } from "../actions/otpActions";
-import {
-  VERIFY_OTP_REQUEST,
-  RESEND_OTP_REQUEST,
-} from "../constants/otpConstants";
-import { useParams, useNavigate } from 'react-router-dom';
+
+import { useNavigate } from 'react-router-dom';
 
 
 const OTPScreen = () => {

@@ -1,172 +1,87 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { listBookDetails } from "../actions/bookActions";
+import { fetchMeanRatings, retrieveRating } from "../actions/ratingActions"; // Import fetchMeanRatings and retrieveRating actions
+import { getRatingId } from "../actions/ratingActions";
 import Loader from "../Components/Loader";
 import Message from "../Components/Message";
 import { useParams } from "react-router-dom";
-import { Button, Container, Row, Col, Modal } from "react-bootstrap"; // Import Modal component
+import { Button, Container, Row, Col, Modal } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { Card } from "react-bootstrap";
-import {
-  createRating,
-  deleteRating,
-  getRatingId,
-  updateRating,
-  retrieveRating
-} from "../actions/ratingActions";
+import Rating from "./Rating";
+import RateModal from "./RateModal";
 
 function BookDetail() {
   const { _id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [book, setBook] = useState({});
-  const [rating, setRating] = useState(0);
-  const [showModal, setShowModal] = useState(false); // State for showing/hiding the modal
-  const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
-  const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
-  const userInfo = userLoginInfo || userRegisterInfo;
-  const user = userInfo ? userInfo.token.id : null;
-  const [showSubmitButton, setShowSubmitButton] = useState(false);
+  const [meanRating, setMeanRating] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     dispatch(listBookDetails(_id));
+    dispatch(fetchMeanRatings(_id));
   }, [dispatch, _id]);
+
+  const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
+  const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
+  const userInfo = userLoginInfo || userRegisterInfo;
+  const userId = userInfo ? userInfo.token.id : null;
 
   const bookDetails = useSelector((state) => state.bookDetails);
   const { loading, error } = bookDetails || {};
 
+  const fetchedMeanRating = useSelector(
+    (state) => state.fetchMeanRatings.ratings.meanRating
+  );
+  const numReviews = useSelector(
+    (state) => state.fetchMeanRatings.ratings.numReviews
+  );
+
   useEffect(() => {
     if (!loading && !error) {
       setBook(bookDetails.book);
-      setRating(bookDetails.book.rating);
     }
   }, [bookDetails, loading, error]);
 
   useEffect(() => {
-    // Check if user has already rated the book
-    const checkUserRating = async () => {
-      try {
-        await dispatch(getRatingId(user, _id));
-        const ratingId = localStorage.getItem("ratingId");
-        console.log("Rating ID:", ratingId);
-        // Dispatch action to retrieve user's rating
-        await dispatch(retrieveRating(ratingId)); 
-        const response = localStorage.getItem("CurrentRating") // Assuming ratingId is correctly obtained
-        if (response) {
-          // If user has rated the book, enable submit button and set rating
-          setShowSubmitButton(true);
-          const parsedRating = parseInt(response); // Parse the rating as an integer
-          setRating(parsedRating);
-          console.log(parsedRating); // Check if rating is correctly obtained
-        } else {
-          // If user has not rated the book, disable submit button
-          setShowSubmitButton(false);
-        }
-      } catch (error) {
-        console.error("Error fetching user's rating:", error);
-      }
-    };
-
-    if (user && _id) {
-      checkUserRating();
+    if (fetchedMeanRating !== null) {
+      setMeanRating(fetchedMeanRating);
     }
-  }, [dispatch, user, _id]);
+  }, [fetchedMeanRating]);
+
+  useEffect(() => {
+    if (userId) {
+      dispatch(getRatingId(userId, _id)); // Retrieve rating ID if user is logged in
+    }
+  }, [dispatch, userId, _id]);
+
+  const ratingId = useSelector((state) => state.getRatingId.ratingId);
+
+  useEffect(() => {
+    if (ratingId) {
+      dispatch(retrieveRating(ratingId)); // Retrieve user's rating if logged in
+    }
+  }, [dispatch, ratingId]);
+
+  // Log the rating when it changes
+  const userRating = useSelector((state) => state.fetchRating.rating);
+  useEffect(() => {
+    console.log("User Rating:", userRating);
+  }, [userRating]);
 
   const handleReadNow = () => {
     navigate(`/chapters/${_id}`);
   };
 
-  const handleCreateRating = async () => {
-    if (rating > 0) { // Check if rating is greater than 0
-      try {
-        // Check if the user has already rated the book
-        await dispatch(getRatingId(user, _id));
-        const ratingId = localStorage.getItem("ratingId");
-        console.log("Rating ID:", ratingId);
-  
-        if (ratingId) {
-          // If user has already rated the book, update the rating
-          await dispatch(updateRating(ratingId, { rating }));
-        } else {
-          // If user has not rated the book, create a new rating
-          await dispatch(createRating({ user, book: _id, rating }));
-        }
-        setShowModal(false); // Close the modal after rating is created/updated
-      } catch (error) {
-        console.error("Error creating/updating rating:", error);
-      }
-    }
+  const handleOpenModal = () => {
+    setShowModal(true);
   };
 
-  const handleDeleteRating = async () => {
-    try {
-      // Dispatch action to get rating ID
-      await dispatch(getRatingId(user, _id));
-      const ratingId = localStorage.getItem("ratingId");
-      console.log("Rating ID:", ratingId);
-  
-      // If rating ID is retrieved successfully, dispatch action to delete rating
-      if (ratingId) {
-        await dispatch(deleteRating(ratingId));
-        localStorage.removeItem("ratingId"); // Remove rating ID from local storage
-        setRating(0); // Reset the rating to 0 after deletion
-        setShowSubmitButton(false); // Disable the submit button
-        setShowModal(false); // Close the modal after rating is deleted
-      } else {
-        console.error("Rating ID not found");
-      }
-    } catch (error) {
-      console.error("Error deleting rating:", error);
-    }
-  };
-
-  const renderStarStaticRating = (value) => {
-    const stars = [];
-    const roundedRating = Math.round(value); // Round the rating to the nearest integer
-    for (let i = 0; i < 5; i++) {
-      if (i < roundedRating) {
-        stars.push(
-          <i key={i} className="fas fa-star" style={{ color: "gold" }}></i>
-        );
-      } else {
-        stars.push(
-          <i key={i} className="far fa-star" style={{ color: "gold" }}></i>
-        );
-      }
-    }
-    return stars;
-  };
-  const renderStarRating = () => {
-    const stars = [];
-    const roundedRating = Math.round(rating); // Round the rating to the nearest integer
-    for (let i = 0; i < 5; i++) {
-      if (i < roundedRating) {
-        stars.push(
-          <i
-            key={i}
-            className="fas fa-star"
-            style={{ color: "gold", cursor: "pointer" }}
-            onClick={() => {
-              setRating(i + 1); // Update rating state when a star is clicked
-              setShowSubmitButton(i + 1 > 0); // Update button's disabled state
-            }}
-          ></i>
-        );
-      } else {
-        stars.push(
-          <i
-            key={i}
-            className="far fa-star"
-            style={{ color: "gold", cursor: "pointer" }}
-            onClick={() => {
-              setRating(i + 1); // Update rating state when a star is clicked
-              setShowSubmitButton(i + 1 > 0); // Update button's disabled state
-            }}
-          ></i>
-        );
-      }
-    }
-    return stars;
+  const handleCloseModal = () => {
+    setShowModal(false);
   };
 
   return (
@@ -181,7 +96,6 @@ function BookDetail() {
             <Card.Img src={book.image} alt={book.title} fluid />
           )}
         </Col>
-
         <Col md={5} style={{ backgroundColor: "#FCD5CE" }}>
           <Link
             to="/"
@@ -262,8 +176,20 @@ function BookDetail() {
               marginBottom: "5px",
             }}
           >
-            <strong style={{ fontFamily: "Blinker" }}>RATING: </strong>
-            {renderStarStaticRating(book.rating)}
+            <strong style={{ fontFamily: "Blinker" }}>Rating: </strong>
+            <span
+              style={{
+                fontStyle: "italic",
+                fontFamily: "Blinker",
+                fontWeight: "1",
+              }}
+            >
+              <Rating
+                value={meanRating}
+                text={numReviews + " reviews"}
+                color="#f8e825"
+              />
+            </span>
           </h5>
           <h5
             style={{
@@ -307,92 +233,71 @@ function BookDetail() {
               {book.synopsis}
             </p>
           </h5>
-
-          <Button
-            className="btn-block customButton mt-3"
-            type="button"
+          <h5
             style={{
-              fontWeight: "1",
-              fontSize: "30px",
-              color: "white",
-              fontFamily: "Protest Guerrilla",
-              borderRadius: "50px",
-              backgroundColor: "#6F1D1B",
+              textAlign: "left",
+              marginLeft: "3%",
+              fontSize: "25px",
+              color: "#6F1D1B",
+              marginBottom: "5px",
             }}
-            onClick={handleReadNow}
           >
-            READ NOW!
-          </Button>
-
-          <Button
-            className="customButton"
-            type="button"
-            style={{
-              width: "100%",
-              fontWeight: "1",
-              fontSize: "20px",
-              color: "white",
-              fontFamily: "Protest Guerrilla",
-              borderRadius: "50px",
-              backgroundColor: "#6F1D1B",
-            }}
-            onClick={() => setShowModal(true)} // Open the modal
-          >
-            Manage Rating
-          </Button>
-        </Col>
-      </Row>
-
-      {/* Rating Modal */}
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Manage Rating</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <h5>
-            <strong style={{ fontFamily: "Blinker" }}>RATING: </strong>
-            {renderStarRating()}
+            <strong style={{ fontFamily: "Blinker" }}>User Rating: </strong>
+            <span
+              style={{
+                fontStyle: "italic",
+                fontFamily: "Blinker",
+                fontWeight: "1",
+              }}
+            >
+              <Rating value={userRating} color="#f8e825" />
+            </span>
           </h5>
-
-          <div className="d-flex justify-content-between mt-3">
-          <Button
-  className="customButton"
-  type="button"
-  style={{
-    width: "45%",
-    fontWeight: "1",
-    fontSize: "20px",
-    color: "white",
-    fontFamily: "Protest Guerrilla",
-    borderRadius: "50px",
-    backgroundColor: "#6F1D1B",
-    opacity: showSubmitButton ? 1 : 0.6,
-    cursor: showSubmitButton ? "pointer" : "not-allowed",
-  }}
-  onClick={handleCreateRating}
-  disabled={!showSubmitButton}
->
-  Submit Rating
-</Button>
+          <Col>
+            <Button
+              className="btn-block customButton"
+              type="button"
+              style={{
+                width: "90%",
+                fontWeight: "1",
+                fontSize: "30px",
+                color: "white",
+                fontFamily: "Protest Guerrilla",
+                borderRadius: "50px",
+                backgroundColor: "#6F1D1B",
+                marginTop: "20px", // Add a margin-top for spacing
+              }}
+              onClick={handleReadNow} // Call handleReadNow function on button click
+            >
+              READ NOW!
+            </Button>
             <Button
               className="customButton"
               type="button"
               style={{
-                width: "45%",
+                width: "90%",
                 fontWeight: "1",
                 fontSize: "20px",
                 color: "white",
                 fontFamily: "Protest Guerrilla",
                 borderRadius: "50px",
                 backgroundColor: "#6F1D1B",
+                marginTop: "20px", // Add a margin-top for spacing
               }}
-              onClick={handleDeleteRating} // Call handleDeleteRating function on button click
+              onClick={() => setShowModal(true)} // Open the modal
             >
-              Delete Rating
+              RATE
             </Button>
-          </div>
-        </Modal.Body>
-      </Modal>
+          </Col>
+        </Col>{" "}
+        {/* Closing tag for the second Col component */}
+      </Row>
+      <RateModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        bookId={_id}
+        userId={userId}
+      />
     </Container>
   );
 }

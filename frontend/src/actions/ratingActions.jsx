@@ -5,16 +5,16 @@ const instance = axios.create({
   baseURL: 'http://127.0.0.1:8000/', // Update with your backend API base URL
 });
 
+
 export const fetchMeanRatings = (bookid) => async (dispatch) => {
   try {
     dispatch({ type: types.FETCH_RATINGS_REQUEST });
 
     const { data } = await instance.get(`api/ratings/book/${bookid}`);
-    const meanRating = data.average_rating; // Extract the average rating value
-    const numReviews = data.num_reviews; // Extract the number of reviews
-    const ratingData = { meanRating, numReviews }; // Create an object with rating data
-    localStorage.setItem("RatingMean", JSON.stringify(ratingData)); // Store the rating data as a JSON string
-    dispatch({ type: types.FETCH_RATINGS_SUCCESS, payload: ratingData });
+    const meanRating = data.average_rating;
+    const numReviews = data.num_reviews;
+    const payload = { meanRating, numReviews }; // Combine meanRating and numReviews into a single payload object
+    dispatch({ type: types.FETCH_RATINGS_SUCCESS, payload });
   } catch (error) {
     dispatch({
       type: types.FETCH_RATINGS_FAILURE,
@@ -24,6 +24,7 @@ export const fetchMeanRatings = (bookid) => async (dispatch) => {
     });
   }
 };
+
 
 export const createRating = (ratingData) => async (dispatch) => {
     try {
@@ -43,6 +44,7 @@ export const createRating = (ratingData) => async (dispatch) => {
       const response = await instance.post('api/ratings/create/', ratingData, config);
       console.log('Response Data:', response.data); // Log response data
        // Log the result of setting local storage
+       
       dispatch({ type: types.CREATE_RATING_SUCCESS, payload: response.data });
     } catch (error) {
       localStorage.setItem('createRatingError', error.Message);
@@ -124,11 +126,14 @@ export const deleteRating = (ratingId) => async (dispatch) => {
         }
       } : {};
   
-      const { data } = await instance.get(`api/ratings/${userId}/${bookId}/get-rating-id/`, config);
-      localStorage.setItem("ratingId", data.rating_id);
+      const response = await instance.get(`api/ratings/${userId}/${bookId}/get-rating-id/`, config);
+      const ratingId = response.data.rating_id; // Extract rating_id from the response
+
   
-      dispatch({ type: types.GET_RATING_ID_SUCCESS, payload: data.rating_id });
+      dispatch({ type: types.GET_RATING_ID_SUCCESS, payload: ratingId });
     } catch (error) {
+      console.error("Error fetching rating ID:", error);
+  
       dispatch({
         type: types.GET_RATING_ID_FAILURE,
         payload: error.response && error.response.data.detail
@@ -137,7 +142,6 @@ export const deleteRating = (ratingId) => async (dispatch) => {
       });
     }
   };
-
   
   
   export const retrieveRating = (ratingId) => async (dispatch) => {
@@ -155,8 +159,9 @@ export const deleteRating = (ratingId) => async (dispatch) => {
   
       // Dispatch success action with the payload
       dispatch({ type: types.FETCH_RATING_SUCCESS, payload });
-      localStorage.setItem("CurrentRating", payload.rating);
-      console.log(payload.rating)
+  
+      // Log the rating payload
+      console.log("Rating Payload:", payload);
     } catch (error) {
       // Dispatch failure action with error message
       dispatch({
@@ -167,3 +172,4 @@ export const deleteRating = (ratingId) => async (dispatch) => {
       });
     }
   };
+  
