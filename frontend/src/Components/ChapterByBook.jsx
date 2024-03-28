@@ -1,22 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { listInteractionsByBook } from '../actions/interactionActions';
-import { useParams } from 'react-router-dom';
-import { Row, Col, Button, Dropdown } from 'react-bootstrap';
-import Message from '../Components/Message';
-import Loader from '../Components/Loader';
-import { Document, Page, pdfjs } from 'react-pdf';
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { listInteractionsByBook } from "../actions/interactionActions";
+import { useParams, useNavigate } from "react-router-dom";
+import { Row, Col, Button, Dropdown } from "react-bootstrap";
+import Message from "../Components/Message";
+import Loader from "../Components/Loader";
+import { Document, Page, pdfjs } from "react-pdf";
+import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 
 const ChapterByBook = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // Get userInfo from Redux store
+  const userInfo = useSelector((state) => state.userLogin.userInfo);
+
+  // Redirect to /payment if userInfo.token.is_paid is false
+  useEffect(() => {
+    if (userInfo && userInfo.token && !userInfo.token.is_paid) {
+      navigate("/payment");
+    } else {
+      dispatch(listInteractionsByBook(id));
+    }
+  }, [dispatch, id, navigate, userInfo]);
 
   useEffect(() => {
     dispatch(listInteractionsByBook(id));
   }, [dispatch, id]);
 
-  const interactionListByBook = useSelector((state) => state.interactionListByBook);
+  const interactionListByBook = useSelector(
+    (state) => state.interactionListByBook
+  );
   const { loading, error, interactions } = interactionListByBook;
 
   const [currentChapter, setCurrentChapter] = useState(1);
@@ -46,7 +61,10 @@ const ChapterByBook = () => {
 
         <Dropdown.Menu>
           {interactions.map((interaction) => (
-            <Dropdown.Item key={interaction.id} onClick={() => handleChapterChange(interaction.chapter_number)}>
+            <Dropdown.Item
+              key={interaction.id}
+              onClick={() => handleChapterChange(interaction.chapter_number)}
+            >
               Chapter {interaction.chapter_number}
             </Dropdown.Item>
           ))}
@@ -57,7 +75,7 @@ const ChapterByBook = () => {
         {loading ? (
           <Loader />
         ) : error ? (
-          <Message variant='danger'>{error}</Message>
+          <Message variant="danger">{error}</Message>
         ) : (
           interactions.map((interaction, index) => (
             <Col key={interaction.id}>
@@ -69,12 +87,24 @@ const ChapterByBook = () => {
                     <p>Chapter: {interaction.chapter_number}</p>
                     <p>Book: {interaction.book}</p>
                   </div>
-                  <Button disabled={currentChapter === 1} onClick={handlePreviousChapter}>Previous Chapter</Button>
-                  <Button disabled={index === interactions.length - 1} onClick={handleNextChapter}>Next Chapter</Button>
-                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <Button
+                    disabled={currentChapter === 1}
+                    onClick={handlePreviousChapter}
+                  >
+                    Previous Chapter
+                  </Button>
+                  <Button
+                    disabled={index === interactions.length - 1}
+                    onClick={handleNextChapter}
+                  >
+                    Next Chapter
+                  </Button>
+                  <div style={{ display: "flex", justifyContent: "center" }}>
                     <Document
                       file={interaction.chapter}
-                      options={{ workerSrc: pdfjs.GlobalWorkerOptions.workerSrc }}
+                      options={{
+                        workerSrc: pdfjs.GlobalWorkerOptions.workerSrc,
+                      }}
                       onLoadSuccess={({ numPages }) => setNumPages(numPages)}
                     >
                       {Array.from(new Array(numPages), (el, index) => (
@@ -88,8 +118,18 @@ const ChapterByBook = () => {
                       ))}
                     </Document>
                   </div>
-                  <Button disabled={currentChapter === 1} onClick={handlePreviousChapter}>Previous Chapter</Button>
-                  <Button disabled={index === interactions.length - 1} onClick={handleNextChapter}>Next Chapter</Button>
+                  <Button
+                    disabled={currentChapter === 1}
+                    onClick={handlePreviousChapter}
+                  >
+                    Previous Chapter
+                  </Button>
+                  <Button
+                    disabled={index === interactions.length - 1}
+                    onClick={handleNextChapter}
+                  >
+                    Next Chapter
+                  </Button>
                 </div>
               ) : null}
             </Col>

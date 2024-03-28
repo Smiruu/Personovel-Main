@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import Header from "./Components/Header";
@@ -21,7 +21,9 @@ import SearchPage from "./Screens/SearchScreen";
 import OTPScreen from "./Screens/OtpScreen";
 import ConfirmChangePass from "./Screens/ConfirmChangePassScreen";
 import RequestChangePass from "./Screens/ReqChangePassScreen";
-function App() {
+import PaymentScreen from "./Screens/PaymentScreen";
+  function App() {
+
   return (
     <Router>
       <Header />
@@ -48,6 +50,7 @@ function App() {
               <Route path="/otp" element={<OTPScreen />} />
               <Route path="api/user/reset/:uid/:token" element={<ConfirmChangePass />} />
               <Route path="/reset-password" element={<RequestChangePass />} />
+              <Route path="/payment" element={<PaymentScreen />} />
             </Routes>
           </Container>
         </main>

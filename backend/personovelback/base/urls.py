@@ -18,6 +18,13 @@ urlpatterns = [
     path('interactions/<str:pk>', views.getInteraction, name="interaction"),
     path('search/', views.search, name='search_books'),
     path('interactions/book/<int:book_id>', views.getInteractionsByBook, name='book-interactions'),
+    path('ratings/', views.ListRatingViewSet.as_view({'get': 'list'}), name='ratings-list'),
+    path('ratings/create/', views.CreateRatingViewSet.as_view({'post': 'create'}), name='ratings-create'),
+    path('ratings/<int:pk>/', views.RetrieveRatingViewSet.as_view({'get': 'retrieve'}), name='ratings-retrieve'),
+    path('ratings/<int:pk>/update/', views.UpdateRatingViewSet.as_view({'put': 'update'}), name='ratings-update'),
+    path('ratings/<int:pk>/delete/', views.DestroyRatingViewSet.as_view({'delete': 'destroy'}), name='ratings-delete'),
+    path('ratings/<int:user_id>/<int:book_id>/get-rating-id/', views.RatingViewSet.as_view({'get': 'get_rating_id_by_user_and_book'}), name='get_rating_id_by_user_and_book'),
+    path('ratings/book/<int:book_id>/', views.get_ratings_for_book, name='book-ratings'),
     
    
 

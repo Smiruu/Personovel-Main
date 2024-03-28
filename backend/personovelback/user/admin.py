@@ -2,6 +2,7 @@ from django.contrib import admin
 from user.models import User
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import UserProfile
+
 # Register your models here.
 
 class UserModelAdmin(BaseUserAdmin):
@@ -12,8 +13,8 @@ class UserModelAdmin(BaseUserAdmin):
     list_filter = ["is_admin",]
     fieldsets = [
         ("User Credentials", {"fields": ["email", "password"]}),
-        ("Personal info", {"fields": ["name"]}),
-        ("Permissions", {"fields": ["is_admin", 'is_active']}),
+        ("Personal info", {"fields": ["name", "paid_at"]}),
+        ("Permissions", {"fields": ["is_admin", 'is_active', "is_paid"]}),
     ]
     # add_fieldsets is not a standard ModelAdmin attribute. UserModelAdmin
     # overrides get_fieldsets to use this attribute when creating a user.

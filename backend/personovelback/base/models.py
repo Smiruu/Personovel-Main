@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 import os
 import random
+from django.conf import settings
 
 def get_filename_ext(filepath):
     base_name = os.path.basename(filepath)
@@ -54,7 +55,11 @@ class Book(models.Model):
     def __str__(self):
         return self.title
 
-
+class Rating(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name = 'rating')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL , on_delete=models.CASCADE)
+    rating = models.PositiveIntegerField(choices=((1, '1 star'),(2, '2 star'),(3, '3 star'),(4, '4 star'),(5, '5 star')))
+    created_at = models.DateTimeField(auto_now_add=True)
     
 class Feedback(models.Model):
     email = models.EmailField()

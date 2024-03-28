@@ -1,36 +1,102 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { listBookDetails } from '../actions/bookActions';
-import Loader from '../Components/Loader';
-import Message from '../Components/Message';
-import { useParams } from 'react-router-dom';
-import { Button, Modal, Container, Row, Col } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
-import { Card } from 'react-bootstrap';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { listBookDetails } from "../actions/bookActions";
+import { fetchMeanRatings, retrieveRating } from "../actions/ratingActions"; // Import fetchMeanRatings and retrieveRating actions
+import { getRatingId } from "../actions/ratingActions";
+import Loader from "../Components/Loader";
+import Message from "../Components/Message";
+import { useParams } from "react-router-dom";
+import { Button, Container, Row, Col, Modal } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { Card } from "react-bootstrap";
+import Rating from "./Rating";
+import RateModal from "./RateModal";
 
 function BookDetail() {
   const { _id } = useParams();
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
   const [book, setBook] = useState({});
+  const [meanRating, setMeanRating] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [ratingId, setRatingId] = useState(localStorage.getItem("ratingId"));
 
-  useEffect(() => {
-    dispatch(listBookDetails(_id));
-  }, [dispatch, _id]);
+  const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
+  const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
+  const userInfo = userLoginInfo || userRegisterInfo;
+  const userId = userInfo ? userInfo.token.id : null;
 
-  const bookDetails = useSelector(state => state.bookDetails);
-  const { loading, error } = bookDetails || {};
+  const bookDetails = useSelector((state) => state.bookDetails);
+  const { loading, error, book: bookData } = bookDetails || {};
+
+  const fetchedMeanRating = useSelector(
+    (state) => state.fetchMeanRatings.ratings.meanRating
+  );
+  const numReviews = useSelector(
+    (state) => state.fetchMeanRatings.ratings.numReviews
+  );
+
+  const userRating = useSelector((state) => state.fetchRating.userRating);
+
+  console.log("UserRating", userRating);
 
   useEffect(() => {
     if (!loading && !error) {
-      setBook(bookDetails.book);
+      setBook(bookData);
     }
-  }, [bookDetails, loading, error]);
+  }, [bookData, loading, error]);
+
+  useEffect(() => {
+    if (fetchedMeanRating !== null) {
+      setMeanRating(fetchedMeanRating);
+    }
+  }, [fetchedMeanRating]);
+
+  useEffect(() => {
+    dispatch(listBookDetails(_id));
+    dispatch(fetchMeanRatings(_id));
+    dispatch(getRatingId(userId, _id));
+  }, [dispatch, _id, userId]);
+
+  useEffect(() => {
+    const storedRatingId = localStorage.getItem("ratingId");
+    if (storedRatingId) {
+      setRatingId(storedRatingId);
+      dispatch(retrieveRating(storedRatingId));
+    }
+  }, [dispatch, userId]);
+
+  useEffect(() => {
+    // Update userRating when ratingId changes
+    if (ratingId) {
+      dispatch(retrieveRating(ratingId));
+    }
+  }, [dispatch, ratingId]);
+
+  useEffect(() => {
+    if (!ratingId) {
+      dispatch({ type: "SET_USER_RATING", payload: 0 }); // Dispatch action to set userRating to 0
+    }
+  }, [dispatch, ratingId]);
+
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem("ratingId");
+      localStorage.removeItem("userRating");
+    };
+  }, []);
 
   const handleReadNow = () => {
-    navigate(`/chapters/${_id}`); // Navigate to ChapterByBook component with book id
+    navigate(`/chapters/${_id}`);
   };
 
+  const handleOpenModal = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
   return (
     <Container fluid>
       <Row className="mt-5 mb-5 h-full w-full">
@@ -40,10 +106,9 @@ function BookDetail() {
           ) : error ? (
             <Message variant="danger">{error}</Message>
           ) : (
-                <Card.Img src={book.image} alt={book.title} fluid />
+            <Card.Img src={book.image} alt={book.title} fluid />
           )}
         </Col>
-
         <Col md={5} style={{ backgroundColor: "#FCD5CE" }}>
           <Link
             to="/"
@@ -53,7 +118,7 @@ function BookDetail() {
               padding: "1% 2% 1% 2%",
               border: "2px solid #6F1D1B",
               borderColor: "#6F1D1B",
-              position: 'relative'
+              position: "relative",
             }}
           >
             <i className="fas fa-times" style={{ color: "#6F1D1B" }}></i>
@@ -115,7 +180,30 @@ function BookDetail() {
               {book?.genre?.toUpperCase()}
             </span>
           </h5>
-
+          <h5
+            style={{
+              textAlign: "left",
+              marginLeft: "3%",
+              fontSize: "25px",
+              color: "#6F1D1B",
+              marginBottom: "5px",
+            }}
+          >
+            <strong style={{ fontFamily: "Blinker" }}>Rating: </strong>
+            <span
+              style={{
+                fontStyle: "italic",
+                fontFamily: "Blinker",
+                fontWeight: "1",
+              }}
+            >
+              <Rating
+                value={meanRating}
+                text={numReviews + " reviews"}
+                color="#f8e825"
+              />
+            </span>
+          </h5>
           <h5
             style={{
               textAlign: "left",
@@ -158,25 +246,72 @@ function BookDetail() {
               {book.synopsis}
             </p>
           </h5>
-
-          <Button
-            className="btn-block customButton"
-            type="button"
+          <h5
             style={{
-              width: "90%",
-              fontWeight: "1",
-              fontSize: "30px",
-              color: "white",
-              fontFamily: "Protest Guerrilla",
-              borderRadius: "50px",
-              backgroundColor: "#6F1D1B",
+              textAlign: "left",
+              marginLeft: "3%",
+              fontSize: "25px",
+              color: "#6F1D1B",
+              marginBottom: "5px",
             }}
-            onClick={handleReadNow} // Call handleReadNow function on button click
           >
-            READ NOW!
-          </Button>
-        </Col>
+            <strong style={{ fontFamily: "Blinker" }}>User Rating: </strong>
+            <span
+              style={{
+                fontStyle: "italic",
+                fontFamily: "Blinker",
+                fontWeight: "1",
+              }}
+            >
+              <Rating value={userRating} color="#f8e825" />
+            </span>
+          </h5>
+          <Col>
+            <Button
+              className="btn-block customButton"
+              type="button"
+              style={{
+                width: "90%",
+                fontWeight: "1",
+                fontSize: "30px",
+                color: "white",
+                fontFamily: "Protest Guerrilla",
+                borderRadius: "50px",
+                backgroundColor: "#6F1D1B",
+                marginTop: "20px", // Add a margin-top for spacing
+              }}
+              onClick={handleReadNow} // Call handleReadNow function on button click
+            >
+              READ NOW!
+            </Button>
+            <Button
+              className="customButton"
+              type="button"
+              style={{
+                width: "90%",
+                fontWeight: "1",
+                fontSize: "20px",
+                color: "white",
+                fontFamily: "Protest Guerrilla",
+                borderRadius: "50px",
+                backgroundColor: "#6F1D1B",
+                marginTop: "20px", // Add a margin-top for spacing
+              }}
+              onClick={() => setShowModal(true)}
+              disabled={!userInfo.token.is_paid}// Open the modal
+            >
+              RATE
+            </Button>
+          </Col>
+        </Col>{" "}
+        {/* Closing tag for the second Col component */}
       </Row>
+      <RateModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        bookId={_id}
+        userId={userId}
+      />
     </Container>
   );
 }
