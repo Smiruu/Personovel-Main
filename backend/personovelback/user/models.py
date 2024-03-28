@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager,AbstractBaseUser
 import pyotp
+from datetime import datetime, timedelta
+from django.utils import timezone
 
 #Custom User Manager
 class UserManager(BaseUserManager):
@@ -44,6 +46,7 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     is_paid = models.BooleanField(default=False)
+    paid_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -70,6 +73,32 @@ class User(AbstractBaseUser):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
+    
+    def is_paid_expired(self):
+        if self.is_paid and self.paid_at:
+            # Get today's date as a datetime object
+            today = datetime.now().date()
+            print("Today's date:", today)
+            
+            # Convert paid_at to a date object
+            paid_date = self.paid_at.date()
+            print("Paid date:", paid_date)
+            
+            # Calculate the difference in days between today and the paid_at date
+            days_difference = (today - paid_date).days
+            print("Days difference:", days_difference)
+            
+            # Check if the difference is greater than or equal to 90 days (3 months)
+            if days_difference >= 90:
+                print("Paid status is expired.")
+                # Update is_paid to False
+                self.is_paid = False
+                # Save the changes to the database
+                self.save()
+                print("is_paid status updated to False.")
+                return True
+        print("Paid status is not expired.")
+        return False
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

@@ -129,7 +129,7 @@ export const deleteRating = (ratingId) => async (dispatch) => {
       const response = await instance.get(`api/ratings/${userId}/${bookId}/get-rating-id/`, config);
       const ratingId = response.data.rating_id; // Extract rating_id from the response
 
-  
+      localStorage.setItem("ratingId", ratingId)
       dispatch({ type: types.GET_RATING_ID_SUCCESS, payload: ratingId });
     } catch (error) {
       console.error("Error fetching rating ID:", error);
@@ -156,12 +156,14 @@ export const deleteRating = (ratingId) => async (dispatch) => {
         rating: data.rating,
         created_at: data.created_at,
       };
-  
+      
+      localStorage.setItem("userRating", payload.rating)
       // Dispatch success action with the payload
       dispatch({ type: types.FETCH_RATING_SUCCESS, payload });
   
       // Log the rating payload
-      console.log("Rating Payload:", payload);
+      console.log("Rating Payload:", payload.rating);
+
     } catch (error) {
       // Dispatch failure action with error message
       dispatch({

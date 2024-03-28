@@ -1,5 +1,5 @@
 from django.urls import path
-from user.views import SendPasswordResetEmailView, UserPasswordResetView, UserRegistrationView, UserLoginView, UserProfileView, UserChangePasswordView, resend_otp, verify_otp, UserLists
+from user.views import *
 
 urlpatterns = [
     path('register/', UserRegistrationView.as_view(), name='register'),
@@ -11,4 +11,5 @@ urlpatterns = [
     path('profile/list/', UserLists.as_view(), name='user-profile-list'),  # Add this line
     path('verify-otp/', verify_otp, name='verify_otp'),
     path('resend-otp/', resend_otp, name='resend_otp'),
+    path('pay/<str:pk>/', update_user_to_paid, name='update_user_to_paid'),
 ]

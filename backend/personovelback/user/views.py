@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from user.utils import Util
 from user.serializers import SendPasswordResetEmailSerializer, UserChangePasswordSerializer, UserPasswordResetSerializer, UserRegistrationSerializers, UserLoginSerializer, UserProfileSerializer
 from django.contrib.auth import authenticate
@@ -12,6 +12,7 @@ from .models import User, UserProfile, OTP
 from .serializers import UserProfileSerializer
 import pyotp
 from rest_framework.permissions import IsAdminUser
+from datetime import datetime, timedelta
 # Generate token Manually
 def get_tokens_for_user(user):
     # Generate refresh token
@@ -23,7 +24,9 @@ def get_tokens_for_user(user):
         'access': str(refresh.access_token),
         'name': user.name,  # Assuming 'name' is a field in your user model
         'email': user.email,  # Assuming 'email' is a field in your user model
-        'id' : user.id
+        'id' : user.id,
+        'is_paid': user.is_paid,
+        'paid_at': user.paid_at,
     }
 
     return access_token_payload
@@ -134,6 +137,7 @@ def resend_otp(request):
 
 class UserLoginView(APIView):
     renderer_classes = [UserRenderer]
+
     def post(self, request, format=None):
         serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -142,9 +146,19 @@ class UserLoginView(APIView):
             user = authenticate(email=email, password=password)
             if user is not None:
                 token = get_tokens_for_user(user)
-                return Response({'token': token,'msg':'Login Succcess'}, status=status.HTTP_200_OK)
+                
+                # Check if the user's subscription has expired
+                subscription_expired = user.is_paid_expired()
+                
+                if subscription_expired:
+                    # Perform any action if the subscription has expired
+                    # For example, return a response indicating the subscription has expired
+                    return Response({'token': token, 'msg': 'Subscription expired'}, status=status.HTTP_200_OK)
+                else:
+                    # Subscription is active, proceed with login
+                    return Response({'token': token, 'msg': 'Login success'}, status=status.HTTP_200_OK)
             else: 
-                return Response({'errors':{'non_field_errors':['Email or Password is not valid']}}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'errors': {'non_field_errors': ['Email or Password is not valid']}}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -198,4 +212,16 @@ class UserProfileView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_user_to_paid(request, pk):
+    try:
+        user = User.objects.get(pk=pk)
+        user.is_paid = True
+        user.paid_at = datetime.now()  # Set the paid_at field to current date
+        user.save()
+        return Response({'detail': 'User payment status updated successfully'})
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=404)
     

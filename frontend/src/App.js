@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import Header from "./Components/Header";
@@ -19,8 +19,23 @@ import ChapterDetailScreen from "./Screens/ChapterDetailScreen";
 import BookScreen from "./Screens/BookScreen";
 import SearchPage from "./Screens/SearchScreen";
 import OTPScreen from "./Screens/OtpScreen";
+import PaymentScreen from "./Screens/PaymentScreen";
+import { logout } from "./actions/userActions";
 
 function App() {
+  useEffect(() => {
+    // Before unloading the window, perform logout if user is logged in
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
+  const handleBeforeUnload = () => {
+    localStorage.removeItem("userInfo")
+    console.log("Performing logout action...");
+  };
   return (
     <Router>
       <Header />
@@ -45,6 +60,7 @@ function App() {
               <Route path="/books/:_id" element={<BookScreen />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/otp" element={<OTPScreen />} />
+              <Route path="/payment" element={<PaymentScreen />} />
             </Routes>
           </Container>
         </main>

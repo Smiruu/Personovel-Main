@@ -9,6 +9,7 @@ const initialState = {
     meanRating: null,
     numReviews: null,
   },
+  userRating:null,
 };
 
 // Reducer for fetching ratings
@@ -157,7 +158,7 @@ export const getRatingIdReducer = (state = initialState, action) => {
         return {
           ...state,
           loading: false,
-          rating: action.payload.rating, // Extract rating from payload
+          userRating: action.payload.rating, // Extract rating from payload
         };
       case types.FETCH_RATING_FAILURE:
         return {

@@ -19,11 +19,7 @@ function BookDetail() {
   const [book, setBook] = useState({});
   const [meanRating, setMeanRating] = useState(null);
   const [showModal, setShowModal] = useState(false);
-
-  useEffect(() => {
-    dispatch(listBookDetails(_id));
-    dispatch(fetchMeanRatings(_id));
-  }, [dispatch, _id]);
+  const [ratingId, setRatingId] = useState(localStorage.getItem("ratingId"));
 
   const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
@@ -31,7 +27,7 @@ function BookDetail() {
   const userId = userInfo ? userInfo.token.id : null;
 
   const bookDetails = useSelector((state) => state.bookDetails);
-  const { loading, error } = bookDetails || {};
+  const { loading, error, book: bookData } = bookDetails || {};
 
   const fetchedMeanRating = useSelector(
     (state) => state.fetchMeanRatings.ratings.meanRating
@@ -40,11 +36,15 @@ function BookDetail() {
     (state) => state.fetchMeanRatings.ratings.numReviews
   );
 
+  const userRating = useSelector((state) => state.fetchRating.userRating);
+
+  console.log("UserRating", userRating);
+
   useEffect(() => {
     if (!loading && !error) {
-      setBook(bookDetails.book);
+      setBook(bookData);
     }
-  }, [bookDetails, loading, error]);
+  }, [bookData, loading, error]);
 
   useEffect(() => {
     if (fetchedMeanRating !== null) {
@@ -53,24 +53,38 @@ function BookDetail() {
   }, [fetchedMeanRating]);
 
   useEffect(() => {
-    if (userId) {
-      dispatch(getRatingId(userId, _id)); // Retrieve rating ID if user is logged in
-    }
-  }, [dispatch, userId, _id]);
-
-  const ratingId = useSelector((state) => state.getRatingId.ratingId);
+    dispatch(listBookDetails(_id));
+    dispatch(fetchMeanRatings(_id));
+    dispatch(getRatingId(userId, _id));
+  }, [dispatch, _id, userId]);
 
   useEffect(() => {
+    const storedRatingId = localStorage.getItem("ratingId");
+    if (storedRatingId) {
+      setRatingId(storedRatingId);
+      dispatch(retrieveRating(storedRatingId));
+    }
+  }, [dispatch, userId]);
+
+  useEffect(() => {
+    // Update userRating when ratingId changes
     if (ratingId) {
-      dispatch(retrieveRating(ratingId)); // Retrieve user's rating if logged in
+      dispatch(retrieveRating(ratingId));
     }
   }, [dispatch, ratingId]);
 
-  // Log the rating when it changes
-  const userRating = useSelector((state) => state.fetchRating.rating);
   useEffect(() => {
-    console.log("User Rating:", userRating);
-  }, [userRating]);
+    if (!ratingId) {
+      dispatch({ type: "SET_USER_RATING", payload: 0 }); // Dispatch action to set userRating to 0
+    }
+  }, [dispatch, ratingId]);
+
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem("ratingId");
+      localStorage.removeItem("userRating");
+    };
+  }, []);
 
   const handleReadNow = () => {
     navigate(`/chapters/${_id}`);
@@ -83,7 +97,6 @@ function BookDetail() {
   const handleCloseModal = () => {
     setShowModal(false);
   };
-
   return (
     <Container fluid>
       <Row className="mt-5 mb-5 h-full w-full">
@@ -284,7 +297,8 @@ function BookDetail() {
                 backgroundColor: "#6F1D1B",
                 marginTop: "20px", // Add a margin-top for spacing
               }}
-              onClick={() => setShowModal(true)} // Open the modal
+              onClick={() => setShowModal(true)}
+              disabled={!userInfo.token.is_paid}// Open the modal
             >
               RATE
             </Button>
