@@ -121,11 +121,13 @@ class OTP(models.Model):
      totp = pyotp.TOTP(self.otp_secret)
      return totp.verify(entered_otp)
     
+# models.py
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField(default='default.jpg', upload_to='userprofile_pics')
+    cover_photo = models.ImageField(default='default_cover.jpg', upload_to='cover_photos')
     name = models.CharField(max_length=200)
-    bio =  models.TextField(blank=True, null=True)
+    bio = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.user.name

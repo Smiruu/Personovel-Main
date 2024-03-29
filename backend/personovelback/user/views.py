@@ -226,6 +226,7 @@ def userProfile(request):
     return Response(serializer.data)
 
 
+# views.py
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def updateProfile(request):

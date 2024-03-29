@@ -37,18 +37,26 @@ class UserLoginSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ['id', 'user', 'image', 'name', 'bio']
+        fields = ['id', 'user', 'image', 'cover_photo', 'name', 'bio']
         read_only_fields = ['user']
-
-    def create(self, validated_data):
-        return Profile.objects.create(user=self.context['request'].user, **validated_data)
+        extra_kwargs = {
+            'name': {'required': False}  # Setting name field as not required
+        }
 
     def update(self, instance, validated_data):
         instance.image = validated_data.get('image', instance.image)
+        instance.cover_photo = validated_data.get('cover_photo', instance.cover_photo)
         instance.name = validated_data.get('name', instance.name)
-        instance.bio = validated_data.get('bio', instance.bio)
+        
+        # Only update bio if it is provided in the request data
+        if 'bio' in validated_data:
+            instance.bio = validated_data['bio']
+        
         instance.save()
         return instance
+
+
+
 
 class UserChangePasswordSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=255, style={'input_type' : 'password'}, write_only=True)

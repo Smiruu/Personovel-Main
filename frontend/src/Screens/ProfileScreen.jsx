@@ -9,14 +9,17 @@ const ProfileScreen = () => {
   const { loading, error, user } = userDetails;
 
   // State to hold the updated user name and bio
-  const [updatedName, setUpdatedName] = useState('');
-  const [updatedBio, setUpdatedBio] = useState('');
+  const [updatedName, setUpdatedName] = useState(user.name ||'');
+  const [updatedBio, setUpdatedBio] = useState(user.bio || '');
 
-  // State to hold the selected profile picture
+  // State to hold the selected profile picture and cover photo
   const [profilePicture, setProfilePicture] = useState(null);
+  const [coverPhoto, setCoverPhoto] = useState(null);
+  
 
   const [fileName, setFileName] = useState('');
   const [isEditing, setIsEditing] = useState(false); // State to control the edit popup/modal
+
 
   useEffect(() => {
     // Fetch user details when component mounts
@@ -35,9 +38,17 @@ const ProfileScreen = () => {
     if (profilePicture) {
       formData.append('image', profilePicture);
     }
+
+    // Append the cover photo if it exists
+    if (coverPhoto) {
+      formData.append('cover_photo', coverPhoto);
+    }
   
     // Dispatch action to update user profile
     dispatch(updateUserProfile(formData));
+
+    // Close the edit profile popup/modal
+    handleCloseEditProfile();
   };
 
   const handleNameChange = (e) => {
@@ -50,14 +61,25 @@ const ProfileScreen = () => {
     setUpdatedBio(e.target.value);
   };
 
-  const handleFileChange = (e) => {
+  const handleProfilePictureChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
-        setProfilePicture(selectedFile);
-        setFileName(selectedFile.name);
+      setProfilePicture(selectedFile);
+      setFileName(selectedFile.name);
     } else {
-        setProfilePicture(null);
-        setFileName('');
+      setProfilePicture(null);
+      setFileName('');
+    }
+  };
+
+  const handleCoverPhotoChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setCoverPhoto(selectedFile);
+      setFileName(selectedFile.name);
+    } else {
+      setCoverPhoto(null);
+      setFileName('');
     }
   };
 
@@ -69,6 +91,10 @@ const ProfileScreen = () => {
   const handleCloseEditProfile = () => {
     // Close the edit profile popup/modal
     setIsEditing(false);
+    // Reset the selected files
+    setProfilePicture(null);
+    setCoverPhoto(null);
+    setFileName('');
   };
 
   return (
@@ -80,10 +106,22 @@ const ProfileScreen = () => {
         <div>Error: {error}</div>
       ) : (
         <div>
-          {/* Add a unique query parameter to force image reload */}
-          <img src={`${user.image}?${new Date().getTime()}`} alt="User Profile Image" />
+          {/* Display cover photo if available */}
+          {user.cover_photo && (
+            <div style={coverPhotoContainerStyle}>
+              <img src={user.cover_photo} alt="Cover Photo" style={coverPhotoStyle} />
+            </div>
+          )}
+          
+          {/* Profile Photo */}
+          <div style={profilePhotoContainerStyle}>
+            <img src={`${user.image}?${new Date().getTime()}`} alt="User Profile" style={profilePhotoStyle} />
+          </div>
+      
+          {/* User details */}
           <p>Name: {user.name}</p>
           <p>Bio: {user.bio}</p>
+      
           {/* Button to trigger the edit profile popup/modal */}
           <button onClick={handleEditProfile}>Edit Profile</button>
         </div>
@@ -100,15 +138,20 @@ const ProfileScreen = () => {
               placeholder="Enter new name"
               value={updatedName}
               onChange={handleNameChange}
+              style={inputStyle}
             />
             <input
               type="text"
               placeholder="Enter new bio"
               value={updatedBio}
               onChange={handleBioChange}
+              style={inputStyle}
             />
-            <input type="file" onChange={handleFileChange} />
-            <button onClick={handleUpdateProfile}>Update Profile</button>
+            <label htmlFor="profilePicture" style={labelStyle}>Profile Photo:</label>
+            <input type="file" id="profilePicture" onChange={handleProfilePictureChange} style={inputStyle} />
+            <label htmlFor="coverPhoto" style={labelStyle}>Cover Photo:</label>
+            <input type="file" id="coverPhoto" onChange={handleCoverPhotoChange} style={inputStyle} />
+            <button onClick={handleUpdateProfile} style={buttonStyle}>Update Profile</button>
           </div>
         </div>
       )}
@@ -130,16 +173,65 @@ const modalStyle = {
 };
 
 const modalContentStyle = {
-  backgroundColor: '#fefefe',
+  backgroundColor: '#fff',
   padding: '20px',
   borderRadius: '8px',
+  boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
 };
 
 const closeButtonStyle = {
   color: '#aaa',
-  float: 'right',
-  fontSize: '28px',
+  position: 'absolute',
+  top: '10px',
+  right: '10px',
+  fontSize: '24px',
+  cursor: 'pointer',
+};
+
+const profilePhotoContainerStyle = {
+  borderRadius: '50%',
+  overflow: 'hidden',
+  width: '150px', // Adjust size as needed
+  height: '150px', // Adjust size as needed
+  margin: '0 auto 20px', // Center horizontally and add some space at the bottom
+};
+
+const profilePhotoStyle = {
+  width: '100%',
+  height: 'auto',
+};
+
+const coverPhotoContainerStyle = {
+  width: '100%',
+  maxHeight: '300px', // Adjust height as needed
+  overflow: 'hidden',
+  marginBottom: '20px',
+};
+
+const coverPhotoStyle = {
+  width: '100%',
+  height: 'auto',
+};
+
+const inputStyle = {
+  width: '100%',
+  marginBottom: '10px',
+  padding: '8px',
+  borderRadius: '4px',
+  border: '1px solid #ccc',
+};
+
+const labelStyle = {
   fontWeight: 'bold',
+  marginBottom: '5px',
+};
+
+const buttonStyle = {
+  backgroundColor: '#1da1f2',
+  color: '#fff',
+  padding: '10px 20px',
+  borderRadius: '4px',
+  border: 'none',
   cursor: 'pointer',
 };
 
