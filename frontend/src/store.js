@@ -26,6 +26,7 @@ import {
   updateRatingReducer,
   fetchMeanRatingsReducer,
 } from "./reducers/ratingReducers";
+import { userDetailsReducer, userProfileUpdateReducer } from "./reducers/profileReducers";
 
 const reducer = combineReducers({
   bookList: bookListReducer,
@@ -47,6 +48,8 @@ const reducer = combineReducers({
   getRatingId: getRatingIdReducer,
   fetchMeanRatings: fetchMeanRatingsReducer,
   userUpdatePaid: userUpdatePaidReducer,
+  userDetails: userDetailsReducer,
+  userProfileUpdate: userProfileUpdateReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")

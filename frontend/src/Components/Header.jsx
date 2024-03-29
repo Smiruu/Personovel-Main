@@ -198,7 +198,7 @@ function Header() {
             <i className="fa-solid fa-magnifying-glass" />
           </Button>
 
-          <Link to="/Profile/:UserId" className="link-no-underline">
+          <Link to="/Profile" className="link-no-underline">
             <Nav.Link
               style={{ color: "#002960", marginLeft: "10px" }}
               href="#action2"

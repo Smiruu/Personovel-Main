@@ -12,7 +12,6 @@ import LandingScreen from "./Screens/LandingScreen";
 import Start from "./Components/Start";
 import SampleScreen from "./Screens/SampleScreen";
 import BrowseScreen from "./Screens/BrowseScreen";
-import Profile from "./Screens/Profile";
 import Chapter from "./Screens/ChapterDropdown";
 import Login from "./Screens/Login";
 import ChapterDetailScreen from "./Screens/ChapterDetailScreen";
@@ -21,21 +20,11 @@ import SearchPage from "./Screens/SearchScreen";
 import OTPScreen from "./Screens/OtpScreen";
 import PaymentScreen from "./Screens/PaymentScreen";
 import { logout } from "./actions/userActions";
+import ProfileScreen from "./Screens/ProfileScreen";
 
 function App() {
-  useEffect(() => {
-    // Before unloading the window, perform logout if user is logged in
-    window.addEventListener("beforeunload", handleBeforeUnload);
 
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, []);
 
-  const handleBeforeUnload = () => {
-    localStorage.removeItem("userInfo")
-    console.log("Performing logout action...");
-  };
   return (
     <Router>
       <Header />
@@ -53,7 +42,6 @@ function App() {
               <Route path="/contact" element={<ContactScreen />} />
               <Route path="/landing" element={<LandingScreen />} />
               <Route path="/sample" element={<SampleScreen />} />
-              <Route path="/Profile/:UserId" element={<Profile />} />
               <Route path="/browse" element={<BrowseScreen />} />
               <Route path="/login" element={<Login />} />
               <Route path="/chapters/:id" element={<ChapterDetailScreen />} />
@@ -61,6 +49,7 @@ function App() {
               <Route path="/search" element={<SearchPage />} />
               <Route path="/otp" element={<OTPScreen />} />
               <Route path="/payment" element={<PaymentScreen />} />
+              <Route path="/profile" element={<ProfileScreen />} />
             </Routes>
           </Container>
         </main>
