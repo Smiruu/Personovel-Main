@@ -1,11 +1,11 @@
 from rest_framework import serializers
 from user.utils import Util
-from user.models import User
+from user.models import *
 from xml.dom import ValidationErr
 from django.utils.encoding import smart_str, force_bytes, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from .models import UserProfile
+
 
 class UserRegistrationSerializers(serializers.ModelSerializer):
     # We are writing this because we need to confirm password field in our Registration Request
@@ -36,8 +36,19 @@ class UserLoginSerializer(serializers.ModelSerializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ['is_paid', 'name', 'created_at']
+        model = Profile
+        fields = ['id', 'user', 'image', 'name', 'bio']
+        read_only_fields = ['user']
+
+    def create(self, validated_data):
+        return Profile.objects.create(user=self.context['request'].user, **validated_data)
+
+    def update(self, instance, validated_data):
+        instance.image = validated_data.get('image', instance.image)
+        instance.name = validated_data.get('name', instance.name)
+        instance.bio = validated_data.get('bio', instance.bio)
+        instance.save()
+        return instance
 
 class UserChangePasswordSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=255, style={'input_type' : 'password'}, write_only=True)
@@ -105,19 +116,5 @@ class UserPasswordResetSerializer(serializers.Serializer):
 
 
 
-# In your Django views.py
 
-from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
-from .models import UserProfile
-from .serializers import UserProfileSerializer
-
-@login_required
-def update_user_profile(request):
-    user_profile = UserProfile.objects.get(user=request.user)
-    serializer = UserProfileSerializer(user_profile, data=request.data, partial=True)
-    if serializer.is_valid():
-        serializer.save()
-        return JsonResponse(serializer.data)
-    return JsonResponse(serializer.errors, status=400)
 
