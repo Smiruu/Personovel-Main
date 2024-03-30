@@ -14,7 +14,7 @@ function BrowseScreen() {
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [sortedBooks, setSortedBooks] = useState([]);
-  const [selectedGenre, setSelectedGenre] = useState("All"); // State to store the selected genre
+  const [setSelectedGenre] = useState("All"); // State to store the selected genre
 
   const toggleFilter = () => {
     setIsFilterOpen(!isFilterOpen);

@@ -51,9 +51,6 @@ function Header() {
   };
 
   const handleSearch = (e) => {
-    e.preventDefault(); // Prevent the default form submission behavior
-    console.log("Search Query:", searchQuery); // Debugging: Log the search query
-    dispatch(searchBooks({ query: searchQuery }));
     navigate("/search");
   };
 
@@ -181,20 +178,9 @@ function Header() {
           </Nav>
         </Navbar.Collapse>
 
-        <Form onSubmit={handleSearch} className="d-flex ms-auto">
-          {isSearchExpanded ? (
-            <Form.Control
-              type="search"
-              placeholder="Search"
-              className="me-2"
-              aria-label="Search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          ) : null}
           <Button
             class="btn btn-lg btn-info"
-            onClick={handleSearchToggle}
+            onClick={handleSearch}
             style={{
               backgroundColor: "#002960",
               border: "none",
@@ -217,7 +203,6 @@ function Header() {
               />
             </Nav.Link>
           </Link>
-        </Form>
       </Container>
     </Navbar>
   );

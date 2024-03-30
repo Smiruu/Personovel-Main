@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Genre, Author, Book, Feedback, Interaction, Rating
+from django.db.models import Avg
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,16 +15,23 @@ class AuthorSerializer(serializers.ModelSerializer):
 
 class BookSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
-    slug_field='name',
-    queryset=Author.objects.all()
+        slug_field='name',
+        queryset=Author.objects.all()
     )
     genre = serializers.SlugRelatedField(
-    slug_field='name',
-    queryset=Genre.objects.all()
+        slug_field='name',
+        queryset=Genre.objects.all()
     )
+    mean_rating = serializers.SerializerMethodField()
+
     class Meta:
         model = Book
         fields = '__all__'
+
+    def get_mean_rating(self, obj):
+        # Calculate the mean rating for the book
+        mean_rating = obj.rating.aggregate(Avg('rating'))['rating__avg']
+        return mean_rating if mean_rating is not None else 0
 
 class RatingSerializer(serializers.ModelSerializer):
     class Meta:

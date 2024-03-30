@@ -5,11 +5,11 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 function SampleScreen() {
-  const [books, setBooks] = useState([]); // Change state name to 'books'
+  const [books, setBooks] = useState([]);
 
   useEffect(() => {
     async function fetchBooks() {
-      const { data } = await axios.get("http://127.0.0.1:8000/api/books/"); // Fetch books instead of products
+      const { data } = await axios.get("http://127.0.0.1:8000/api/books/");
       setBooks(data);
     }
     fetchBooks();
@@ -31,13 +31,11 @@ function SampleScreen() {
               change the course of your destiny?
             </h1>
 
-            <div
-              style={{ height: "450px", overflow: "hidden", margin: "10px" }}
-            >
+            <div style={{ margin: "10px" }}>
               <Row className="g-2">
-                {books.map((book) => ( // Map through 'books' instead of 'products'
+                {books.map((book) => (
                   <Col key={book._id}>
-                    <Book book={book} /> {/* Render Book component */}
+                    <Book book={book} />
                   </Col>
                 ))}
               </Row>
@@ -79,13 +77,11 @@ function SampleScreen() {
               and immerses you in a world where every question leads to a
               revelation?
             </h1>
-            <div
-              style={{ height: "450px", overflow: "hidden", margin: "10px" }}
-            >
+            <div style={{ margin: "10px" }}>
               <Row className="g-2">
-                {books.map((book) => ( // Map through 'books' instead of 'products'
+                {books.map((book) => (
                   <Col key={book._id}>
-                    <Book book={book} /> {/* Render Book component */}
+                    <Book book={book} />
                   </Col>
                 ))}
               </Row>

@@ -1,8 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { updateUserProfile, getUserDetails } from '../actions/profileActions';
-import Loader from '../Components/Loader'; // If you have a loader component
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { updateUserProfile, getUserDetails } from "../actions/profileActions";
+import Loader from "../Components/Loader";
+import { useNavigate } from "react-router-dom";
+import { Modal, Form, Button, Image } from "react-bootstrap";
+import {
+  MDBContainer,
+  MDBRow,
+  MDBCol,
+  MDBCard,
+  MDBCardText,
+  MDBCardImage,
+  MDBTypography,
+  MDBInput,
+} from "mdb-react-ui-kit";
 
 const ProfileScreen = () => {
   const dispatch = useDispatch();
@@ -14,53 +25,40 @@ const ProfileScreen = () => {
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
   const userInfo = userLoginInfo || userRegisterInfo;
 
-  // State to hold the updated user name and bio
-  const [updatedName, setUpdatedName] = useState(user.name ||'');
-  const [updatedBio, setUpdatedBio] = useState(user.bio || '');
+  const [updatedName, setUpdatedName] = useState(user.name || "");
+  const [updatedBio, setUpdatedBio] = useState(user.bio || "");
 
-  // State to hold the selected profile picture and cover photo
   const [profilePicture, setProfilePicture] = useState(null);
   const [coverPhoto, setCoverPhoto] = useState(null);
-  const [fileName, setFileName] = useState('');
-  const [isEditing, setIsEditing] = useState(false); // State to control the edit popup/modal
+  const [fileName, setFileName] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    // Fetch user details when component mounts
     dispatch(getUserDetails());
   }, [dispatch]);
 
   const handleUpdateProfile = () => {
-    // Create a FormData object
     const formData = new FormData();
-  
-    // Append the updated name and bio to the FormData
-    formData.append('name', updatedName);
-    formData.append('bio', updatedBio);
-  
-    // Append the profile picture if it exists
+
+    formData.append("name", updatedName);
+    formData.append("bio", updatedBio);
+
     if (profilePicture) {
-      formData.append('image', profilePicture);
+      formData.append("image", profilePicture);
     }
-
-    // Append the cover photo if it exists
     if (coverPhoto) {
-      formData.append('cover_photo', coverPhoto);
+      formData.append("cover_photo", coverPhoto);
     }
-  
-    // Dispatch action to update user profile
-    dispatch(updateUserProfile(formData));
 
-    // Close the edit profile popup/modal
+    dispatch(updateUserProfile(formData));
     handleCloseEditProfile();
   };
 
   const handleNameChange = (e) => {
-    // Update the updatedName state based on user input
     setUpdatedName(e.target.value);
   };
 
   const handleBioChange = (e) => {
-    // Update the updatedBio state based on user input
     setUpdatedBio(e.target.value);
   };
 
@@ -71,7 +69,7 @@ const ProfileScreen = () => {
       setFileName(selectedFile.name);
     } else {
       setProfilePicture(null);
-      setFileName('');
+      setFileName("");
     }
   };
 
@@ -82,170 +80,334 @@ const ProfileScreen = () => {
       setFileName(selectedFile.name);
     } else {
       setCoverPhoto(null);
-      setFileName('');
+      setFileName("");
     }
   };
 
   const handleEditProfile = () => {
-    // Open the edit profile popup/modal
     setIsEditing(true);
   };
 
   const handleCloseEditProfile = () => {
-    // Close the edit profile popup/modal
     setIsEditing(false);
-    // Reset the selected files
     setProfilePicture(null);
     setCoverPhoto(null);
-    setFileName('');
+    setFileName("");
   };
 
   const handleAdminPage = () => {
-    // Navigate to the admin page
-    navigate('/admin');
+    navigate("/admin");
+  };
+
+  const backgroundImage = user.cover_photo || "";
+  const profileIcon = `${user.image}?${new Date().getTime()}`;
+
+  // Conversation and subscription logic
+
+  const [activeTab, setActiveTab] = useState("ABOUT");
+
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
   };
 
   return (
     <div>
-      <h2>User Profile</h2>
       {loading ? (
-        <Loader /> // You can replace this with your loader component
+        <Loader />
       ) : error ? (
         <div>Error: {error}</div>
       ) : (
         <div>
-          {/* Display cover photo if available */}
-          {user.cover_photo && (
-            <div style={coverPhotoContainerStyle}>
-              <img src={user.cover_photo} alt="Cover Photo" style={coverPhotoStyle} />
+          <MDBContainer className="upc">
+            <MDBRow className="justify-content-center align-items-center">
+              <MDBCol>
+                <MDBCard>
+                  <div
+                    className="background"
+                    style={{
+                      backgroundImage: `url(${backgroundImage})`,
+                      backgroundRepeat: "no-repeat",
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      width: "100%",
+                      height: "300px",
+                    }}
+                  >
+                    <Image
+                      src={profileIcon}
+                      alt="User Profile"
+                      className="profile-icon mt-5 mb-2 p-3"
+                      roundedCircle
+                      style={{
+                        width: "250px",
+                        height: "250px",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </div>
+                </MDBCard>
+              </MDBCol>
+            </MDBRow>
+
+            <div className="username d-flex align-items-center ms-5 mt-4">
+              <MDBTypography tag="h5" className="me-2">
+                <h1>{user.name}</h1>
+              </MDBTypography>
+
+              <Button
+                className="edit-profile ms-auto"
+                onClick={handleEditProfile}
+                style={{
+                  backgroundColor: "transparent",
+                  color: "#002960",
+                  textTransform: "uppercase",
+                  borderColor: "#002960",
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.color = "white";
+                  e.target.style.backgroundColor = "#002960";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.color = "#002960";
+                  e.target.style.backgroundColor = "transparent";
+                }}
+              >
+                Edit Profile
+              </Button>
+
+              {userInfo.token && userInfo.token.is_admin && (
+                <Button
+                  onClick={handleAdminPage}
+                  style={{
+                    backgroundColor: "transparent",
+                    color: "#BC1823",
+                    marginLeft: "10px",
+                    textTransform: "uppercase",
+                    borderColor: "#BC1823",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.color = "white";
+                    e.target.style.backgroundColor = "#BC1823";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.color = "#BC1823";
+                    e.target.style.backgroundColor = "transparent";
+                  }}
+                >
+                  Admin Page
+                </Button>
+              )}
             </div>
+          </MDBContainer>
+
+          {isEditing && (
+            <Modal show={isEditing} onHide={handleCloseEditProfile}>
+              <Modal.Header closeButton>
+                <Modal.Title>Edit Profile</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Form>
+                  <Form.Group controlId="formName">
+                    <Form.Label>Name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter new name"
+                      value={updatedName}
+                      onChange={handleNameChange}
+                    />
+                  </Form.Group>
+                  <Form.Group controlId="formBio">
+                    <Form.Label>Bio</Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows={3}
+                      placeholder="Enter new bio"
+                      value={updatedBio}
+                      onChange={handleBioChange}
+                    />
+                  </Form.Group>
+                  <Form.Group controlId="formProfilePicture">
+                    <Form.Label>Profile Picture</Form.Label>
+                    <Form.Control
+                      type="file"
+                      onChange={handleProfilePictureChange}
+                    />
+                    {profilePicture && (
+                      <img
+                        src={URL.createObjectURL(profilePicture)}
+                        alt="Profile"
+                        style={{
+                          marginTop: "10px",
+                          maxWidth: "100%",
+                          width: "150px",
+                          height: "150px",
+                          objectFit: "cover",
+                        }}
+                      />
+                    )}
+                  </Form.Group>
+                  <Form.Group controlId="formCoverPhoto">
+                    <Form.Label>Cover Photo</Form.Label>
+                    <Form.Control
+                      type="file"
+                      onChange={handleCoverPhotoChange}
+                    />
+                    {coverPhoto && (
+                      <img
+                        src={URL.createObjectURL(coverPhoto)}
+                        alt="Cover"
+                        style={{ marginTop: "10px", maxWidth: "100%" }}
+                      />
+                    )}
+                  </Form.Group>
+                </Form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={handleCloseEditProfile}>
+                  Close
+                </Button>
+                <Button variant="primary" onClick={handleUpdateProfile}>
+                  Save Changes
+                </Button>
+              </Modal.Footer>
+            </Modal>
           )}
-          
-          {/* Profile Photo */}
-          <div style={profilePhotoContainerStyle}>
-            <img src={`${user.image}?${new Date().getTime()}`} alt="User Profile" style={profilePhotoStyle} />
+
+          <div className="tabs-container mt-3">
+            <button
+              style={{
+                padding: "10px 15px",
+                border: "1px solid #002960",
+                backgroundColor: activeTab === "ABOUT" ? "#002960" : "white",
+                color: activeTab === "ABOUT" ? "white" : "#002960",
+                cursor: "pointer",
+                transition: "background-color 0.3s ease",
+              }}
+              onClick={() => handleTabClick("ABOUT")}
+            >
+              ABOUT
+            </button>
+
+            {userInfo.token && userInfo.token.is_admin ? (
+              <button
+                style={{
+                  padding: "10px 15px",
+                  border: "1px solid #002960",
+                  backgroundColor:
+                    activeTab === "STATISTICS" ? "#002960" : "white",
+                  color: activeTab === "STATISTICS" ? "white" : "#002960",
+                  cursor: "pointer",
+                  transition: "background-color 0.3s ease",
+                }}
+                onClick={() => handleTabClick("STATISTICS")}
+              >
+                STATISTICS
+              </button>
+            ) : (
+              <>
+                <button
+                  style={{
+                    padding: "10px 15px",
+                    border: "1px solid #002960",
+                    backgroundColor:
+                      activeTab === "CONVERSATIONS" ? "#002960" : "white",
+                    color: activeTab === "CONVERSATIONS" ? "white" : "#002960",
+                    cursor: "pointer",
+                    transition: "background-color 0.3s ease",
+                  }}
+                  onClick={() => handleTabClick("CONVERSATIONS")}
+                >
+                  CONVERSATIONS
+                </button>
+                <button
+                  style={{
+                    padding: "10px 15px",
+                    border: "1px solid #002960",
+                    backgroundColor:
+                      activeTab === "SUBSCRIPTIONS" ? "#002960" : "white",
+                    color: activeTab === "SUBSCRIPTIONS" ? "white" : "#002960",
+                    cursor: "pointer",
+                    transition: "background-color 0.3s ease",
+                  }}
+                  onClick={() => handleTabClick("SUBSCRIPTIONS")}
+                >
+                  SUBSCRIPTIONS
+                </button>
+              </>
+            )}
           </div>
-      
-          {/* User details */}
-          <p>Name: {user.name}</p>
-          <p>Bio: {user.bio}</p>
-      
-          {/* Button to trigger the edit profile popup/modal */}
-          <button onClick={handleEditProfile}>Edit Profile</button>
 
-          {/* Button to navigate to the admin page if user is an admin */}
-          {userInfo.token && userInfo.token.is_admin && (
-            <button onClick={handleAdminPage}>Admin Page</button>
-          )}
-        </div>
-      )}
+          <div className="tab-content mt-3">
+            {activeTab === "ABOUT" && (
+              <div className="about-container">
+                <MDBRow>
+                  <MDBCol size="6">
+                    <div className="bio-section bg-white p-2">
+                      <p>
+                        <strong>BIO:</strong> {user.bio}
+                      </p>
+                      <p>
+                        <strong>DATE JOINED:</strong> WHEN THE USER JOINED
+                      </p>
+                      <p>
+                        <strong>SUBSCRIPTION DURATION:</strong> SUB DURATION
+                      </p>
+                    </div>
+                  </MDBCol>
+                  <MDBCol size="6">
+                    <div className="favorite-books-section bg-white p-2">
+                      <h4>Favorite Books</h4>
+                      <p>book1</p>
+                      <p>book1</p>
+                      <p>book1</p>
+                    </div>
+                  </MDBCol>
+                </MDBRow>
+              </div>
+            )}
 
-      {/* Edit Profile Popup/Modal */}
-      {isEditing && (
-        <div style={modalStyle}>
-          <div style={modalContentStyle}>
-            <span style={closeButtonStyle} onClick={handleCloseEditProfile}>&times;</span>
-            {/* Edit profile form */}
-            <input
-              type="text"
-              placeholder="Enter new name"
-              value={updatedName}
-              onChange={handleNameChange}
-              style={inputStyle}
-            />
-            <input
-              type="text"
-              placeholder="Enter new bio"
-              value={updatedBio}
-              onChange={handleBioChange}
-              style={inputStyle}
-            />
-            <label htmlFor="profilePicture" style={labelStyle}>Profile Photo:</label>
-            <input type="file" id="profilePicture" onChange={handleProfilePictureChange} style={inputStyle} />
-            <label htmlFor="coverPhoto" style={labelStyle}>Cover Photo:</label>
-            <input type="file" id="coverPhoto" onChange={handleCoverPhotoChange} style={inputStyle} />
-            <button onClick={handleUpdateProfile} style={buttonStyle}>Update Profile</button>
+            {userInfo.token &&
+              userInfo.token.is_admin &&
+              activeTab === "STATISTICS" && (
+                <div className="statistics-container">
+                  <h3>Subscription Statistics</h3>
+                  <div className="subscription-chart">
+                    {/* Placeholder chart for subscription statistics */}
+                    {/* You can use any chart library like Chart.js, react-chartjs-2, etc. */}
+                    {/* Example: */}
+                    <img
+                      src="subscription_chart_placeholder.png"
+                      alt="Subscription Chart"
+                    />
+                  </div>
+
+                  <h3>Book Statistics</h3>
+                  <div className="book-chart">
+                    {/* Placeholder chart for book statistics */}
+                    {/* Example: */}
+                    <img src="book_chart_placeholder.png" alt="Book Chart" />
+                  </div>
+                </div>
+              )}
+
+            {activeTab === "CONVERSATIONS" && (
+              <div className="conversation-container">
+                <h3>Conversation Section</h3>
+                DITO UNG MGA NIREPLY/CINOMMENT NG USER
+              </div>
+            )}
+
+            {activeTab === "SUBSCRIPTIONS" && (
+              <div className="subscription-container">
+                <h3>Subscription Section</h3>
+                ITO UNG PWEDE MAG SUBSCRIBE ULIT UNG USER
+              </div>
+            )}
           </div>
         </div>
       )}
     </div>
   );
-};
-
-const modalStyle = {
-  display: 'flex',
-  position: 'fixed',
-  zIndex: 1,
-  left: 0,
-  top: 0,
-  width: '100%',
-  height: '100%',
-  backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-
-const modalContentStyle = {
-  backgroundColor: '#fff',
-  padding: '20px',
-  borderRadius: '8px',
-  boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
-};
-
-const closeButtonStyle = {
-  color: '#aaa',
-  position: 'absolute',
-  top: '10px',
-  right: '10px',
-  fontSize: '24px',
-  cursor: 'pointer',
-};
-
-const profilePhotoContainerStyle = {
-  borderRadius: '50%',
-  overflow: 'hidden',
-  width: '150px', // Adjust size as needed
-  height: '150px', // Adjust size as needed
-  margin: '0 auto 20px', // Center horizontally and add some space at the bottom
-};
-
-const profilePhotoStyle = {
-  width: '100%',
-  height: 'auto',
-};
-
-const coverPhotoContainerStyle = {
-  width: '100%',
-  maxHeight: '300px', // Adjust height as needed
-  overflow: 'hidden',
-  marginBottom: '20px',
-};
-
-const coverPhotoStyle = {
-  width: '100%',
-  height: 'auto',
-};
-
-const inputStyle = {
-  width: '100%',
-  marginBottom: '10px',
-  padding: '8px',
-  borderRadius: '4px',
-  border: '1px solid #ccc',
-};
-
-const labelStyle = {
-  fontWeight: 'bold',
-  marginBottom: '5px',
-};
-
-const buttonStyle = {
-  backgroundColor: '#1da1f2',
-  color: '#fff',
-  padding: '10px 20px',
-  borderRadius: '4px',
-  border: 'none',
-  cursor: 'pointer',
 };
 
 export default ProfileScreen;

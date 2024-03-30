@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -10,15 +9,14 @@ import {
   deleteAuthor,
   resetDeleteAuthor,
 } from "../../actions/authorActions";
+import { Modal, Button, Form } from "react-bootstrap";
 
 const AuthorAdmin = () => {
-  // Component state
   const [authorName, setAuthorName] = useState("");
   const [authorIdToUpdate, setAuthorIdToUpdate] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [authorToDelete, setAuthorToDelete] = useState(null);
 
-  // Redux
   const dispatch = useDispatch();
   const authorCreate = useSelector((state) => state.authorCreate);
   const {
@@ -27,25 +25,22 @@ const AuthorAdmin = () => {
     error: errorCreate,
   } = authorCreate;
 
-  // Dispatch listAuthors action when component mounts
   useEffect(() => {
     dispatch(listAuthors());
   }, [dispatch]);
 
-  // Get list of authors from Redux state
   const authorList = useSelector((state) => state.authorList);
   const { loading: loadingList, authors, error: errorList } = authorList;
 
   const submitHandler = (e) => {
     e.preventDefault();
     if (authorIdToUpdate) {
-      // If authorIdToUpdate has a value, it means we're updating an author
       dispatch(updateAuthor(authorIdToUpdate, { name: authorName }))
         .then(() => {
-          setAuthorIdToUpdate(null); // Reset the authorIdToUpdate after update
+          setAuthorIdToUpdate(null);
           setAuthorName("");
           setShowConfirmation(false);
-          dispatch(listAuthors()); // Fetch the updated list of authors
+          dispatch(listAuthors());
         })
         .catch((error) => console.error("Error updating author:", error));
     } else {
@@ -53,45 +48,40 @@ const AuthorAdmin = () => {
         .then(() => {
           setAuthorName("");
           setShowConfirmation(false);
-          dispatch(listAuthors()); // Fetch the updated list of authors
+          dispatch(listAuthors());
         })
         .catch((error) => console.error("Error creating author:", error));
     }
   };
 
-  // Function to handle author update
   const handleUpdateAuthor = (id, name) => {
     setAuthorIdToUpdate(id);
     setAuthorName(name);
   };
 
-  // Function to cancel edit and reset form fields
   const cancelEditHandler = () => {
     setAuthorIdToUpdate(null);
     setAuthorName("");
-    dispatch(resetAuthorUpdate()); // Reset any update-related state
+    dispatch(resetAuthorUpdate());
   };
 
-  // Function to handle confirmation modal for delete
   const handleDeleteConfirmation = (id) => {
     setAuthorToDelete(id);
     setShowConfirmation(true);
   };
 
-  // Function to confirm delete action
   const handleConfirmDelete = () => {
     dispatch(deleteAuthor(authorToDelete))
       .then(() => {
         setShowConfirmation(false);
-        dispatch(listAuthors()); // Fetch the updated list of authors
+        dispatch(listAuthors());
       })
       .catch((error) => console.error("Error deleting author:", error));
   };
 
-  // Function to cancel delete action
   const handleCancelDelete = () => {
     setShowConfirmation(false);
-    dispatch(resetDeleteAuthor()); // Reset delete-related state
+    dispatch(resetDeleteAuthor());
   };
 
   return (
@@ -106,25 +96,48 @@ const AuthorAdmin = () => {
             : "Author created successfully!"}
         </p>
       )}
-      <form onSubmit={submitHandler}>
-        <div>
-          <label htmlFor="authorName">Author Name</label>
-          <input
+
+      <Form onSubmit={submitHandler}>
+        <Form.Group controlId="authorName">
+          <Form.Label>Author Name</Form.Label>
+          <Form.Control
             type="text"
-            id="authorName"
             value={authorName}
             onChange={(e) => setAuthorName(e.target.value)}
           />
+        </Form.Group>
+
+        <div className="d-flex justify-content-between mt-2">
+          <Button
+            variant="primary"
+            type="submit"
+            style={{
+              backgroundColor: "#BC1823",
+              color: "white",
+              marginLeft: "10px",
+              textTransform: "uppercase",
+              borderColor: "#BC1823",
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.color = "#BC1823";
+              e.target.style.backgroundColor = "white";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.color = "white";
+              e.target.style.backgroundColor = "#BC1823";
+            }}
+          >
+            {authorIdToUpdate ? "Update Author" : "Create Author"}
+          </Button>
+          {authorIdToUpdate && (
+            <Button variant="secondary" onClick={cancelEditHandler}>
+              Cancel Edit
+            </Button>
+          )}
         </div>
-        <button type="submit">
-          {authorIdToUpdate ? "Update Author" : "Create Author"}
-        </button>
-        {authorIdToUpdate && (
-          <button type="button" onClick={cancelEditHandler}>
-            Cancel Edit
-          </button>
-        )}
-      </form>
+      </Form>
+
+      <hr />
 
       <h2>Authors</h2>
       {loadingList ? (
@@ -132,39 +145,76 @@ const AuthorAdmin = () => {
       ) : errorList ? (
         <p>Error: {errorList}</p>
       ) : (
-        <ul>
+        <ul className="list-unstyled">
           {authors.map((author) => (
-            <li key={author.id}>
+            <li
+              key={author.id}
+              className="d-flex justify-content-between align-items-center mt-3"
+              style={{ listStyleType: "disc" }}
+            >
               {author.name}
-              <button
-                type="button"
-                onClick={() => handleUpdateAuthor(author.id, author.name)}
-              >
-                Edit
-              </button>
-              <button
-                type="button"
-                onClick={() => handleDeleteConfirmation(author.id)}
-              >
-                Delete
-              </button>
+              <div>
+                <Button
+                  variant="info"
+                  onClick={() => handleUpdateAuthor(author.id, author.name)}
+                  style={{
+                    backgroundColor: "transparent",
+                    color: "#002960",
+                    textTransform: "uppercase",
+                    borderColor: "#002960",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.color = "white";
+                    e.target.style.backgroundColor = "#002960";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.color = "#002960";
+                    e.target.style.backgroundColor = "transparent";
+                  }}
+                >
+                  EDIT
+                </Button>
+                <Button
+                  variant="danger"
+                  onClick={() => handleDeleteConfirmation(author.id)}
+                  style={{
+                    backgroundColor: "transparent",
+                    color: "#BC1823",
+                    marginLeft: "10px",
+                    textTransform: "uppercase",
+                    borderColor: "#BC1823",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.color = "white";
+                    e.target.style.backgroundColor = "#BC1823";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.color = "#BC1823";
+                    e.target.style.backgroundColor = "transparent";
+                  }}
+                >
+                  DELETE
+                </Button>
+              </div>
             </li>
           ))}
         </ul>
       )}
 
-      {/* Confirmation modal for delete */}
-      {showConfirmation && (
-        <div>
-          <p>Are you sure you want to delete this author?</p>
-          <button type="button" onClick={handleConfirmDelete}>
-            Yes
-          </button>
-          <button type="button" onClick={handleCancelDelete}>
+      <Modal show={showConfirmation} onHide={handleCancelDelete}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this author?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCancelDelete}>
             No
-          </button>
-        </div>
-      )}
+          </Button>
+          <Button variant="primary" onClick={handleConfirmDelete}>
+            Yes
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

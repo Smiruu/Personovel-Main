@@ -9,6 +9,7 @@ import {
   resetUpdateBook,
   deleteBook,
 } from "../../actions/bookActions";
+import { Modal, Button, Form } from "react-bootstrap";
 
 const BookAdmin = () => {
   const [formData, setFormData] = useState({
@@ -21,7 +22,7 @@ const BookAdmin = () => {
   });
   const [editId, setEditId] = useState(null);
   const [operationMessage, setOperationMessage] = useState("");
-  const [showCurrentImage, setShowCurrentImage] = useState(false); // State to toggle display of current image
+  const [showCurrentImage, setShowCurrentImage] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [bookToDelete, setBookToDelete] = useState(null);
 
@@ -58,24 +59,23 @@ const BookAdmin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const { title, image, language, genre, synopsis, author } = formData;
     let bookData = {
       title,
       language,
-      genre, 
+      genre,
       synopsis,
       author,
     };
-  
-    // If a new image is selected, include it in the bookData
+
     if (image instanceof File) {
       bookData = {
         ...bookData,
         image,
       };
     }
-  
+
     try {
       if (editId !== null) {
         await dispatch(updateBook(editId, bookData));
@@ -93,7 +93,7 @@ const BookAdmin = () => {
         synopsis: "",
         author: "",
       });
-      dispatch(listBooks()); // Update book list after adding or updating a book
+      dispatch(listBooks());
     } catch (error) {
       console.error("Error performing book operation:", error);
       setOperationMessage("An error occurred while performing the operation.");
@@ -110,15 +110,16 @@ const BookAdmin = () => {
         genre: bookToEdit.genre || "",
         synopsis: bookToEdit.synopsis || "",
         author: bookToEdit.author || "",
-        image: bookToEdit.image || "", // Set the image URL in formData
+        image: bookToEdit.image || "",
       });
       if (bookToEdit.image) {
-        setShowCurrentImage(true); // Display the current image when editing
+        setShowCurrentImage(true);
       }
     } else {
       console.error(`Book with ID ${_id} not found.`);
     }
   };
+
   const handleCancelEdit = () => {
     setEditId(null);
     setFormData({
@@ -138,7 +139,7 @@ const BookAdmin = () => {
 
   const handleConfirmDelete = async () => {
     await dispatch(deleteBook(bookToDelete));
-    dispatch(listBooks()); // Update book list after deleting a book
+    dispatch(listBooks());
     setShowConfirmation(false);
   };
 
@@ -154,54 +155,68 @@ const BookAdmin = () => {
     <div>
       <h2>{editId !== null ? "Edit Book" : "Add New Book"}</h2>
       {operationMessage && <p>{operationMessage}</p>}
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <div>
-          <label htmlFor="title">Title</label>
-          <input
+      <Form
+        onSubmit={handleSubmit}
+        encType="multipart/form-data"
+        className="mt-3"
+      >
+        <Form.Group controlId="title">
+          <Form.Label>Title</Form.Label>
+          <Form.Control
             type="text"
-            id="title"
             name="title"
             value={formData.title}
             onChange={handleChange}
             required
           />
-        </div>
-        <div>
-          <label htmlFor="image">Image</label>
-          <input
-            type="file"
-            id="image"
-            name="image"
-            onChange={handleImageChange}
-          />
+        </Form.Group>
+
+        <Form.Group controlId="image" className="mt-3">
+          <Form.Label>Image</Form.Label>
+          <Form.Control type="file" name="image" onChange={handleImageChange} />
           {formData.image && (
-            <button type="button" onClick={handleToggleImageDisplay}>
-              {showCurrentImage ? "Hide Current Image" : "See Current Image"}
-            </button>
+            <div className="d-flex flex-column">
+              <Button
+                className="mt-3"
+                variant="secondary"
+                onClick={handleToggleImageDisplay}
+              >
+                {showCurrentImage ? "Hide Current Image" : "See Current Image"}
+              </Button>
+              {showCurrentImage && (
+                <img
+                  src={
+                    formData.image instanceof File
+                      ? URL.createObjectURL(formData.image)
+                      : formData.image
+                  }
+                  alt="Current"
+                  className="mt-3 d-flex justify-content-center"
+                  style={{
+                    maxWidth: "100px",
+                    maxHeight: "100px",
+                  }}
+                />
+              )}
+            </div>
           )}
-          {showCurrentImage && (
-            <img
-              src={formData.image instanceof File ? URL.createObjectURL(formData.image) : formData.image}
-              alt="Current"
-              style={{ maxWidth: "100px", maxHeight: "100px" }}
-            />
-          )}
-        </div>
-        <div>
-          <label htmlFor="language">Language</label>
-          <input
+        </Form.Group>
+
+        <Form.Group controlId="language" className="mt-3">
+          <Form.Label>Language</Form.Label>
+          <Form.Control
             type="text"
-            id="language"
             name="language"
             value={formData.language}
             onChange={handleChange}
             required
           />
-        </div>
-        <div>
-          <label htmlFor="genre">Genre</label>
-          <select
-            id="genre"
+        </Form.Group>
+
+        <Form.Group controlId="genre" className="mt-3">
+          <Form.Label>Genre</Form.Label>
+          <Form.Control
+            as="select"
             name="genre"
             value={formData.genre}
             onChange={handleChange}
@@ -213,22 +228,24 @@ const BookAdmin = () => {
                 {genre.name}
               </option>
             ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="synopsis">Synopsis</label>
-          <textarea
-            id="synopsis"
+          </Form.Control>
+        </Form.Group>
+
+        <Form.Group controlId="synopsis" className="mt-3">
+          <Form.Label>Synopsis</Form.Label>
+          <Form.Control
+            as="textarea"
             name="synopsis"
             value={formData.synopsis}
             onChange={handleChange}
             required
           />
-        </div>
-        <div>
-          <label htmlFor="author">Author</label>
-          <select
-            id="author"
+        </Form.Group>
+
+        <Form.Group controlId="author" className="mt-3">
+          <Form.Label>Author</Form.Label>
+          <Form.Control
+            as="select"
             name="author"
             value={formData.author}
             onChange={handleChange}
@@ -240,48 +257,101 @@ const BookAdmin = () => {
                 {author.name}
               </option>
             ))}
-          </select>
-        </div>
-        <button type="submit">
-          {editId !== null ? "Update Book" : "Add Book"}
-        </button>
-        {editId !== null && (
-          <button type="button" onClick={handleCancelEdit}>
-            Cancel Edit
-          </button>
-        )}
-      </form>
+          </Form.Control>
+        </Form.Group>
 
-      <div>
+        <div className="d-flex justify-content-between mt-3">
+          <Button type="submit" variant="primary">
+            {editId !== null ? "Update Book" : "Add Book"}
+          </Button>
+          {editId !== null && (
+            <Button variant="secondary" onClick={handleCancelEdit}>
+              Cancel Edit
+            </Button>
+          )}
+        </div>
+      </Form>
+
+      <hr />
+
+      <div className="mt-3">
         <h2>Book List</h2>
         {loadingBooks ? (
           <p>Loading books...</p>
         ) : errorBooks ? (
           <p>Error loading books: {errorBooks}</p>
         ) : (
-          <ul>
+          <ul className="list-unstyled">
             {books.map((book) => (
-              <li key={book._id}>
-                ID: {book._id}, Title: {book.title}
-                <button onClick={() => handleEdit(book._id)}>Edit</button>
-                <button onClick={() => handleDeleteConfirmation(book._id)}>Delete</button>
+              <li
+                key={book._id}
+                className="d-flex justify-content-between align-items-center mt-3"
+              >
+                <span>
+                  ID: {book._id}, Title: {book.title}
+                </span>
+                <div>
+                  <Button
+                    onClick={() => handleEdit(book._id)}
+                    className="ms-2"
+                    style={{
+                      backgroundColor: "transparent",
+                      color: "#002960",
+                      textTransform: "uppercase",
+                      borderColor: "#002960",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.color = "white";
+                      e.target.style.backgroundColor = "#002960";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.color = "#002960";
+                      e.target.style.backgroundColor = "transparent";
+                    }}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    onClick={() => handleDeleteConfirmation(book._id)}
+                    className="ms-2"
+                    style={{
+                      backgroundColor: "transparent",
+                      color: "#BC1823",
+                      textTransform: "uppercase",
+                      borderColor: "#BC1823",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.color = "white";
+                      e.target.style.backgroundColor = "#BC1823";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.color = "#BC1823";
+                      e.target.style.backgroundColor = "transparent";
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </div>
               </li>
             ))}
           </ul>
         )}
       </div>
-      {/* Confirmation modal for delete */}
-      {showConfirmation && (
-        <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", backgroundColor: "white", padding: "20px", border: "1px solid black" }}>
-        <p>Are you sure you want to delete this book?</p>
-          <button type="button" onClick={handleConfirmDelete}>
-            Yes
-          </button>
-          <button type="button" onClick={handleCancelDelete}>
+
+      <Modal show={showConfirmation} onHide={handleCancelDelete}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this book?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCancelDelete}>
             No
-          </button>
-        </div>
-      )}
+          </Button>
+          <Button variant="primary" onClick={handleConfirmDelete}>
+            Yes
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

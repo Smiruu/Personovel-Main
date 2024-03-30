@@ -11,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import NotFound, PermissionDenied
+from django.db.models import Avg
 
 # Create your views here.
 @api_view(['GET'])
@@ -53,12 +54,12 @@ def search(request):
 @api_view(['GET', 'POST'])
 def getBooks(request):
     if request.method == 'GET':
-        books = Book.objects.all()
+        books = Book.objects.annotate(mean_rating=Avg('rating__rating'))
         serializer = BookSerializer(books, many=True)
         return Response(serializer.data)
+
     elif request.method == 'POST':
         serializer = BookSerializer(data=request.data)
-        print(request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

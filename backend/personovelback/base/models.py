@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 import os
 import random
 from django.conf import settings
+from django.db.models import Avg
 
 def get_filename_ext(filepath):
     base_name = os.path.basename(filepath)
@@ -55,6 +56,16 @@ class Book(models.Model):
     _id = models.AutoField(primary_key=True, editable=False)
 
     
+    @property
+    def mean_rating(self):
+        return self.rating.aggregate(Avg('rating'))['rating__avg']
+
+    @mean_rating.setter
+    def mean_rating(self, value):
+        # This setter method is optional and depends on your requirements.
+        # If you want to set the mean_rating explicitly, implement the setter accordingly.
+        pass
+
     def __str__(self):
         return self.title
 

@@ -9,16 +9,17 @@ import {
 import { listBooks } from "../../actions/bookActions";
 import { listInteractionsByBook } from "../../actions/interactionActions";
 import { Document, Page } from "react-pdf";
+import { Modal, Button, Form } from "react-bootstrap";
 
 const InteractionAdmin = () => {
   const dispatch = useDispatch();
+  const { books } = useSelector((state) => state.bookList);
+  const { interactions } = useSelector((state) => state.interactionListByBook);
   const [formData, setFormData] = useState({
     book: "",
     chapter: null,
     chapter_number: 1,
   });
-  const { books } = useSelector((state) => state.bookList);
-  const { interactions } = useSelector((state) => state.interactionListByBook);
   const [selectedBookTitle, setSelectedBookTitle] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [selectedInteraction, setSelectedInteraction] = useState(null);
@@ -160,174 +161,167 @@ const InteractionAdmin = () => {
   };
 
   return (
-    <div style={{ display: "flex" }}>
-      <div style={{ flex: 1 }}>
-        <h2>Interaction Admin</h2>
-        {!isEditing ? (
-          <div>
-            <h3>Add Interaction</h3>
-            <form onSubmit={handleSubmit} encType="multipart/form-data">
-              <label>
-                Book:
-                <select
-                  name="book"
-                  id="title"
-                  value={formData.book}
-                  onChange={handleChange}
-                >
-                  <option value="">Select a book</option>
-                  {books.map((book) => (
-                    <option key={book._id} value={book._id}>
-                      {book.title}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                Chapter:
-                <input type="file" name="chapter" onChange={handleChange} />
-              </label>
-              <label>
-                Chapter Number:
-                <input
-                  type="number"
-                  name="chapter_number"
-                  value={formData.chapter_number}
-                  onChange={handleChange}
-                  min="1"
-                  max="100"
-                />
-              </label>
-              <button type="submit">Submit</button>
-              <button type="button" onClick={handleReset}>
-                Reset
-              </button>
-            </form>
-          </div>
-        ) : (
-          <div>
-            <h3>Edit Interaction</h3>
-            <form onSubmit={handleEditSubmit} style={{ marginBottom: "20px" }}>
-              <div style={{ marginBottom: "10px" }}>
-                <label>
-                  <strong>Book Used:</strong>{" "}
-                  {
-                    books.find((book) => book._id === selectedInteraction.book)
-                      ?.title
-                  }
-                </label>
-              </div>
-              <div style={{ marginBottom: "10px" }}>
-                <label>
-                  <strong>Chapter Number:</strong>
-                  <input
-                    type="number"
-                    name="chapter_number"
-                    value={formData.chapter_number}
-                    onChange={handleEditChange}
-                    style={{ marginLeft: "10px" }}
-                    min="1"
-                    max="100"
-                  />
-                </label>
-              </div>
-
-              <div style={{ marginBottom: "10px" }}>
-                <label>
-                  <strong>Chapter File:</strong>
-                  <input
-                    type="file"
-                    name="chapter"
-                    onChange={handleChange}
-                    style={{ marginLeft: "10px" }}
-                  />
-                </label>
-              </div>
-              <div>
-                <button type="submit">Update</button>
-                <button onClick={togglePdfView} style={{ marginLeft: "10px" }}>
-                  {showPdf ? "Hide PDF" : "View Current PDF"}
-                </button>
-                <button
-                  onClick={handleCancelEdit}
-                  style={{ marginLeft: "10px" }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-
+    <div>
+      {!isEditing ? (
         <div>
-          <h3>Interactions</h3>
-          <ul>
-            {sortedInteractions.map((interaction) => (
-              <li key={interaction._id}>
-                Chapter Number: {interaction.chapter_number} -{" "}
-                <button onClick={() => handleEdit(interaction)}>Edit</button>{" "}
-                <button
-                  onClick={() => handleDeleteConfirmation(interaction.id)}
-                >
-                  Delete
-                </button>
-              </li>
-            ))}
-          </ul>
+          <h3>Add Interaction</h3>
+          <Form onSubmit={handleSubmit} encType="multipart/form-data">
+            <Form.Group controlId="formBook">
+              <Form.Label>Book:</Form.Label>
+              <Form.Control
+                as="select"
+                name="book"
+                value={formData.book}
+                onChange={handleChange}
+              >
+                <option value="">Select a book</option>
+                {books.map((book) => (
+                  <option key={book._id} value={book._id}>
+                    {book.title}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+
+            <Form.Group controlId="formChapter" className="mt-3">
+              <Form.Label>Chapter:</Form.Label>
+              <Form.Control
+                type="file"
+                name="chapter"
+                onChange={handleChange}
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formChapterNumber" className="mt-3">
+              <Form.Label>Chapter Number:</Form.Label>
+              <Form.Control
+                type="number"
+                name="chapter_number"
+                value={formData.chapter_number}
+                onChange={handleChange}
+                min="1"
+                max="100"
+              />
+            </Form.Group>
+
+            <div className="d-flex justify-content-between">
+              <Button variant="primary" type="submit" className="mt-3">
+                Submit
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={handleReset}
+                className="mt-3"
+              >
+                Reset
+              </Button>
+            </div>
+          </Form>
+          <hr />
         </div>
+      ) : (
+        <div>
+          <h3>Edit Interaction</h3>
+          <Form onSubmit={handleEditSubmit} style={{ marginBottom: "20px" }}>
+            <div style={{ marginBottom: "10px" }}>
+              <label>
+                <strong>Book Used:</strong>{" "}
+                {
+                  books.find((book) => book._id === selectedInteraction.book)
+                    ?.title
+                }
+              </label>
+            </div>
+            <Form.Group controlId="editChapterNumber">
+              <Form.Label>Chapter Number:</Form.Label>
+              <Form.Control
+                type="number"
+                name="chapter_number"
+                value={formData.chapter_number}
+                onChange={handleEditChange}
+                min="1"
+                max="100"
+              />
+            </Form.Group>
+            <Form.Group controlId="editChapterFile" className="mt-3">
+              <Form.Label>Chapter File:</Form.Label>
+              <Form.Control
+                type="file"
+                name="chapter"
+                onChange={handleChange}
+              />
+            </Form.Group>
+
+            <div className="d-flex justify-content-between mt-3">
+              <Button variant="primary" type="submit">
+                Update
+              </Button>
+              <Button onClick={togglePdfView}>
+                {showPdf ? "Hide PDF" : "View Current PDF"}
+              </Button>
+              <Button onClick={handleCancelEdit}>Cancel</Button>
+            </div>
+          </Form>
+          <hr />
+        </div>
+      )}
+
+      <div>
+        <h3>Interactions</h3>
+        <ul>
+          {sortedInteractions.map((interaction) => (
+            <li key={interaction._id}>
+              Chapter Number: {interaction.chapter_number} -{" "}
+              <Button onClick={() => handleEdit(interaction)}>Edit</Button>{" "}
+              <Button onClick={() => handleDeleteConfirmation(interaction.id)}>
+                Delete
+              </Button>
+            </li>
+          ))}
+        </ul>
       </div>
+      <hr />
 
       {showPdf && (
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            fontSize: "1.2em",
-          }}
-        >
-          <h3 style={{ marginBottom: "10px" }}>PDF Viewer</h3>
+        <div>
+          <h3>PDF Viewer</h3>
           <Document
             file={formData.chapter}
             onLoadSuccess={onDocumentLoadSuccess}
           >
             <Page pageNumber={pageNumber} width={750} className="pdf-page" />
           </Document>
-          <div style={{ marginTop: "20px" }}>
-            <button
-              onClick={goToPrevPage}
-              disabled={pageNumber <= 1}
-              style={{ fontSize: "1em", marginRight: "10px" }}
-            >
+
+          <div className="d-flex justify-content-between">
+            <Button onClick={goToPrevPage} disabled={pageNumber <= 1}>
               Previous Page
-            </button>
-            <span style={{ fontSize: "1em", margin: "0 10px" }}>
+            </Button>
+            <span>
               Page {pageNumber} of {numPages}
             </span>
-            <button
-              onClick={goToNextPage}
-              disabled={pageNumber >= numPages}
-              style={{ fontSize: "1em", marginLeft: "10px" }}
-            >
+            <Button onClick={goToNextPage} disabled={pageNumber >= numPages}>
               Next Page
-            </button>
+            </Button>
           </div>
         </div>
       )}
 
-      {/* Confirmation modal for delete */}
-      {showConfirmation && (
-        <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", backgroundColor: "white", padding: "20px", border: "1px solid black" }}>
-          <p>Are you sure you want to delete this interaction?</p>
-          <button type="button" onClick={handleConfirmDelete}>
-            Yes
-          </button>
-          <button type="button" onClick={handleCancelDelete}>
+      <Modal show={showConfirmation} onHide={handleCancelDelete}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to delete this interaction?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCancelDelete}>
             No
-          </button>
-        </div>
-      )}
+          </Button>
+          <Button variant="primary" onClick={handleConfirmDelete}>
+            Yes
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

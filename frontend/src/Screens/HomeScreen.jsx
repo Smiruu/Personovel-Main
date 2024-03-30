@@ -1,32 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Card, Container } from "react-bootstrap";
-import Book from "../Components/Book"; // Updated import
+import Book from "../Components/Book";
 import { Link, Navigate } from "react-router-dom";
-import axios from 'axios'
-import { useSelector, useDispatch } from 'react-redux';
-import { checkUserPaidStatus } from '../actions/userActions'
+import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+import { checkUserPaidStatus } from "../actions/userActions";
 
 function LandingScreen() {
-  const [books, setBooks] = useState([]); // Updated state name
+  const [books, setBooks] = useState([]);
   const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
   const userInfo = userLoginInfo || userRegisterInfo;
   const dispatch = useDispatch();
-  
+
   useEffect(() => {
     async function fetchBooks() {
-      const { data } = await axios.get('http://127.0.0.1:8000/api/books/');
+      const { data } = await axios.get("http://127.0.0.1:8000/api/books/");
       setBooks(data);
     }
     fetchBooks();
 
-    // Check user's paid status when component mounts
     if (userInfo) {
-      dispatch(checkUserPaidStatus(userInfo.token.id)); // Replace userInfo.userId with the appropriate user ID property
+      dispatch(checkUserPaidStatus(userInfo.token.id));
     }
-  }, [userInfo, dispatch]); // useEffect dependencies
-
-  
+  }, [userInfo, dispatch]);
 
   const [recommendedIndex, setRecommendedIndex] = useState(0);
   const [popularIndex, setPopularIndex] = useState(0);
@@ -78,7 +75,6 @@ function LandingScreen() {
           >
             {userInfo.token.name}!
           </h1>
-
           <Card.Img
             src="/images/home-flower.png"
             className="logo_book"
@@ -87,11 +83,12 @@ function LandingScreen() {
         </Col>
 
         <Col md={7}>
-          <h1 className="mt-5"
+          <h1
+            className="mt-5"
             style={{
               textAlign: "center",
               marginTop: "2%",
-              fontWeight: "1",
+              fontWeight: "bold",
               fontFamily: "Permanent Marker",
               color: "#6F1D1B",
               textDecoration: "underline",
@@ -100,14 +97,7 @@ function LandingScreen() {
             Recommended For You
           </h1>
 
-          <div
-            style={{
-              height: "600px",
-              width: "100%",
-              overflow: "hidden",
-              position: "relative",
-            }}
-          >
+          <div style={{ overflowX: "auto" }}>
             <Row className="g-2">
               {books
                 .slice(recommendedIndex, recommendedIndex + 4)
@@ -117,48 +107,45 @@ function LandingScreen() {
                   </Col>
                 ))}
             </Row>
-            <div
-              style={{
-                position: "absolute",
-                top: "33%",
-                margin: "2%",
-                display: "flex",
-                justifyContent: "flex-start",
-                width: "95%",
-                padding: "0 1% 0 3%",
-              }}
-            >
-              {hasPrevBooks(recommendedIndex) && hasClickedNext && (
-                <button
-                  onClick={() => handlePrev(setRecommendedIndex)}
-                  style={{
-                    borderRadius: "50%",
-                    backgroundColor: "rgba(111, 29, 27, 0.7)",
-                    color: "white",
-                    padding: "20px",
-                    border: "none",
-                    marginRight: "auto",
-                  }}
-                >
-                  {"<"}
-                </button>
-              )}
-              {hasNextBooks(recommendedIndex) && (
-                <button
-                  onClick={() => handleNext(setRecommendedIndex)}
-                  style={{
-                    marginLeft: "auto",
-                    borderRadius: "50%",
-                    backgroundColor: "rgba(111, 29, 27, 0.7)",
-                    color: "white",
-                    padding: "20px",
-                    border: "none",
-                  }}
-                >
-                  {">"}
-                </button>
-              )}
-            </div>
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "1rem",
+            }}
+          >
+            {hasPrevBooks(recommendedIndex) && hasClickedNext && (
+              <button
+                onClick={() => handlePrev(setRecommendedIndex)}
+                style={{
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(111, 29, 27, 0.7)",
+                  color: "white",
+                  padding: "0.5rem 1rem",
+                  border: "none",
+                  marginRight: "auto",
+                }}
+              >
+                {"<"}
+              </button>
+            )}
+            {hasNextBooks(recommendedIndex) && (
+              <button
+                onClick={() => handleNext(setRecommendedIndex)}
+                style={{
+                  marginLeft: "auto",
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(111, 29, 27, 0.7)",
+                  color: "white",
+                  padding: "0.5rem 1rem",
+                  border: "none",
+                }}
+              >
+                {">"}
+              </button>
+            )}
           </div>
         </Col>
       </Row>
@@ -168,26 +155,18 @@ function LandingScreen() {
           <h1
             style={{
               textAlign: "center",
-              marginTop: "10%",
-              fontWeight: "1",
+              fontWeight: "bold",
               color: "#00669B",
               fontFamily: "Permanent Marker",
               textDecoration: "underline",
+              marginTop: "5rem",
             }}
           >
             Popular Novels
           </h1>
         </Link>
 
-        <div
-          style={{
-            height: "500px",
-            overflow: "hidden",
-            margin: "2%",
-            position: "relative",
-            width: "100%",
-          }}
-        >
+        <div style={{ overflowX: "auto" }}>
           <Row className="g-2">
             {books.slice(popularIndex, popularIndex + 4).map((book) => (
               <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
@@ -195,47 +174,45 @@ function LandingScreen() {
               </Col>
             ))}
           </Row>
-          <div
-            style={{
-              position: "absolute",
-              top: "50%",
-              display: "flex",
-              justifyContent: "flex-start",
-              width: "100%",
-              padding: "0 2%",
-            }}
-          >
-            {hasPrevBooks(popularIndex) && hasClickedNext && (
-              <button
-                onClick={() => handlePrev(setPopularIndex)}
-                style={{
-                  borderRadius: "50%",
-                  backgroundColor: "rgba(0, 102, 155, 0.7)",
-                  color: "white",
-                  padding: "20px",
-                  border: "none",
-                  marginRight: "auto",
-                }}
-              >
-                {"<"}
-              </button>
-            )}
-            {hasNextBooks(popularIndex) && (
-              <button
-                onClick={() => handleNext(setPopularIndex)}
-                style={{
-                  marginLeft: "auto",
-                  borderRadius: "50%",
-                  backgroundColor: "rgba(0, 102, 155, 0.7)",
-                  color: "white",
-                  padding: "20px",
-                  border: "none",
-                }}
-              >
-                {">"}
-              </button>
-            )}
-          </div>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "1rem",
+          }}
+        >
+          {hasPrevBooks(popularIndex) && hasClickedNext && (
+            <button
+              onClick={() => handlePrev(setPopularIndex)}
+              style={{
+                borderRadius: "50%",
+                backgroundColor: "rgba(0, 102, 155, 0.7)",
+                color: "white",
+                padding: "0.5rem 1rem",
+                border: "none",
+                marginRight: "auto",
+              }}
+            >
+              {"<"}
+            </button>
+          )}
+          {hasNextBooks(popularIndex) && (
+            <button
+              onClick={() => handleNext(setPopularIndex)}
+              style={{
+                marginLeft: "auto",
+                borderRadius: "50%",
+                backgroundColor: "rgba(0, 102, 155, 0.7)",
+                color: "white",
+                padding: "0.5rem 1rem",
+                border: "none",
+              }}
+            >
+              {">"}
+            </button>
+          )}
         </div>
       </Col>
 
@@ -245,8 +222,8 @@ function LandingScreen() {
             <h1
               style={{
                 textAlign: "center",
-                marginTop: "10%",
-                fontWeight: "1",
+                marginTop: "2rem",
+                fontWeight: "bold",
                 color: "#BC1823",
                 fontFamily: "Permanent Marker",
                 textDecoration: "underline",
@@ -255,15 +232,7 @@ function LandingScreen() {
               Latest Novels
             </h1>
           </Link>
-          <div
-            style={{
-              height: "500px",
-              overflow: "hidden",
-              margin: "2%",
-              position: "relative",
-              width: "100%",
-            }}
-          >
+          <div style={{ overflowX: "auto" }}>
             <Row className="g-2">
               {books.slice(latestIndex, latestIndex + 4).map((book) => (
                 <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
@@ -271,47 +240,44 @@ function LandingScreen() {
                 </Col>
               ))}
             </Row>
-            <div
-              style={{
-                position: "absolute",
-                top: "50%",
-                display: "flex",
-                justifyContent: "flex-start",
-                width: "100%",
-                padding: "0 2%",
-              }}
-            >
-              {hasPrevBooks(latestIndex) && hasClickedNext && (
-                <button
-                  onClick={() => handlePrev(setLatestIndex)}
-                  style={{
-                    borderRadius: "50%",
-                    backgroundColor: "rgba(188, 24, 35, 0.7)",
-                    color: "white",
-                    padding: "20px",
-                    border: "none",
-                    marginRight: "auto",
-                  }}
-                >
-                  {"<"}
-                </button>
-              )}
-              {hasNextBooks(latestIndex) && (
-                <button
-                  onClick={() => handleNext(setLatestIndex)}
-                  style={{
-                    marginLeft: "auto",
-                    borderRadius: "50%",
-                    backgroundColor: "rgba(188, 24, 35, 0.7)",
-                    color: "white",
-                    padding: "20px",
-                    border: "none",
-                  }}
-                >
-                  {">"}
-                </button>
-              )}
-            </div>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "1rem",
+            }}
+          >
+            {hasPrevBooks(latestIndex) && hasClickedNext && (
+              <button
+                onClick={() => handlePrev(setLatestIndex)}
+                style={{
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(188, 24, 35, 0.7)",
+                  color: "white",
+                  padding: "0.5rem 1rem",
+                  border: "none",
+                  marginRight: "auto",
+                }}
+              >
+                {"<"}
+              </button>
+            )}
+            {hasNextBooks(latestIndex) && (
+              <button
+                onClick={() => handleNext(setLatestIndex)}
+                style={{
+                  marginLeft: "auto",
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(188, 24, 35, 0.7)",
+                  color: "white",
+                  padding: "0.5rem 1rem",
+                  border: "none",
+                }}
+              >
+                {">"}
+              </button>
+            )}
           </div>
         </section>
       </Col>
