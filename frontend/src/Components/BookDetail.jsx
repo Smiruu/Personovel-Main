@@ -24,7 +24,7 @@ function BookDetail() {
   const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
   const userInfo = userLoginInfo || userRegisterInfo;
-  const userId = userInfo ? userInfo.token.id : null;
+  const userId = userInfo?.token?.id ?? null;
 
   const bookDetails = useSelector((state) => state.bookDetails);
   const { loading, error, book: bookData } = bookDetails || {};
@@ -37,8 +37,6 @@ function BookDetail() {
   );
 
   const userRating = useSelector((state) => state.fetchRating.userRating);
-
-  console.log("UserRating", userRating);
 
   useEffect(() => {
     if (!loading && !error) {
@@ -55,8 +53,10 @@ function BookDetail() {
   useEffect(() => {
     dispatch(listBookDetails(_id));
     dispatch(fetchMeanRatings(_id));
-    dispatch(getRatingId(userId, _id));
-  }, [dispatch, _id, userId]);
+    if (userInfo) { // Check if userInfo is not null
+      dispatch(getRatingId(userId, _id));
+    }
+  }, [dispatch, _id, userId, userInfo]);
 
   useEffect(() => {
     const storedRatingId = localStorage.getItem("ratingId");
@@ -298,7 +298,7 @@ function BookDetail() {
                 marginTop: "20px", // Add a margin-top for spacing
               }}
               onClick={() => setShowModal(true)}
-              disabled={!userInfo.token.is_paid}// Open the modal
+              disabled={!userInfo || !userInfo.token.is_paid}// Open the modal
             >
               RATE
             </Button>

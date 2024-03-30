@@ -36,7 +36,6 @@ export const listBooks = () => async (dispatch) => {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json', 
-        'Authorization': `Bearer ${token}`
       }
     } : {};
 
@@ -71,7 +70,6 @@ export const listBookDetails = (_id) => async (dispatch) => {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json', 
-        'Authorization': `Bearer ${token}`
       }
     } : {};
 

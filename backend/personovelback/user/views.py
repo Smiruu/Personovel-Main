@@ -31,6 +31,7 @@ def get_tokens_for_user(user):
         'id' : user.id,
         'is_paid': user.is_paid,
         'paid_at': user.paid_at,
+        'is_admin': user.is_admin
     }
 
     return access_token_payload

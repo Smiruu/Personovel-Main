@@ -2,11 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateUserProfile, getUserDetails } from '../actions/profileActions';
 import Loader from '../Components/Loader'; // If you have a loader component
+import { useNavigate } from 'react-router-dom';
 
 const ProfileScreen = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const userDetails = useSelector((state) => state.userDetails);
   const { loading, error, user } = userDetails;
+
+  const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
+  const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
+  const userInfo = userLoginInfo || userRegisterInfo;
 
   // State to hold the updated user name and bio
   const [updatedName, setUpdatedName] = useState(user.name ||'');
@@ -15,11 +21,8 @@ const ProfileScreen = () => {
   // State to hold the selected profile picture and cover photo
   const [profilePicture, setProfilePicture] = useState(null);
   const [coverPhoto, setCoverPhoto] = useState(null);
-  
-
   const [fileName, setFileName] = useState('');
   const [isEditing, setIsEditing] = useState(false); // State to control the edit popup/modal
-
 
   useEffect(() => {
     // Fetch user details when component mounts
@@ -97,6 +100,11 @@ const ProfileScreen = () => {
     setFileName('');
   };
 
+  const handleAdminPage = () => {
+    // Navigate to the admin page
+    navigate('/admin');
+  };
+
   return (
     <div>
       <h2>User Profile</h2>
@@ -124,6 +132,11 @@ const ProfileScreen = () => {
       
           {/* Button to trigger the edit profile popup/modal */}
           <button onClick={handleEditProfile}>Edit Profile</button>
+
+          {/* Button to navigate to the admin page if user is an admin */}
+          {userInfo.token && userInfo.token.is_admin && (
+            <button onClick={handleAdminPage}>Admin Page</button>
+          )}
         </div>
       )}
 
