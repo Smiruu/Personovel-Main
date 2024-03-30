@@ -7,6 +7,11 @@ import {
     USER_FEEDBACK_LIST_REQUEST,
     USER_FEEDBACK_LIST_SUCCESS,
     USER_FEEDBACK_LIST_FAIL,
+    USER_FEEDBACK_DELETE_REQUEST,
+    USER_FEEDBACK_DELETE_SUCCESS,
+    USER_FEEDBACK_DELETE_FAIL,
+    USER_FEEDBACK_DELETE_RESET,
+
 } from '../constants/feedbackConstants';
 
 const instance = axios.create({
@@ -69,4 +74,23 @@ export const fetchFeedbacks = () => async (dispatch) => {
                 : error.message,
         });
     }
+};
+
+export const deleteFeedback = (id) => async (dispatch) => {
+    try {
+        dispatch({ type: USER_FEEDBACK_DELETE_REQUEST });
+        await instance.delete(`/api/feedbacks/${id}/delete`);
+        dispatch({ type: USER_FEEDBACK_DELETE_SUCCESS });
+    } catch (error) {
+        dispatch({
+            type: USER_FEEDBACK_DELETE_FAIL,
+            payload: error.response && error.response.data.details
+                ? error.response.data.details
+                : error.message,
+        });
+    }
+};
+
+export const resetDeleteFeedback = () => (dispatch) => {
+    dispatch({ type: USER_FEEDBACK_DELETE_RESET });
 };

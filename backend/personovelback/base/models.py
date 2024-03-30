@@ -16,7 +16,7 @@ def upload_image_path(instance, filename):
 # Create your models here.
 
 def upload_chapter_path(instance, filename):
-    name, ext = get_filename_ext(filename)
+    name, ext = os.path.splitext(filename)
     
     # Replace spaces with underscores in the book title
     book_name = instance.book.title.replace(" ", "_")
@@ -24,8 +24,11 @@ def upload_chapter_path(instance, filename):
     # Construct the folder path including the book title
     folder_path = os.path.join("book_chapters", book_name)
     
+    # Include chapter number in the file name
+    file_name = f"Chapter_{instance.chapter_number}{ext}"
+    
     # Return the full file path
-    return os.path.join(folder_path, f"Chapter_{name}{ext}")
+    return os.path.join(folder_path, file_name)
     
 class Genre(models.Model):
     name = models.CharField(max_length=100)
@@ -53,9 +56,8 @@ class Book(models.Model):
     
     def __str__(self):
         return self.title
-
-
     
+
 class Feedback(models.Model):
     email = models.EmailField()
     subject = models.CharField(max_length=100)
@@ -64,9 +66,10 @@ class Feedback(models.Model):
 
     def __str__(self):
         return self.subject
+    
 class Interaction(models.Model):
     book = models.ForeignKey(Book, on_delete=models.SET_NULL, null=True)
-    chapter = models.FileField(upload_to=upload_chapter_path)
+    chapter = models.FileField(upload_to=upload_chapter_path, blank=True, null=True)
     chapter_number = models.PositiveIntegerField(default=1)  # Add chapter number field
 
     def __str__(self):
@@ -74,5 +77,12 @@ class Interaction(models.Model):
             return f"{self.book.title} - Chapter {self.chapter_number}" if self.chapter else f"{self.book.title} - No chapters"
         else:
             return f"No book - Chapter {self.chapter_number}" if self.chapter else "No book - No chapters"
-
-
+    
+    def save(self, *args, **kwargs):
+        if self.pk:  # Check if the instance already exists (updating)
+            existing_interaction = Interaction.objects.get(pk=self.pk)
+            # Delete the old file if a new file is uploaded
+            if self.chapter and self.chapter != existing_interaction.chapter:
+                existing_interaction.chapter.delete(save=False)
+        # Proceed with saving
+        super().save(*args, **kwargs)

@@ -44,11 +44,19 @@ def search(request):
     })
 
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 def getBooks(request):
-    books = Book.objects.all()
-    serializer = BookSerializer(books, many=True)
-    return Response(serializer.data)
+    if request.method == 'GET':
+        books = Book.objects.all()
+        serializer = BookSerializer(books, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = BookSerializer(data=request.data)
+        print(request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 def getBook(request, pk):
@@ -61,6 +69,34 @@ def getBook(request, pk):
     except ValueError:
         return Response({'detail': 'Invalid Book ID'}, status=status.HTTP_400_BAD_REQUEST)
     
+
+@api_view(['PUT'])
+def updateBook(request, pk):
+    try:
+        book = Book.objects.get(pk=pk)
+        serializer = BookSerializer(instance=book, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Book.DoesNotExist:
+        return Response({'detail': 'Book does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+    except ValueError:
+        return Response({'detail': 'Invalid Book ID'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+def deleteBook(request, pk):
+    try:
+        book = Book.objects.get(pk=pk)
+        book.delete()
+        return Response({'detail': 'Book deleted successfully'})
+    except Book.DoesNotExist:
+        return Response({'detail': 'Book does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+    except ValueError:
+        return Response({'detail': 'Invalid Book ID'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 @api_view(['GET'])
 def getGenre(request, pk):
     try:
@@ -72,24 +108,43 @@ def getGenre(request, pk):
     except ValueError:
         return Response({'detail': 'Invalid Genre ID'}, status=status.HTTP_400_BAD_REQUEST)
 
-
-@api_view(['GET'])
-def getAuthor(request, pk):
-    try:
-        author = Author.objects.get(pk=pk)
-        serializer = AuthorSerializer(author, many=False)
-        return Response(serializer.data)
-    except Author.DoesNotExist:
-        return Response({'detail': 'Author does not exist'}, status=status.HTTP_400_BAD_REQUEST)
-    except ValueError:
-        return Response({'detail': 'Invalid Author ID'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 def getGenres(request):
-    genres = Genre.objects.all()
-    serializer = GenreSerializer(genres, many=True)
-    return Response(serializer.data)
+    if request.method == 'GET':
+        genres = Genre.objects.all()
+        serializer = GenreSerializer(genres, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = GenreSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['PUT'])
+def updateGenre(request, pk):
+    try:
+        genre = Genre.objects.get(pk=pk)
+        serializer = GenreSerializer(instance=genre, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Genre.DoesNotExist:
+        return Response({'detail': 'Genre does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+    except ValueError:
+        return Response({'detail': 'Invalid Genre ID'}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['DELETE'])
+def deleteGenre(request, pk):
+    try:
+        genre = Genre.objects.get(pk=pk)
+        genre.delete()
+        return Response({'detail': 'Genre deleted successfully'})
+    except Genre.DoesNotExist:
+        return Response({'detail': 'Genre does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+    except ValueError:
+        return Response({'detail': 'Invalid Genre ID'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'POST'])
 def getAuthors(request):
@@ -104,6 +159,43 @@ def getAuthors(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+@api_view(['GET'])
+def getAuthor(request, pk):
+    try:
+        author = Author.objects.get(pk=pk)
+        serializer = AuthorSerializer(author, many=False)
+        return Response(serializer.data)
+    except Author.DoesNotExist:
+        return Response({'detail': 'Author does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+    except ValueError:
+        return Response({'detail': 'Invalid Author ID'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT'])
+def updateAuthor(request, pk):
+    try:
+        author = Author.objects.get(pk=pk)
+        serializer = AuthorSerializer(instance=author, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Author.DoesNotExist:
+        return Response({'detail': 'Author does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+    except ValueError:
+        return Response({'detail': 'Invalid Author ID'}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['DELETE'])
+def deleteAuthor(request, pk):
+    try:
+        author = Author.objects.get(pk=pk)
+        author.delete()
+        return Response({'detail': 'Author deleted successfully'})
+    except Author.DoesNotExist:
+        return Response({'detail': 'Author does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+    except ValueError:
+        return Response({'detail': 'Invalid Author ID'}, status=status.HTTP_400_BAD_REQUEST)
+
+    
 @api_view(['GET', 'POST'])
 def getFeedbacks(request):
     if request.method == 'GET':
@@ -117,11 +209,30 @@ def getFeedbacks(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-@api_view(['GET'])
+@api_view(['DELETE'])
+def deleteFeedback(request, pk):
+    try:
+        feedback = Feedback.objects.get(pk=pk)
+        feedback.delete()
+        return Response({'detail': 'Feedback deleted successfully'})
+    except Feedback.DoesNotExist:
+        return Response({'detail': 'Feedback does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+    except ValueError:
+        return Response({'detail': 'Invalid Feedback ID'}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET', 'POST'])
 def getInteractions(request):
-    interactions = Interaction.objects.all()
-    serializer = InteractionSerializer(interactions, many=True)
-    return Response(serializer.data)
+    if request.method == 'GET':
+        interactions = Interaction.objects.all()
+        serializer = InteractionSerializer(interactions, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = InteractionSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
 
 @api_view(['GET'])
 def getInteraction(request, pk):
@@ -142,6 +253,31 @@ def getInteractionsByBook(request, book_id):
         return Response(serializer.data)
     except ValueError:
         return Response({'detail': 'Invalid Book ID'}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['PUT'])
+def updateInteraction(request, pk):
+    try:
+        interaction = Interaction.objects.get(pk=pk)
+        serializer = InteractionSerializer(instance=interaction, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Interaction.DoesNotExist:
+        return Response({'detail': 'Interaction does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+    except ValueError:
+        return Response({'detail': 'Invalid Interaction ID'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+def deleteInteraction(request, pk):
+    try:
+        interaction = Interaction.objects.get(pk=pk)
+        interaction.delete()
+        return Response({'detail': 'Interaction deleted successfully'})
+    except Interaction.DoesNotExist:
+        return Response({'detail': 'Interaction does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+    except ValueError:
+        return Response({'detail': 'Invalid Interaction ID'}, status=status.HTTP_400_BAD_REQUEST)
 
 
     
