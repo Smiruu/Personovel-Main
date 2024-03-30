@@ -14,6 +14,9 @@ import pyotp
 from rest_framework.permissions import IsAdminUser
 from datetime import datetime, timedelta
 from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from django.views.generic import View
+from django.contrib.auth.mixins import LoginRequiredMixin
 # Generate token Manually
 def get_tokens_for_user(user):
     # Generate refresh token
@@ -217,4 +220,15 @@ def update_user_to_paid(request, pk):
     except User.DoesNotExist:
         return Response({'error': 'User not found'}, status=404)
     
-    
+class CheckPaidStatusView(APIView):
+    def get(self, request, user_id, *args, **kwargs):
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User does not exist'}, status=404)
+
+        if request.user == user and hasattr(user, 'is_paid_expired'):
+            is_expired = user.is_paid_expired()
+            return JsonResponse({'is_expired': is_expired})
+        else:
+            return JsonResponse({'error': 'User does not have required methods'}, status=400)

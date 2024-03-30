@@ -2,7 +2,10 @@ import { USER_LOGIN_REQUEST, USER_LOGIN_SUCCESS, USER_LOGIN_FAIL, USER_LOGOUT,
     USER_UPDATE_PAID_REQUEST,
     USER_UPDATE_PAID_SUCCESS,
     USER_UPDATE_PAID_FAIL,
-    USER_UPDATE_PAID_RESET, } from "../constants/userConstants";
+    USER_UPDATE_PAID_RESET,
+CHECK_PAID_STATUS_FAILURE,
+CHECK_PAID_STATUS_SUCCESS,
+CHECK_PAID_STATUS_REQUEST } from "../constants/userConstants";
 
 
 
@@ -39,3 +42,35 @@ export const userUpdatePaidReducer = (state = {}, action) => {
             return state;
     }
 };
+
+const initialState = {
+    loading: false,
+    isExpired: null,
+    error: null
+  };
+export const checkPaidStatusreducer = (state = initialState, action) => {
+    switch (action.type) {
+      case CHECK_PAID_STATUS_REQUEST:
+        return {
+          ...state,
+          loading: true,
+          error: null
+        };
+      case CHECK_PAID_STATUS_SUCCESS:
+        return {
+          ...state,
+          loading: false,
+          isExpired: action.payload.isExpired,
+          error: null
+        };
+      case CHECK_PAID_STATUS_FAILURE:
+        return {
+          ...state,
+          loading: false,
+          isExpired: null,
+          error: action.payload.error
+        };
+      default:
+        return state;
+    }
+  };

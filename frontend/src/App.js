@@ -47,12 +47,9 @@ function App() {
               <Route path="/books/:_id" element={<BookScreen />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/otp" element={<OTPScreen />} />
-              <Route
-                path="api/user/reset/:uid/:token"
-                element={<ConfirmChangePass />}
-              />
+              <Route path="api/user/reset/:uid/:token"element={<ConfirmChangePass />}/>
               <Route path="/reset-password" element={<RequestChangePass />} />
-              <Route path="/payment" element={<PaymentScreen />} />
+              <Route path="/subscription" element={<PaymentScreen />} />
               <Route path="/profile" element={<ProfileScreen />} />
               <Route path="/admin" element={<AdminScreen />} />
             </Routes>

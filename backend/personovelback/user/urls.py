@@ -14,4 +14,5 @@ urlpatterns = [
     path('verify-otp/', verify_otp, name='verify_otp'),
     path('resend-otp/', resend_otp, name='resend_otp'),
     path('pay/<str:pk>/', update_user_to_paid, name='update_user_to_paid'),
+    path('check-paid-status/<int:user_id>/', CheckPaidStatusView.as_view(), name='check_paid_status'),
 ]

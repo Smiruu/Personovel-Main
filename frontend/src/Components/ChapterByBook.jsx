@@ -22,7 +22,7 @@ const ChapterByBook = () => {
   // Redirect to /payment if userInfo.token.is_paid is false
   useEffect(() => {
     if (userInfo && userInfo.token && !userInfo.token.is_paid) {
-      navigate("/payment");
+      navigate("/subscription");
     } else {
       dispatch(listInteractionsByBook(id));
     }

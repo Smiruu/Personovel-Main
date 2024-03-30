@@ -3,21 +3,30 @@ import { Row, Col, Card, Container } from "react-bootstrap";
 import Book from "../Components/Book"; // Updated import
 import { Link, Navigate } from "react-router-dom";
 import axios from 'axios'
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { checkUserPaidStatus } from '../actions/userActions'
 
 function LandingScreen() {
   const [books, setBooks] = useState([]); // Updated state name
   const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
   const userInfo = userLoginInfo || userRegisterInfo;
+  const dispatch = useDispatch();
   
   useEffect(() => {
     async function fetchBooks() {
-      const { data } = await axios.get('http://127.0.0.1:8000/api/books/'); // Updated API endpoint
+      const { data } = await axios.get('http://127.0.0.1:8000/api/books/');
       setBooks(data);
     }
     fetchBooks();
-  }, []);
+
+    // Check user's paid status when component mounts
+    if (userInfo) {
+      dispatch(checkUserPaidStatus(userInfo.token.id)); // Replace userInfo.userId with the appropriate user ID property
+    }
+  }, [userInfo, dispatch]); // useEffect dependencies
+
+  
 
   const [recommendedIndex, setRecommendedIndex] = useState(0);
   const [popularIndex, setPopularIndex] = useState(0);

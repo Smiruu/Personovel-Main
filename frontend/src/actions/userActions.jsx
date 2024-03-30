@@ -7,6 +7,9 @@ import {
   USER_UPDATE_PAID_REQUEST,
   USER_UPDATE_PAID_SUCCESS,
   USER_UPDATE_PAID_FAIL,
+  CHECK_PAID_STATUS_FAILURE,
+  CHECK_PAID_STATUS_SUCCESS,
+  CHECK_PAID_STATUS_REQUEST
 } from "../constants/userConstants";
 
 const instance = axios.create({
@@ -33,6 +36,7 @@ export const login = (email, password) => async (dispatch) => {
     });
     localStorage.setItem("userInfo", JSON.stringify(data));
   } catch (error) {
+    console.log("Login error, Payload:", error.response ? error.response.data : error.message); // Add console log here
     dispatch({
       type: USER_LOGIN_FAIL,
       payload:
@@ -79,6 +83,48 @@ export const updateUserToPaid = (userId) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: USER_UPDATE_PAID_FAIL,
+      payload:
+        error.response && error.response.data.error
+          ? error.response.data.error
+          : error.message,
+    });
+  }
+};
+
+export const checkUserPaidStatus = (userId) => async (dispatch, getState) => {
+  try {
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.token : null;
+    console.log("token", token);
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token.access}`,
+          },
+        }
+      : {};
+
+    // Make the API call to check user's paid status
+    const { data } = await instance.get(`api/user/check-paid-status/${userId}/`, config);
+
+    // Dispatch action based on the response
+    dispatch({
+      type: 'CHECK_USER_PAID_STATUS_SUCCESS',
+      payload: data,
+    });
+
+    // If is_expired is true, update userInfo token
+    if (data.is_expired) {
+      // Update userInfo token is_paid to false and paid_at to null
+      userInfo.token.is_paid = false;
+      userInfo.token.paid_at = null;
+      localStorage.setItem("userInfo", JSON.stringify(userInfo));
+    }
+  } catch (error) {
+    dispatch({
+      type: 'CHECK_USER_PAID_STATUS_FAIL',
       payload:
         error.response && error.response.data.error
           ? error.response.data.error

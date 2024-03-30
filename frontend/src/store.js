@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import {thunk} from 'redux-thunk';
 import { combineReducers } from 'redux';
 import { userRegisterReducer } from './reducers/registerReducers';
-import { userLoginReducer,  userUpdatePaidReducer, } from './reducers/userReducers';
+import { checkPaidStatusreducer, userLoginReducer,  userUpdatePaidReducer, } from './reducers/userReducers';
 import { genreListReducer, genreCreateReducer, genreUpdateReducer, genreDeleteReducer } from './reducers/genreReducers';
 import { interactionListReducer, interactionDetailsReducer, interactionListByBookReducer, interactionCreateReducer, interactionDeleteReducer, interactionUpdateReducer} from './reducers/interactionReducers'; 
 import { authorListReducer, authorDetailsReducer, authorCreateReducer, authorDeleteReducer, authorUpdateReducer} from './reducers/authorReducers';
@@ -32,6 +32,7 @@ const reducer = combineReducers({
     userUpdatePaid: userUpdatePaidReducer,
     userDetails: userDetailsReducer,
     userProfileUpdate: userProfileUpdateReducer,
+    checkPaid: checkPaidStatusreducer,
 
     fetchRating: fetchRatingReducer,
     createRating: createRatingReducer,
