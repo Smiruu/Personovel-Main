@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import Header from "./Components/Header";
@@ -12,7 +12,6 @@ import LandingScreen from "./Screens/LandingScreen";
 import Start from "./Components/Start";
 import SampleScreen from "./Screens/SampleScreen";
 import BrowseScreen from "./Screens/BrowseScreen";
-import Profile from "./Screens/Profile";
 import Chapter from "./Screens/ChapterDropdown";
 import Login from "./Screens/Login";
 import ChapterDetailScreen from "./Screens/ChapterDetailScreen";
@@ -22,8 +21,9 @@ import OTPScreen from "./Screens/OtpScreen";
 import ConfirmChangePass from "./Screens/ConfirmChangePassScreen";
 import RequestChangePass from "./Screens/ReqChangePassScreen";
 import PaymentScreen from "./Screens/PaymentScreen";
-  function App() {
-
+import ProfileScreen from "./Screens/ProfileScreen";
+import AdminScreen from "./Screens/AdminScreen";
+function App() {
   return (
     <Router>
       <Header />
@@ -41,16 +41,20 @@ import PaymentScreen from "./Screens/PaymentScreen";
               <Route path="/contact" element={<ContactScreen />} />
               <Route path="/landing" element={<LandingScreen />} />
               <Route path="/sample" element={<SampleScreen />} />
-              <Route path="/Profile/:UserId" element={<Profile />} />
               <Route path="/browse" element={<BrowseScreen />} />
               <Route path="/login" element={<Login />} />
               <Route path="/chapters/:id" element={<ChapterDetailScreen />} />
               <Route path="/books/:_id" element={<BookScreen />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/otp" element={<OTPScreen />} />
-              <Route path="api/user/reset/:uid/:token" element={<ConfirmChangePass />} />
+              <Route
+                path="api/user/reset/:uid/:token"
+                element={<ConfirmChangePass />}
+              />
               <Route path="/reset-password" element={<RequestChangePass />} />
               <Route path="/payment" element={<PaymentScreen />} />
+              <Route path="/profile" element={<ProfileScreen />} />
+              <Route path="/admin" element={<AdminScreen />} />
             </Routes>
           </Container>
         </main>

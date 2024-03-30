@@ -1,34 +1,39 @@
-// reducers/userReducer.js
+// profileReducers.js
+
 import {
   USER_DETAILS_REQUEST,
   USER_DETAILS_SUCCESS,
-  USER_DETAILS_FAILURE,
-  UPDATE_USER_DETAILS,
-} from '../actions/userActions';
+  USER_DETAILS_FAIL,
+  USER_UPDATE_PROFILE_REQUEST,
+  USER_UPDATE_PROFILE_SUCCESS,
+  USER_UPDATE_PROFILE_FAIL,
+  USER_UPDATE_PROFILE_RESET
+} from '../constants/profileConstants';
 
-const initialState = {
-  loading: false,
-  userInfo: null,
-  error: null,
-};
-
-const userReducer = (state = initialState, action) => {
+export const userDetailsReducer = (state = { user: {} }, action) => {
   switch (action.type) {
     case USER_DETAILS_REQUEST:
       return { ...state, loading: true };
-
     case USER_DETAILS_SUCCESS:
-      return { ...state, loading: false, userInfo: action.payload, error: null };
-
-    case USER_DETAILS_FAILURE:
-      return { ...state, loading: false, userInfo: null, error: action.payload };
-
-    case UPDATE_USER_DETAILS:
-      return { ...state, userInfo: action.payload };
-
+      return { loading: false, user: action.payload };
+    case USER_DETAILS_FAIL:
+      return { loading: false, error: action.payload };
     default:
       return state;
   }
 };
 
-export default userReducer;
+export const userProfileUpdateReducer = (state = {}, action) => {
+  switch (action.type) {
+    case USER_UPDATE_PROFILE_REQUEST:
+      return { loading: true };
+    case USER_UPDATE_PROFILE_SUCCESS:
+      return { loading: false, success: true, user: action.payload };
+    case USER_UPDATE_PROFILE_FAIL:
+      return { loading: false, error: action.payload };
+    case USER_UPDATE_PROFILE_RESET:
+      return {};
+    default:
+      return state;
+  }
+};

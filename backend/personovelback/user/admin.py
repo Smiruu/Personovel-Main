@@ -1,7 +1,7 @@
 from django.contrib import admin
 from user.models import User
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import UserProfile
+from .models import *
 
 # Register your models here.
 
@@ -34,9 +34,4 @@ class UserModelAdmin(BaseUserAdmin):
 
 # Now register the new UserModelAdmin...
 admin.site.register(User, UserModelAdmin)
-
-
-@admin.register(UserProfile)
-class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'bio', 'profile_photo', 'cover_photo')
-    search_fields = ('user__username',)
+admin.site.register(Profile)

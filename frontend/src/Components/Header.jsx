@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Navbar, Nav, Container, Form, Button, Image, NavDropdown } from "react-bootstrap";
+import {
+  Navbar,
+  Nav,
+  Container,
+  Form,
+  Button,
+  Image,
+  NavDropdown,
+} from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
-import {searchBooks} from "../actions/searchActions"
+import { searchBooks } from "../actions/searchActions";
 import { logout } from "../actions/userActions";
 
 function Header() {
@@ -29,18 +37,17 @@ function Header() {
     backgroundColor: "transparent",
     borderRadius: "10px",
     borderColor: "#002960",
-    boxShadow: 'none'
+    boxShadow: "none",
   };
 
   const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
   const userInfo = userLoginInfo || userRegisterInfo;
-  
 
   const logoutHandler = () => {
     dispatch(logout());
     localStorage.removeItem("userInfo"); // Remove user info from localStorage
-    navigate('/login'); // Redirect the user to the login page
+    navigate("/login"); // Redirect the user to the login page
   };
 
   const handleSearch = (e) => {
@@ -177,14 +184,13 @@ function Header() {
         <Form onSubmit={handleSearch} className="d-flex ms-auto">
           {isSearchExpanded ? (
             <Form.Control
-            type="search"
-            placeholder="Search"
-            className="me-2"
-            aria-label="Search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-
+              type="search"
+              placeholder="Search"
+              className="me-2"
+              aria-label="Search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           ) : null}
           <Button
             class="btn btn-lg btn-info"
@@ -198,7 +204,7 @@ function Header() {
             <i className="fa-solid fa-magnifying-glass" />
           </Button>
 
-          <Link to="/Profile/:UserId" className="link-no-underline">
+          <Link to="/Profile" className="link-no-underline">
             <Nav.Link
               style={{ color: "#002960", marginLeft: "10px" }}
               href="#action2"

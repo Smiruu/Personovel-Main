@@ -8,11 +8,12 @@ from django.contrib.auth import authenticate
 from user.renderers import UserRenderer
 from rest_framework_simplejwt.tokens import RefreshToken, Token
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from .models import User, UserProfile, OTP
+from .models import *
 from .serializers import UserProfileSerializer
 import pyotp
 from rest_framework.permissions import IsAdminUser
 from datetime import datetime, timedelta
+from django.shortcuts import get_object_or_404
 # Generate token Manually
 def get_tokens_for_user(user):
     # Generate refresh token
@@ -119,6 +120,7 @@ def resend_otp(request):
 
 class UserLoginView(APIView):
     renderer_classes = [UserRenderer]
+
     def post(self, request, format=None):
         serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -127,9 +129,19 @@ class UserLoginView(APIView):
             user = authenticate(email=email, password=password)
             if user is not None:
                 token = get_tokens_for_user(user)
-                return Response({'token': token,'msg':'Login Succcess'}, status=status.HTTP_200_OK)
+                
+                # Check if the user's subscription has expired
+                subscription_expired = user.is_paid_expired()
+                
+                if subscription_expired:
+                    # Perform any action if the subscription has expired
+                    # For example, return a response indicating the subscription has expired
+                    return Response({'token': token, 'msg': 'Subscription expired'}, status=status.HTTP_200_OK)
+                else:
+                    # Subscription is active, proceed with login
+                    return Response({'token': token, 'msg': 'Login success'}, status=status.HTTP_200_OK)
             else: 
-                return Response({'errors':{'non_field_errors':['Email or Password is not valid']}}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'errors': {'non_field_errors': ['Email or Password is not valid']}}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -170,19 +182,28 @@ class UserPasswordResetView(APIView):
             return Response({'msg':"Password Reset Succesfully"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class UserProfileView(APIView):
-    def get(self, request):
-        user_profile = UserProfile.objects.get(user=request.user)
-        serializer = UserProfileSerializer(user_profile)
-        return Response(serializer.data)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def userProfile(request):
+    user = request.user
+    print(user)
+    profile = get_object_or_404(Profile, user=user)
+    serializer = UserProfileSerializer(profile)
+    return Response(serializer.data)
 
-    def put(self, request):
-        user_profile = UserProfile.objects.get(user=request.user)
-        serializer = UserProfileSerializer(user_profile, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# views.py
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def updateProfile(request):
+    user = request.user
+    profile = get_object_or_404(Profile, user=user)
+    serializer = UserProfileSerializer(profile, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])

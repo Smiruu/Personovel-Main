@@ -3,7 +3,8 @@ from django.contrib.auth.models import BaseUserManager,AbstractBaseUser
 import pyotp
 from datetime import datetime, timedelta
 from django.utils import timezone
-
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 #Custom User Manager
 class UserManager(BaseUserManager):
     def create_user(self, email, name,  password=None, password2=None):
@@ -100,14 +101,28 @@ class User(AbstractBaseUser):
         print("Paid status is not expired.")
         return False
 
-class UserProfile(models.Model):
+class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    image = models.ImageField(default='default.jpg', upload_to='userprofile_pics')
+    cover_photo = models.ImageField(default='default_cover.jpg', upload_to='cover_photos')
+    name = models.CharField(max_length=200, default="")
     bio = models.TextField(blank=True, null=True)
-    profile_photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
-    cover_photo = models.ImageField(upload_to='cover_photos/', blank=True, null=True)
 
     def __str__(self):
-        return self.user.username
+        return self.user.name if self.user.name else "Profile for user " + str(self.user.id)
+   
+@receiver(post_save, sender=User)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        profile = Profile.objects.create(user=instance)
+        # Set profile name to user's name by default
+        profile.name = instance.name
+        profile.save()
+    else:
+        # If the user name has changed, update the profile name accordingly
+        if instance.profile:
+            instance.profile.name = instance.name
+            instance.profile.save()
     
 
 class OTP(models.Model):

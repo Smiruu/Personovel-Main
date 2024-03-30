@@ -8,6 +8,9 @@ import Loader from "../Components/Loader";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 
+pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+
+
 const ChapterByBook = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
