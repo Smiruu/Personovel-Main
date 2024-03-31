@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { listBookDetails } from "../actions/bookActions";
-import { fetchMeanRatings, retrieveRating } from "../actions/ratingActions"; // Import fetchMeanRatings and retrieveRating actions
+import { fetchMeanRatings, retrieveRating } from "../actions/ratingActions";
 import { getRatingId } from "../actions/ratingActions";
 import Loader from "../Components/Loader";
 import Message from "../Components/Message";
@@ -53,7 +53,7 @@ function BookDetail() {
   useEffect(() => {
     dispatch(listBookDetails(_id));
     dispatch(fetchMeanRatings(_id));
-    if (userInfo) { // Check if userInfo is not null
+    if (userInfo) {
       dispatch(getRatingId(userId, _id));
     }
   }, [dispatch, _id, userId, userInfo]);
@@ -67,7 +67,6 @@ function BookDetail() {
   }, [dispatch, userId]);
 
   useEffect(() => {
-    // Update userRating when ratingId changes
     if (ratingId) {
       dispatch(retrieveRating(ratingId));
     }
@@ -75,7 +74,7 @@ function BookDetail() {
 
   useEffect(() => {
     if (!ratingId) {
-      dispatch({ type: "SET_USER_RATING", payload: 0 }); // Dispatch action to set userRating to 0
+      dispatch({ type: "SET_USER_RATING", payload: 0 });
     }
   }, [dispatch, ratingId]);
 
@@ -145,7 +144,7 @@ function BookDetail() {
               marginLeft: "3%",
               fontSize: "25px",
               color: "#6F1D1B",
-              marginBottom: "5px",
+              marginBottom: "15px",
             }}
           >
             <strong style={{ fontFamily: "Blinker" }}>AUTHOR: </strong>
@@ -166,7 +165,7 @@ function BookDetail() {
               marginLeft: "3%",
               fontSize: "25px",
               color: "#6F1D1B",
-              marginBottom: "5px",
+              marginBottom: "15px",
             }}
           >
             <strong style={{ fontFamily: "Blinker" }}>GENRE: </strong>
@@ -186,10 +185,10 @@ function BookDetail() {
               marginLeft: "3%",
               fontSize: "25px",
               color: "#6F1D1B",
-              marginBottom: "5px",
+              marginBottom: "15px",
             }}
           >
-            <strong style={{ fontFamily: "Blinker" }}>Rating: </strong>
+            <strong style={{ fontFamily: "Blinker" }}>RATING: </strong>
             <span
               style={{
                 fontStyle: "italic",
@@ -204,13 +203,27 @@ function BookDetail() {
               />
             </span>
           </h5>
+
           <h5
             style={{
               textAlign: "left",
               marginLeft: "3%",
               fontSize: "25px",
               color: "#6F1D1B",
-              marginBottom: "5px",
+              marginBottom: "15px",
+            }}
+          >
+            <strong style={{ fontFamily: "Blinker" }}>USER RATINGS: </strong>
+            <Rating value={userRating} color="#f8e825" />
+          </h5>
+
+          <h5
+            style={{
+              textAlign: "left",
+              marginLeft: "3%",
+              fontSize: "25px",
+              color: "#6F1D1B",
+              marginBottom: "15px",
             }}
           >
             <strong style={{ fontFamily: "Blinker" }}>LANGUAGE: </strong>
@@ -231,7 +244,7 @@ function BookDetail() {
               marginLeft: "3%",
               fontSize: "25px",
               color: "#6F1D1B",
-              marginBottom: "5px",
+              marginBottom: "15px",
             }}
           >
             <strong style={{ fontFamily: "Blinker" }}>SYNOPSIS: </strong>
@@ -246,65 +259,49 @@ function BookDetail() {
               {book.synopsis}
             </p>
           </h5>
-          <h5
-            style={{
-              textAlign: "left",
-              marginLeft: "3%",
-              fontSize: "25px",
-              color: "#6F1D1B",
-              marginBottom: "5px",
-            }}
-          >
-            <strong style={{ fontFamily: "Blinker" }}>User Rating: </strong>
-            <span
-              style={{
-                fontStyle: "italic",
-                fontFamily: "Blinker",
-                fontWeight: "1",
-              }}
-            >
-              <Rating value={userRating} color="#f8e825" />
-            </span>
-          </h5>
-          <Col>
-            <Button
-              className="btn-block customButton"
-              type="button"
-              style={{
-                width: "90%",
-                fontWeight: "1",
-                fontSize: "30px",
-                color: "white",
-                fontFamily: "Protest Guerrilla",
-                borderRadius: "50px",
-                backgroundColor: "#6F1D1B",
-                marginTop: "20px", // Add a margin-top for spacing
-              }}
-              onClick={handleReadNow} // Call handleReadNow function on button click
-            >
-              READ NOW!
-            </Button>
-            <Button
-              className="customButton"
-              type="button"
-              style={{
-                width: "90%",
-                fontWeight: "1",
-                fontSize: "20px",
-                color: "white",
-                fontFamily: "Protest Guerrilla",
-                borderRadius: "50px",
-                backgroundColor: "#6F1D1B",
-                marginTop: "20px", // Add a margin-top for spacing
-              }}
-              onClick={() => setShowModal(true)}
-              disabled={!userInfo || !userInfo.token.is_paid}// Open the modal
-            >
-              RATE
-            </Button>
-          </Col>
+          
+          <Row className="justify-content-center mb-3">
+            <Col>
+              <Button
+                className="btn-block customButton"
+                type="button"
+                style={{
+                  width: "100%",
+                  fontWeight: "1",
+                  fontSize: "30px",
+                  color: "white",
+                  fontFamily: "Protest Guerrilla",
+                  borderRadius: "50px",
+                  backgroundColor: "#6F1D1B",
+                  marginTop: "20px",
+                }}
+                onClick={handleReadNow}
+              >
+                READ NOW!
+              </Button>
+            </Col>
+            <Col>
+              <Button
+                className="customButton"
+                type="button"
+                style={{
+                  width: "100%",
+                  fontWeight: "1",
+                  fontSize: "30px",
+                  color: "white",
+                  fontFamily: "Protest Guerrilla",
+                  borderRadius: "50px",
+                  backgroundColor: "#6F1D1B",
+                  marginTop: "20px",
+                }}
+                onClick={() => setShowModal(true)}
+                disabled={!userInfo || !userInfo.token.is_paid}
+              >
+                RATE
+              </Button>
+            </Col>
+          </Row>
         </Col>{" "}
-        {/* Closing tag for the second Col component */}
       </Row>
       <RateModal
         show={showModal}

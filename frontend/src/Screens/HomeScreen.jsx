@@ -6,7 +6,7 @@ import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { checkUserPaidStatus } from "../actions/userActions";
 
-function LandingScreen() {
+function HomeScreen() {
   const [books, setBooks] = useState([]);
   const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
@@ -285,4 +285,4 @@ function LandingScreen() {
   );
 }
 
-export default LandingScreen;
+export default HomeScreen;

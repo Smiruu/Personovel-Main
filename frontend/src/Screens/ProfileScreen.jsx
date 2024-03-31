@@ -9,11 +9,13 @@ import {
   MDBRow,
   MDBCol,
   MDBCard,
-  MDBCardText,
-  MDBCardImage,
   MDBTypography,
-  MDBInput,
 } from "mdb-react-ui-kit";
+import AdminScreen from "./AdminScreen";
+import StatisticScreen from "./StatisticScreen";
+import ConversationScreen from "./ConversationScreen";
+import PaymentScreen from "./PaymentScreen";
+import LatestScreen from "./LatestScreen";
 
 const ProfileScreen = () => {
   const dispatch = useDispatch();
@@ -102,8 +104,6 @@ const ProfileScreen = () => {
   const backgroundImage = user.cover_photo || "";
   const profileIcon = `${user.image}?${new Date().getTime()}`;
 
-  // Conversation and subscription logic
-
   const [activeTab, setActiveTab] = useState("ABOUT");
 
   const handleTabClick = (tab) => {
@@ -162,6 +162,7 @@ const ProfileScreen = () => {
                   color: "#002960",
                   textTransform: "uppercase",
                   borderColor: "#002960",
+                  fontSize: "20px",
                 }}
                 onMouseEnter={(e) => {
                   e.target.style.color = "white";
@@ -174,29 +175,6 @@ const ProfileScreen = () => {
               >
                 Edit Profile
               </Button>
-
-              {userInfo.token && userInfo.token.is_admin && (
-                <Button
-                  onClick={handleAdminPage}
-                  style={{
-                    backgroundColor: "transparent",
-                    color: "#BC1823",
-                    marginLeft: "10px",
-                    textTransform: "uppercase",
-                    borderColor: "#BC1823",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.color = "white";
-                    e.target.style.backgroundColor = "#BC1823";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.color = "#BC1823";
-                    e.target.style.backgroundColor = "transparent";
-                  }}
-                >
-                  Admin Page
-                </Button>
-              )}
             </div>
           </MDBContainer>
 
@@ -216,7 +194,7 @@ const ProfileScreen = () => {
                       onChange={handleNameChange}
                     />
                   </Form.Group>
-                  <Form.Group controlId="formBio">
+                  <Form.Group controlId="formBio" className="mt-3">
                     <Form.Label>Bio</Form.Label>
                     <Form.Control
                       as="textarea"
@@ -226,7 +204,7 @@ const ProfileScreen = () => {
                       onChange={handleBioChange}
                     />
                   </Form.Group>
-                  <Form.Group controlId="formProfilePicture">
+                  <Form.Group controlId="formProfilePicture" className="mt-3">
                     <Form.Label>Profile Picture</Form.Label>
                     <Form.Control
                       type="file"
@@ -246,7 +224,7 @@ const ProfileScreen = () => {
                       />
                     )}
                   </Form.Group>
-                  <Form.Group controlId="formCoverPhoto">
+                  <Form.Group controlId="formCoverPhoto" className="mt-3">
                     <Form.Label>Cover Photo</Form.Label>
                     <Form.Control
                       type="file"
@@ -274,37 +252,55 @@ const ProfileScreen = () => {
           )}
 
           <div className="tabs-container mt-3">
-            <button
-              style={{
-                padding: "10px 15px",
-                border: "1px solid #002960",
-                backgroundColor: activeTab === "ABOUT" ? "#002960" : "white",
-                color: activeTab === "ABOUT" ? "white" : "#002960",
-                cursor: "pointer",
-                transition: "background-color 0.3s ease",
-              }}
-              onClick={() => handleTabClick("ABOUT")}
-            >
-              ABOUT
-            </button>
-
             {userInfo.token && userInfo.token.is_admin ? (
-              <button
-                style={{
-                  padding: "10px 15px",
-                  border: "1px solid #002960",
-                  backgroundColor:
-                    activeTab === "STATISTICS" ? "#002960" : "white",
-                  color: activeTab === "STATISTICS" ? "white" : "#002960",
-                  cursor: "pointer",
-                  transition: "background-color 0.3s ease",
-                }}
-                onClick={() => handleTabClick("STATISTICS")}
-              >
-                STATISTICS
-              </button>
+              <>
+                <button
+                  style={{
+                    padding: "10px 15px",
+                    border: "1px solid #002960",
+                    backgroundColor:
+                      activeTab === "ABOUT" ? "#002960" : "white",
+                    color: activeTab === "ABOUT" ? "white" : "#002960",
+                    cursor: "pointer",
+                    transition: "background-color 0.3s ease",
+                  }}
+                  onClick={() => handleTabClick("ABOUT")}
+                >
+                  ABOUT
+                </button>
+
+                <button
+                  style={{
+                    padding: "10px 15px",
+                    border: "1px solid #002960",
+                    backgroundColor:
+                      activeTab === "STATISTICS" ? "#002960" : "white",
+                    color: activeTab === "STATISTICS" ? "white" : "#002960",
+                    cursor: "pointer",
+                    transition: "background-color 0.3s ease",
+                  }}
+                  onClick={() => handleTabClick("STATISTICS")}
+                >
+                  STATISTICS
+                </button>
+              </>
             ) : (
               <>
+                <button
+                  style={{
+                    padding: "10px 15px",
+                    border: "1px solid #002960",
+                    backgroundColor:
+                      activeTab === "ABOUT" ? "#002960" : "white",
+                    color: activeTab === "ABOUT" ? "white" : "#002960",
+                    cursor: "pointer",
+                    transition: "background-color 0.3s ease",
+                  }}
+                  onClick={() => handleTabClick("ABOUT")}
+                >
+                  ABOUT
+                </button>
+
                 <button
                   style={{
                     padding: "10px 15px",
@@ -319,6 +315,7 @@ const ProfileScreen = () => {
                 >
                   CONVERSATIONS
                 </button>
+
                 <button
                   style={{
                     padding: "10px 15px",
@@ -355,54 +352,61 @@ const ProfileScreen = () => {
                     </div>
                   </MDBCol>
                   <MDBCol size="6">
-                    <div className="favorite-books-section bg-white p-2">
-                      <h4>Favorite Books</h4>
-                      <p>book1</p>
-                      <p>book1</p>
-                      <p>book1</p>
-                    </div>
+                    {userInfo.token && userInfo.token.is_admin ? (
+                      <div className="favorite-books-section bg-white p-2">
+                        <AdminScreen />
+                      </div>
+                    ) : (
+                      <div className="favorite-books-section bg-white p-2">
+                        <h4>LATEST READ</h4>
+                        <p>book1</p>
+                      </div>
+                    )}
+                  </MDBCol>
+
+                  <MDBCol size="12" className="mt-3">
+                    {userInfo.token && userInfo.token.is_admin ? (
+                      <div className="mt-3">
+                        <div className="favorite-books-section bg-white p-2">
+                        <LatestScreen />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="mt-3">
+                        <div className="favorite-books-section bg-white p-2">
+                          <h4>FAVORITE BOOKS</h4>
+                          <p>book1</p>
+                          <p>book2</p>
+                          <p>book3</p>
+                          <p>book4</p>
+                          <p>book5</p>
+                        </div>
+                      </div>
+                    )}
                   </MDBCol>
                 </MDBRow>
               </div>
             )}
 
-            {userInfo.token &&
-              userInfo.token.is_admin &&
-              activeTab === "STATISTICS" && (
-                <div className="statistics-container">
-                  <h3>Subscription Statistics</h3>
-                  <div className="subscription-chart">
-                    {/* Placeholder chart for subscription statistics */}
-                    {/* You can use any chart library like Chart.js, react-chartjs-2, etc. */}
-                    {/* Example: */}
-                    <img
-                      src="subscription_chart_placeholder.png"
-                      alt="Subscription Chart"
-                    />
-                  </div>
-
-                  <h3>Book Statistics</h3>
-                  <div className="book-chart">
-                    {/* Placeholder chart for book statistics */}
-                    {/* Example: */}
-                    <img src="book_chart_placeholder.png" alt="Book Chart" />
-                  </div>
-                </div>
-              )}
-
             {activeTab === "CONVERSATIONS" && (
               <div className="conversation-container">
-                <h3>Conversation Section</h3>
-                DITO UNG MGA NIREPLY/CINOMMENT NG USER
+                <ConversationScreen />
               </div>
             )}
 
             {activeTab === "SUBSCRIPTIONS" && (
               <div className="subscription-container">
-                <h3>Subscription Section</h3>
-                ITO UNG PWEDE MAG SUBSCRIBE ULIT UNG USER
+                <PaymentScreen />
               </div>
             )}
+
+            {activeTab === "STATISTICS" &&
+              userInfo.token &&
+              userInfo.token.is_admin && (
+                <div className="statistics-container">
+                  <StatisticScreen />
+                </div>
+              )}
           </div>
         </div>
       )}

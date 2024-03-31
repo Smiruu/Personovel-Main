@@ -93,6 +93,7 @@ const OTPScreen = () => {
         <input
           type="text"
           value={otpCode}
+          placeholder="Enter OTP code"
           onChange={(e) => setOtpCode(e.target.value)}
           style={{
             padding: "10px",
