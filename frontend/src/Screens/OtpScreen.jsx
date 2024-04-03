@@ -26,7 +26,10 @@ const OTPScreen = () => {
     event.preventDefault();
     try {
       await dispatch(verifyOTP(userId, otpId, otpCode));
-      navigate("/home");
+      const otpVerified = localStorage.getItem("OTP");
+      if (otpVerified === "true") {
+        navigate('/home');
+      }
     } catch (error) {
       console.error("userId or otpId is not set in userInfo");
     }

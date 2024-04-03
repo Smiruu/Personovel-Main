@@ -39,6 +39,6 @@ urlpatterns = [
     path('ratings/<int:user_id>/<int:book_id>/get-rating-id/', views.RatingViewSet.as_view({'get': 'get_rating_id_by_user_and_book'}), name='get_rating_id_by_user_and_book'),
     path('ratings/book/<int:book_id>/', views.get_ratings_for_book, name='book-ratings'),
     
-   
-
+    path('add_to_reading_history/', views.add_to_reading_history, name='add_to_reading_history'),
+    path('get_preferred_genre/<int:user_id>/', views.get_preferred_genre, name='get_preferred_genre'),  
 ]

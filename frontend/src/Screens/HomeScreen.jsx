@@ -4,14 +4,18 @@ import Book from "../Components/Book";
 import { Link, Navigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { checkUserPaidStatus } from "../actions/userActions";
-
+import { checkUserPaidStatus } from "../actions/userActions"; // Import the getPreferredGenre action
+import { getPreferredGenre } from '../actions/preferenceActions'
 function LandingScreen() {
   const [books, setBooks] = useState([]);
   const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
   const userInfo = userLoginInfo || userRegisterInfo;
   const dispatch = useDispatch();
+
+
+  const booksInPreferredGenre = useSelector(state => state.preference.booksInPreferredGenre);
+  console.log("Books in preferred genre:", booksInPreferredGenre);
 
   useEffect(() => {
     async function fetchBooks() {
@@ -22,6 +26,7 @@ function LandingScreen() {
 
     if (userInfo) {
       dispatch(checkUserPaidStatus(userInfo.token.id));
+      dispatch(getPreferredGenre(userInfo.token.id)); // Dispatch the getPreferredGenre action
     }
   }, [userInfo, dispatch]);
 
@@ -99,11 +104,10 @@ function LandingScreen() {
 
           <div style={{ overflowX: "auto" }}>
             <Row className="g-2">
-              {books
-                .slice(recommendedIndex, recommendedIndex + 4)
-                .map((book) => (
-                  <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
-                    <Book book={book} />
+            {Array.isArray(booksInPreferredGenre) &&
+      booksInPreferredGenre.slice(recommendedIndex, recommendedIndex + 4).map((book) => (
+        <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
+          <Book book={book} />
                   </Col>
                 ))}
             </Row>
