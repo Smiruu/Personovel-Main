@@ -31,7 +31,8 @@ def get_tokens_for_user(user):
         'id' : user.id,
         'is_paid': user.is_paid,
         'paid_at': user.paid_at,
-        'is_admin': user.is_admin
+        'is_admin': user.is_admin,
+        'created_at': user.created_at,
     }
 
     return access_token_payload
@@ -193,6 +194,11 @@ def userProfile(request):
     print(user)
     profile = get_object_or_404(Profile, user=user)
     serializer = UserProfileSerializer(profile)
+    
+    # Accessing the created_at attribute of the User model
+    user_created_at = user.created_at
+    print("User created at:", user_created_at)
+    
     return Response(serializer.data)
 
 

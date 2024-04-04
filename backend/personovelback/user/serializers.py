@@ -34,10 +34,15 @@ class UserLoginSerializer(serializers.ModelSerializer):
         model = User
         fields = ['email', 'password']
 
+from rest_framework import serializers
+from .models import Profile
+
 class UserProfileSerializer(serializers.ModelSerializer):
+    user_created_at = serializers.DateTimeField(source='user.created_at', read_only=True)
+
     class Meta:
         model = Profile
-        fields = ['id', 'user', 'image', 'cover_photo', 'name', 'bio']
+        fields = ['id', 'user', 'image', 'cover_photo', 'name', 'bio', 'user_created_at']
         read_only_fields = ['user']
         extra_kwargs = {
             'name': {'required': False}  # Setting name field as not required
@@ -48,8 +53,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
         instance.cover_photo = validated_data.get('cover_photo', instance.cover_photo)
         instance.name = validated_data.get('name', instance.name)
         
-        # Only update bio if it is provided in the request data
-        if 'bio' in validated_data:
+        # Only update bio if it is provided in the request data and not None
+        if 'bio' in validated_data and validated_data['bio'] is not None:
             instance.bio = validated_data['bio']
         
         instance.save()

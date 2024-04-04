@@ -6,6 +6,7 @@ import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { checkUserPaidStatus } from "../actions/userActions";
 import { getPreferredGenre } from "../actions/preferenceActions";
+import { getUserDetails } from "../actions/profileActions";
 
 function LandingScreen() {
   const [preferredBooks, setPreferredBooks] = useState([]);
@@ -20,6 +21,11 @@ function LandingScreen() {
   const userInfo = userLoginInfo || userRegisterInfo;
   const dispatch = useDispatch();
   const booksInPreferredGenre = useSelector((state) => state.preference.booksInPreferredGenre);
+  const userDetails = useSelector((state) => state.userDetails);
+  const { loading, error, user } = userDetails;
+  useEffect(() => {
+    dispatch(getUserDetails());
+  }, [dispatch]);
 
   // Update preferredBooks state when booksInPreferredGenre changes
   useEffect(() => {
@@ -88,7 +94,7 @@ function LandingScreen() {
               margin: "0",
             }}
           >
-            {userInfo.token.name}!
+            {user.name}!
           </h1>
           <Card.Img
             src="/images/home-flower.png"

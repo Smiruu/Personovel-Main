@@ -33,6 +33,35 @@ const ProfileScreen = () => {
   const [fileName, setFileName] = useState("");
   const [isEditing, setIsEditing] = useState(false);
 
+  const dateJoined = new Date(user.user_created_at);
+
+  const calculateRemainingDays = () => {
+    if (userInfo.token && userInfo.token.paid_at) {
+      const paidDate = new Date(userInfo.token.paid_at);
+      // Add 3 months to the paid date
+      const threeMonthsLater = new Date(paidDate);
+      threeMonthsLater.setMonth(threeMonthsLater.getMonth() + 3);
+      // Calculate difference in milliseconds
+      const differenceMs = threeMonthsLater - Date.now();
+      // Convert milliseconds to days
+      const remainingDays = Math.ceil(differenceMs / (1000 * 60 * 60 * 24));
+      return remainingDays;
+    }
+    return null; // Return null if paid_at date is not available
+  };
+  
+  const remainingDays = calculateRemainingDays();
+
+// Define options for date formatting
+const options = {
+  year: 'numeric',
+  month: 'long', // Full month name (e.g., "February")
+  day: 'numeric',
+};
+
+// Format the date
+const formattedDateJoined = dateJoined.toLocaleDateString('en-US', options);
+
   useEffect(() => {
     dispatch(getUserDetails());
   }, [dispatch]);
@@ -41,7 +70,9 @@ const ProfileScreen = () => {
     const formData = new FormData();
 
     formData.append("name", updatedName);
-    formData.append("bio", updatedBio);
+
+    const bioValue = updatedBio.trim() !== "" ? updatedBio : user.bio;
+    formData.append("bio", bioValue);
 
     if (profilePicture) {
       formData.append("image", profilePicture);
@@ -347,10 +378,11 @@ const ProfileScreen = () => {
                         <strong>BIO:</strong> {user.bio}
                       </p>
                       <p>
-                        <strong>DATE JOINED:</strong> WHEN THE USER JOINED
+                        <strong>DATE JOINED:</strong> {formattedDateJoined}
                       </p>
                       <p>
-                        <strong>SUBSCRIPTION DURATION:</strong> SUB DURATION
+                        <strong>SUBSCRIPTION DURATION:</strong> {" "}
+                       {remainingDays !== null ? `${remainingDays} days remaining` : "N/A"}
                       </p>
                     </div>
                   </MDBCol>
