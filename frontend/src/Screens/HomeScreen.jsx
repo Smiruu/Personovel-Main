@@ -5,30 +5,54 @@ import { Link, Navigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { checkUserPaidStatus } from "../actions/userActions";
+import { getPreferredGenre } from "../actions/preferenceActions";
+import { getUserDetails } from "../actions/profileActions";
 
 function LandingScreen() {
-  const [books, setBooks] = useState([]);
+  const [preferredBooks, setPreferredBooks] = useState([]);
+  const [popularBooks, setPopularBooks] = useState([]);
+  const [latestBooks, setLatestBooks] = useState([]);
+  const [recommendedIndex, setRecommendedIndex] = useState(0);
+  const [popularIndex, setPopularIndex] = useState(0);
+  const [latestIndex, setLatestIndex] = useState(0);
+  const [hasClickedNext, setHasClickedNext] = useState(false);
   const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
   const userInfo = userLoginInfo || userRegisterInfo;
   const dispatch = useDispatch();
+  const booksInPreferredGenre = useSelector((state) => state.preference.booksInPreferredGenre);
+  const userDetails = useSelector((state) => state.userDetails);
+  const { loading, error, user } = userDetails;
+
+  
+  useEffect(() => {
+    dispatch(getUserDetails());
+  }, [dispatch]);
+
+  // Update preferredBooks state when booksInPreferredGenre changes
+  useEffect(() => {
+    if (booksInPreferredGenre) {
+      setPreferredBooks(booksInPreferredGenre);
+    }
+  }, [booksInPreferredGenre]);
 
   useEffect(() => {
     async function fetchBooks() {
       const { data } = await axios.get("http://127.0.0.1:8000/api/books/");
-      setBooks(data);
+      // Sort the books by popularity (assuming 'mean_rating' is a property of each book)
+      const sortedPopularBooks = [...data].sort((a, b) => b.mean_rating - a.mean_rating);
+      setPopularBooks(sortedPopularBooks);
+      // Sort the books by latest date
+      const sortedLatestBooks = [...data].sort((a, b) => new Date(b.date_added) - new Date(a.date_added));
+      setLatestBooks(sortedLatestBooks);
     }
     fetchBooks();
 
     if (userInfo) {
       dispatch(checkUserPaidStatus(userInfo.token.id));
+      dispatch(getPreferredGenre(userInfo.token.id));
     }
   }, [userInfo, dispatch]);
-
-  const [recommendedIndex, setRecommendedIndex] = useState(0);
-  const [popularIndex, setPopularIndex] = useState(0);
-  const [latestIndex, setLatestIndex] = useState(0);
-  const [hasClickedNext, setHasClickedNext] = useState(false);
 
   const handleNext = (setIndex) => {
     setIndex((prevIndex) => prevIndex + 1);
@@ -40,12 +64,15 @@ function LandingScreen() {
   };
 
   const hasPrevBooks = (index) => index > 0;
-  const hasNextBooks = (index) => index + 4 < books.length;
+  const hasNextBooks = (index, books) => index + 4 < books.length;
 
   if (!userInfo) {
     return <Navigate to="/login" />;
   }
 
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
   return (
     <Container fluid>
       <Row className="mt-3">
@@ -61,7 +88,6 @@ function LandingScreen() {
           >
             WELCOME,
           </h1>
-
           <h1
             style={{
               color: "#BC1823",
@@ -73,7 +99,7 @@ function LandingScreen() {
               margin: "0",
             }}
           >
-            {userInfo.token.name}!
+            {user.name}!
           </h1>
           <Card.Img
             src="/images/home-flower.png"
@@ -96,10 +122,9 @@ function LandingScreen() {
           >
             Recommended For You
           </h1>
-
           <div style={{ overflowX: "auto" }}>
             <Row className="g-2">
-              {books
+              {preferredBooks
                 .slice(recommendedIndex, recommendedIndex + 4)
                 .map((book) => (
                   <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
@@ -108,7 +133,6 @@ function LandingScreen() {
                 ))}
             </Row>
           </div>
-
           <div
             style={{
               display: "flex",
@@ -131,7 +155,7 @@ function LandingScreen() {
                 {"<"}
               </button>
             )}
-            {hasNextBooks(recommendedIndex) && (
+            {hasNextBooks(recommendedIndex, preferredBooks) && (
               <button
                 onClick={() => handleNext(setRecommendedIndex)}
                 style={{
@@ -165,17 +189,15 @@ function LandingScreen() {
             Popular Novels
           </h1>
         </Link>
-
         <div style={{ overflowX: "auto" }}>
           <Row className="g-2">
-            {books.slice(popularIndex, popularIndex + 4).map((book) => (
+            {popularBooks.slice(popularIndex, popularIndex + 4).map((book) => (
               <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
                 <Book book={book} />
               </Col>
             ))}
           </Row>
         </div>
-
         <div
           style={{
             display: "flex",
@@ -198,7 +220,7 @@ function LandingScreen() {
               {"<"}
             </button>
           )}
-          {hasNextBooks(popularIndex) && (
+          {hasNextBooks(popularIndex, popularBooks) && (
             <button
               onClick={() => handleNext(setPopularIndex)}
               style={{
@@ -234,7 +256,7 @@ function LandingScreen() {
           </Link>
           <div style={{ overflowX: "auto" }}>
             <Row className="g-2">
-              {books.slice(latestIndex, latestIndex + 4).map((book) => (
+              {latestBooks.slice(latestIndex, latestIndex + 4).map((book) => (
                 <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
                   <Book book={book} />
                 </Col>
@@ -263,7 +285,7 @@ function LandingScreen() {
                 {"<"}
               </button>
             )}
-            {hasNextBooks(latestIndex) && (
+            {hasNextBooks(latestIndex, latestBooks) && (
               <button
                 onClick={() => handleNext(setLatestIndex)}
                 style={{

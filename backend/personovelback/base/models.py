@@ -1,10 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import User
 import os
 import random
 from django.conf import settings
 from django.db.models import Avg
-
+from user.models import User
+from collections import Counter
 def get_filename_ext(filepath):
     base_name = os.path.basename(filepath)
     name, ext = os.path.splitext(base_name)
@@ -105,3 +105,10 @@ class Interaction(models.Model):
         # Proceed with saving
         super().save(*args, **kwargs)
 
+class ReadingHistory(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    read_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.book.title} - {self.read_at}"

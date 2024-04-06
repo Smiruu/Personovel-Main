@@ -11,6 +11,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Card } from "react-bootstrap";
 import Rating from "./Rating";
 import RateModal from "./RateModal";
+import { addToReadingHistory } from "../actions/preferenceActions"; // Impor
 
 function BookDetail() {
   const { _id } = useParams();
@@ -87,6 +88,7 @@ function BookDetail() {
   }, []);
 
   const handleReadNow = () => {
+    dispatch(addToReadingHistory(_id, userId)); // Call addToReadingHistory action when Read Now button is clicked
     navigate(`/chapters/${_id}`);
   };
 

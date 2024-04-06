@@ -40,5 +40,6 @@ urlpatterns = [
     path('ratings/book/<int:book_id>/', views.get_ratings_for_book, name='book-ratings'),
     
    
-
+    path('add_to_reading_history/', views.add_to_reading_history, name='add_to_reading_history'),
+    path('get_preferred_genre/<int:user_id>/', views.get_preferred_genre, name='get_preferred_genre'),  
 ]

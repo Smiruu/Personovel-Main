@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from .models import Genre, Author, Feedback, Interaction, Book 
+from .models import *
 from .serializers import *
 import rest_framework.status as status
 from rest_framework import viewsets
@@ -12,7 +12,10 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import NotFound, PermissionDenied
 from django.db.models import Avg
-
+from .models import User
+from collections import Counter
+from django.db.models import Count, Sum
+from django.contrib.auth import get_user_model
 # Create your views here.
 @api_view(['GET'])
 def getRoutes(request):
@@ -408,4 +411,76 @@ def get_ratings_for_book(request, book_id):
         return Response({'detail': 'Invalid Book ID'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['POST'])
+def add_to_reading_history(request):
+    try:
+        # Extract book_id and user_id from request data
+        book_id = request.data.get('book_id')
+        user_id = request.data.get('user_id')
+        
+        # Retrieve the user and book objects
+        user = User.objects.get(pk=user_id)
+        book = Book.objects.get(pk=book_id)
+
+        # Create a new entry in the reading history
+        ReadingHistory.objects.create(user=user, book=book)
+
+        return Response({'detail': 'Book added to reading history successfully'}, status=status.HTTP_201_CREATED)
     
+    except Book.DoesNotExist:
+        return Response({'detail': 'Book does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+    except User.DoesNotExist:
+        return Response({'detail': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+from django.contrib.auth import get_user_model
+
+@api_view(['GET'])
+def get_preferred_genre(request, user_id):
+    try:
+        print("Received GET request for get_preferred_genre")
+        print("User ID:", user_id)
+        
+        # Fetch the user object using the user ID
+        user = get_user_model().objects.get(pk=user_id)
+        
+        # Get the user's reading history
+        reading_history = ReadingHistory.objects.filter(user=user)
+        
+        # Count occurrences of each book in the reading history
+        book_counts = reading_history.values('book').annotate(num_read=Count('book'))
+
+        # Get the genres of the books in the reading history
+        genres = Genre.objects.filter(book__in=reading_history.values('book'))
+
+        # Aggregate the total number of reads for each genre
+        genre_counts = genres.annotate(total_reads=Count('book'))
+
+        # Get the genre with the highest total reads
+        most_common_genre = genre_counts.order_by('-total_reads').first()
+
+        if most_common_genre:
+            # Get all books belonging to the preferred genre
+            books_in_genre = Book.objects.filter(genre=most_common_genre)
+
+            # Sort the books based on their mean rating
+            sorted_books = sorted(books_in_genre, key=lambda x: x.mean_rating if x.mean_rating is not None else float('-inf'), reverse=True)
+            
+            # Serialize the sorted books
+            serializer = BookSerializer(sorted_books, many=True)
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            # If there is no preferred genre, fetch all books and sort them based on mean rating
+            all_books = Book.objects.all().annotate(mean_rating=Avg('rating__rating'))
+            sorted_books = sorted(all_books, key=lambda x: x.mean_rating if x.mean_rating is not None else float('-inf'), reverse=True)
+            serializer = BookSerializer(sorted_books, many=True)
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    except User.DoesNotExist:
+        return Response({'detail': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)   
