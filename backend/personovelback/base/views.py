@@ -513,6 +513,11 @@ def create_comment(request):
         return Response({'detail': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)
     
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Book, Comment, Reply
+
 @api_view(['GET'])
 def get_comments_for_book(request, book_id):
     if request.method == 'GET':
@@ -523,23 +528,43 @@ def get_comments_for_book(request, book_id):
 
         # Retrieve all comments related to the book
         comments = Comment.objects.filter(book=book)
+        replies = Reply.objects.filter(comment__in=comments)
         
-        # Create a list to store modified comments with user profile name
+        # Create a list to store modified comments with user profile name and picture
         modified_comments = []
         for comment in comments:
-            # Modify the comment to include user profile name instead of username
+            # Modify the comment to include user profile name and picture instead of username
             modified_comment = {
                 'comment_id': comment.id,
                 'name': comment.user.profile.name,
+                'picture': comment.user.profile.get_profile_image(),  # Get profile image URL
                 'book_title': comment.book.title,
                 'comment': comment.comment,
                 'created_at': comment.created_at
             }
             modified_comments.append(modified_comment)
-        
-        return Response(modified_comments, status=status.HTTP_200_OK)
+
+        modified_replies = []
+        for reply in replies:
+            # Modify the reply to include user profile name and picture instead of username
+            modified_reply = {
+                'reply_id': reply.id,
+                'name': reply.user.profile.name,
+                'picture': reply.user.profile.get_profile_image(),  # Get profile image URL
+                'comment_id': reply.comment.id,
+                'reply': reply.reply,
+                'created_at': reply.created_at
+            }
+            modified_replies.append(modified_reply)
+            
+        response_data = {
+            'comments': modified_comments,
+            'replies': modified_replies
+        }
+        return Response(response_data, status=status.HTTP_200_OK)
     else:
         return Response({'detail': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)
+
     
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

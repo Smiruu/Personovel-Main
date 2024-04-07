@@ -108,6 +108,14 @@ class User(AbstractBaseUser):
             return self.profile.name
         # If there is no associated profile, return the user's name
         return self.name
+    
+    def get_profile_image(self):
+        # Check if the user has a profile associated with it
+        if hasattr(self, 'profile'):
+            # Return the profile image from the associated profile
+            return self.profile.profile_image.url
+        # If there is no associated profile or profile image, return None
+        return None
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -119,6 +127,9 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.name if self.user.name else "Profile for user " + str(self.user.id)
    
+    def get_profile_image(self):
+        return self.image.url if self.image else None
+
 @receiver(post_save, sender=User)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:

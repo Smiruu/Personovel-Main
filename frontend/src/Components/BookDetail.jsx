@@ -50,6 +50,7 @@ function BookDetail() {
     dispatch(getCommentsForBook(_id));
   }, [dispatch, _id, userId]);
 
+
   useEffect(() => {
     console.log("Comments:", comments); // Log comments data
   }, [comments]);
@@ -98,12 +99,14 @@ function BookDetail() {
     e.preventDefault();
     dispatch(createComment({ book_id: _id, user_id: userId, comment: commentText }));
     setCommentText("");
+    window.location.reload();
   };
 
   const handleReply = (comment_id, reply, user_id) => {
     console.log("Comment ID:", comment_id);
     console.log("Reply Text:", reply);
     dispatch(createReply(comment_id, reply, user_id));
+    window.location.reload();
   };
 
   const handleCommentTextChange = (text) => {
@@ -331,7 +334,8 @@ function BookDetail() {
       <Row className="mt-3">
         <Col md={12}>
           <CommentSection
-            comments={comments}
+            comments={comments.comments}
+            replies = {comments.replies}
             loading={loadingComments}
             commentsError={commentsError}
             handleCommentSubmit={handleCommentSubmit}
@@ -339,6 +343,7 @@ function BookDetail() {
             setCommentText={handleCommentTextChange}
             commentText={commentText}
             userId = {userId}
+            userInfo = {userInfo}
           />
         </Col>
       </Row>
