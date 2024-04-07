@@ -22,7 +22,7 @@ import {
   } from "./reducers/ratingReducers";
   import { userDetailsReducer, userProfileUpdateReducer } from "./reducers/profileReducers";
   import preferenceReducer from './reducers/preferenceReducers'; 
-import { commentReducer, createReplyReducer } from './reducers/commentReducers';
+import { commentReducer, createReplyReducer, getRepliesReducer } from './reducers/commentReducers';
 const reducer = combineReducers({
     userRegister: userRegisterReducer,
     userLogin: userLoginReducer,
@@ -75,6 +75,7 @@ const reducer = combineReducers({
 
     comment: commentReducer,
     createReply: createReplyReducer,
+    getReplies: getRepliesReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null;

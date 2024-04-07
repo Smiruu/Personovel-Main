@@ -10,7 +10,7 @@ import { Button, Container, Row, Col, Card } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import Rating from "./Rating";
 import RateModal from "./RateModal";
-import { createComment, getCommentsForBook, createReply } from "../actions/commentActions";
+import { createComment, getCommentsForBook, createReply, getRepliesForComment } from "../actions/commentActions";
 import CommentSection from "./CommentSection";
 
 function BookDetail() {
@@ -49,6 +49,16 @@ function BookDetail() {
     dispatch(getRatingId(userId, _id));
     dispatch(getCommentsForBook(_id));
   }, [dispatch, _id, userId]);
+
+  useEffect(() => {
+    console.log("Comments:", comments); // Log comments data
+    // Fetch replies for each comment
+    if (comments && comments.length > 0) {
+      comments.forEach((comment) => {
+        dispatch(getRepliesForComment(comment.comment_id));
+      });
+    }
+  }, [dispatch, comments])
 
   useEffect(() => {
     console.log("Comments:", comments); // Log comments data

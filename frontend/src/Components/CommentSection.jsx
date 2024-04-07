@@ -1,11 +1,26 @@
-import React, { useState } from "react";
+// CommentSection.jsx
+
+import React, { useState, useEffect } from "react";
 import { Button, Form, Col, Row } from "react-bootstrap";
 import Message from "../Components/Message";
 import Loader from "../Components/Loader";
+import { useDispatch, useSelector } from "react-redux";
+import { getRepliesForComment } from "../actions/commentActions";
+import Replies from "./Replies";
 
 const CommentSection = ({ comments, loadingComments, commentsError, handleCommentSubmit, handleReply, commentText, setCommentText, userId }) => {
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [replyingToCommentId, setReplyingToCommentId] = useState(null);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Fetch replies for each comment
+    if (comments && comments.length > 0) {
+      comments.forEach((comment) => {
+        dispatch(getRepliesForComment(comment.comment_id));
+      });
+    }
+  }, [dispatch, comments]);
 
   const handleReplyButtonClick = (commentId) => {
     setShowReplyInput(true);
@@ -39,6 +54,9 @@ const CommentSection = ({ comments, loadingComments, commentsError, handleCommen
       console.error("Error submitting reply:", error);
     }
   };
+
+  // Retrieve replies from the Redux store
+  const replies = useSelector((state) => state.getreplies && state.getreplies.replies);
 
   return (
     <>
@@ -93,11 +111,11 @@ const CommentSection = ({ comments, loadingComments, commentsError, handleCommen
                       </Button>
                     </Form>
                   )}
+                  {/* Display replies for the current comment */}
+                  {replies && replies[comment.comment_id] && (
+                    <Replies replies={replies[comment.comment_id]} />
+                  )}
                 </div>
-              ))}
-              {/* Log all comment IDs */}
-              {comments.map((comment) => (
-                console.log("Comment ID:", comment.comment_id)
               ))}
             </div>
           ) : (
