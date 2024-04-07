@@ -12,7 +12,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import NotFound, PermissionDenied
 from django.db.models import Avg
-from .models import User
+from user.models import User
 from collections import Counter
 from django.db.models import Count, Sum
 from django.contrib.auth import get_user_model
@@ -484,3 +484,115 @@ def get_preferred_genre(request, user_id):
         return Response({'detail': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)   
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_comment(request):
+    if request.method == 'POST':
+        # Extract data from request
+        user_id = request.data.get('user_id')
+        book_id = request.data.get('book_id')
+        comment_text = request.data.get('comment')
+
+        # Check if user and book exist
+        user = get_object_or_404(User, pk=user_id)
+        book = get_object_or_404(Book, pk=book_id)
+
+        # Create the comment
+        comment = Comment.objects.create(
+            user=user,
+            book=book,
+            comment=comment_text
+        )
+
+        # Serialize the created comment
+        serializer = CommentSerializer(comment)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response({'detail': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+@api_view(['GET'])
+def get_comments_for_book(request, book_id):
+    if request.method == 'GET':
+        # Check if the book exists
+        book = Book.objects.filter(pk=book_id).first()
+        if not book:
+            return Response({'detail': 'Book not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Retrieve all comments related to the book
+        comments = Comment.objects.filter(book=book)
+        
+        # Create a list to store modified comments with user profile name
+        modified_comments = []
+        for comment in comments:
+            # Modify the comment to include user profile name instead of username
+            modified_comment = {
+                'comment_id': comment.id,
+                'name': comment.user.profile.name,
+                'book_title': comment.book.title,
+                'comment': comment.comment,
+                'created_at': comment.created_at
+            }
+            modified_comments.append(modified_comment)
+        
+        return Response(modified_comments, status=status.HTTP_200_OK)
+    else:
+        return Response({'detail': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_reply(request):
+    if request.method == 'POST':
+        # Extract data from request
+        user_id = request.data.get('user_id')
+        comment_id = request.data.get('comment_id')
+        reply_text = request.data.get('reply')
+
+        # Check if user and comment exist
+        user = get_object_or_404(User, pk=user_id)
+        comment = get_object_or_404(Comment, pk=comment_id)
+
+        # Create the reply
+        reply = Reply.objects.create(
+            user=user,
+            comment=comment,
+            reply=reply_text
+        )
+
+        # Serialize the created reply
+        serializer = ReplySerializer(reply)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response({'detail': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+def get_replies_for_comment(request, comment_id):
+    if request.method == 'GET':
+        # Check if the comment exists
+        comment = Comment.objects.filter(pk=comment_id).first()
+        if not comment:
+            return Response({'detail': 'Comment not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Retrieve all replies related to the comment
+        replies = Reply.objects.filter(comment=comment)
+        
+        # Create a list to store modified replies with user profile name
+        modified_replies = []
+        for reply in replies:
+            # Modify the reply to include user profile name instead of username
+            modified_reply = {
+                'reply_id': reply.id,
+                'name': reply.user.profile.name,
+                'comment_id': reply.comment.id,
+                'reply': reply.reply,
+                'created_at': reply.created_at
+            }
+            modified_replies.append(modified_reply)
+        
+        return Response(modified_replies, status=status.HTTP_200_OK)
+    else:
+        return Response({'detail': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)
+

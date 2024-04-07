@@ -112,3 +112,22 @@ class ReadingHistory(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.book.title} - {self.read_at}"
+    
+
+class Comment(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} commented on {self.book.title} at {self.created_at}"
+
+class Reply(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+    reply = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} replied to {self.comment.user.username}'s comment on {self.comment.book.title} at {self.created_at}"

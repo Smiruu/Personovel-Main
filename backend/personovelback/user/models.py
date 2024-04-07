@@ -100,6 +100,14 @@ class User(AbstractBaseUser):
                 return True
         print("Paid status is not expired.")
         return False
+    
+    def get_profile_name(self):
+        # Check if the user has a profile associated with it
+        if hasattr(self, 'profile'):
+            # Return the name from the associated profile
+            return self.profile.name
+        # If there is no associated profile, return the user's name
+        return self.name
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

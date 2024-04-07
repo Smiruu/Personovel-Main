@@ -42,4 +42,10 @@ urlpatterns = [
    
     path('add_to_reading_history/', views.add_to_reading_history, name='add_to_reading_history'),
     path('get_preferred_genre/<int:user_id>/', views.get_preferred_genre, name='get_preferred_genre'),  
+
+    path('comments/create/', views.create_comment, name='create_comment'),
+    path('comments/book/<int:book_id>/', views.get_comments_for_book, name='get_comments_for_book'),
+
+    path('replies/create/', views.create_reply, name='create_reply'),
+    path('replies/comment/<int:comment_id>/', views.get_replies_for_comment, name='get_replies_for_comment'),
 ]
