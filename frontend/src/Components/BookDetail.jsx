@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { listBookDetails } from "../actions/bookActions";
-import { fetchMeanRatings, retrieveRating } from "../actions/ratingActions"; // Import fetchMeanRatings and retrieveRating actions
+import { fetchMeanRatings, retrieveRating } from "../actions/ratingActions";
 import { getRatingId } from "../actions/ratingActions";
 import Loader from "../Components/Loader";
 import Message from "../Components/Message";
 import { useParams } from "react-router-dom";
-import { Button, Container, Row, Col, Modal } from "react-bootstrap";
+import { Button, Container, Row, Col, Card } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { Card } from "react-bootstrap";
 import Rating from "./Rating";
 import RateModal from "./RateModal";
-import { addToReadingHistory } from "../actions/preferenceActions"; // Impor
+import { createComment, getCommentsForBook, createReply } from "../actions/commentActions";
+import CommentSection from "./CommentSection";
 
 function BookDetail() {
   const { _id } = useParams();
@@ -19,16 +19,17 @@ function BookDetail() {
   const navigate = useNavigate();
   const [book, setBook] = useState({});
   const [meanRating, setMeanRating] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+  const [commentText, setCommentText] = useState("");
   const [ratingId, setRatingId] = useState(localStorage.getItem("ratingId"));
-
   const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
   const userInfo = userLoginInfo || userRegisterInfo;
-  const userId = userInfo?.token?.id ?? null;
+  const userId = userInfo ? userInfo.token.id : null;
+  const [showModal, setShowModal] = useState(false);
+  const currentBookId = _id;
 
   const bookDetails = useSelector((state) => state.bookDetails);
-  const { loading, error, book: bookData } = bookDetails || {};
+  const { loading: bookLoading, error: bookError, book: bookData } = bookDetails;
 
   const fetchedMeanRating = useSelector(
     (state) => state.fetchMeanRatings.ratings.meanRating
@@ -39,25 +40,19 @@ function BookDetail() {
 
   const userRating = useSelector((state) => state.fetchRating.userRating);
 
-  useEffect(() => {
-    if (!loading && !error) {
-      setBook(bookData);
-    }
-  }, [bookData, loading, error]);
-
-  useEffect(() => {
-    if (fetchedMeanRating !== null) {
-      setMeanRating(fetchedMeanRating);
-    }
-  }, [fetchedMeanRating]);
+  const commentList = useSelector((state) => state.comment);
+  const { loading: loadingComments, error: commentsError, comments } = commentList || {};
 
   useEffect(() => {
     dispatch(listBookDetails(_id));
     dispatch(fetchMeanRatings(_id));
-    if (userInfo) { // Check if userInfo is not null
-      dispatch(getRatingId(userId, _id));
-    }
-  }, [dispatch, _id, userId, userInfo]);
+    dispatch(getRatingId(userId, _id));
+    dispatch(getCommentsForBook(_id));
+  }, [dispatch, _id, userId]);
+
+  useEffect(() => {
+    console.log("Comments:", comments); // Log comments data
+  }, [comments]);
 
   useEffect(() => {
     const storedRatingId = localStorage.getItem("ratingId");
@@ -88,7 +83,6 @@ function BookDetail() {
   }, []);
 
   const handleReadNow = () => {
-    dispatch(addToReadingHistory(_id, userId)); // Call addToReadingHistory action when Read Now button is clicked
     navigate(`/chapters/${_id}`);
   };
 
@@ -99,16 +93,33 @@ function BookDetail() {
   const handleCloseModal = () => {
     setShowModal(false);
   };
+
+  const handleCommentSubmit = (e) => {
+    e.preventDefault();
+    dispatch(createComment({ book_id: _id, user_id: userId, comment: commentText }));
+    setCommentText("");
+  };
+
+  const handleReply = (comment_id, reply, user_id) => {
+    console.log("Comment ID:", comment_id);
+    console.log("Reply Text:", reply);
+    dispatch(createReply(comment_id, reply, user_id));
+  };
+
+  const handleCommentTextChange = (text) => {
+    setCommentText(text);
+  };
+
   return (
     <Container fluid>
       <Row className="mt-5 mb-5 h-full w-full">
         <Col md={6} style={{ margin: "0", padding: "0" }}>
-          {loading ? (
+          {bookLoading ? (
             <Loader />
-          ) : error ? (
-            <Message variant="danger">{error}</Message>
+          ) : bookError ? (
+            <Message variant="danger">{bookError}</Message>
           ) : (
-            <Card.Img src={book.image} alt={book.title} fluid />
+            <Card.Img src={bookData.image} alt={bookData.title} fluid />
           )}
         </Col>
         <Col md={5} style={{ backgroundColor: "#FCD5CE" }}>
@@ -137,7 +148,7 @@ function BookDetail() {
               color: "#6F1D1B",
             }}
           >
-            {book?.title?.toUpperCase()}
+            {bookData?.title?.toUpperCase()}
           </h4>
 
           <h5
@@ -158,7 +169,7 @@ function BookDetail() {
                 fontWeight: "1",
               }}
             >
-              {book?.author?.toUpperCase()}
+              {bookData?.author?.toUpperCase()}
             </span>
           </h5>
 
@@ -179,7 +190,7 @@ function BookDetail() {
                 fontWeight: "1",
               }}
             >
-              {book?.genre?.toUpperCase()}
+              {bookData?.genre?.toUpperCase()}
             </span>
           </h5>
           <h5
@@ -223,7 +234,7 @@ function BookDetail() {
                 fontWeight: "1",
               }}
             >
-              {book?.language?.toUpperCase()}
+              {bookData?.language?.toUpperCase()}
             </span>
           </h5>
 
@@ -245,7 +256,11 @@ function BookDetail() {
                 fontWeight: "1",
               }}
             >
-              {book.synopsis}
+              {bookData && bookData.synopsis ? (
+                bookData.synopsis
+              ) : (
+                "Synopsis not available"
+              )}
             </p>
           </h5>
           <h5
@@ -280,9 +295,9 @@ function BookDetail() {
                 fontFamily: "Protest Guerrilla",
                 borderRadius: "50px",
                 backgroundColor: "#6F1D1B",
-                marginTop: "20px", // Add a margin-top for spacing
+                marginTop: "20px",
               }}
-              onClick={handleReadNow} // Call handleReadNow function on button click
+              onClick={handleReadNow}
             >
               READ NOW!
             </Button>
@@ -297,16 +312,15 @@ function BookDetail() {
                 fontFamily: "Protest Guerrilla",
                 borderRadius: "50px",
                 backgroundColor: "#6F1D1B",
-                marginTop: "20px", // Add a margin-top for spacing
+                marginTop: "20px",
               }}
               onClick={() => setShowModal(true)}
-              disabled={!userInfo || !userInfo.token.is_paid}// Open the modal
+              disabled={!userInfo.token.is_paid}
             >
               RATE
             </Button>
           </Col>
-        </Col>{" "}
-        {/* Closing tag for the second Col component */}
+        </Col>
       </Row>
       <RateModal
         show={showModal}
@@ -314,6 +328,20 @@ function BookDetail() {
         bookId={_id}
         userId={userId}
       />
+      <Row className="mt-3">
+        <Col md={12}>
+          <CommentSection
+            comments={comments}
+            loading={loadingComments}
+            commentsError={commentsError}
+            handleCommentSubmit={handleCommentSubmit}
+            handleReply={handleReply} // Pass the handleReply function directly
+            setCommentText={handleCommentTextChange}
+            commentText={commentText}
+            userId = {userId}
+          />
+        </Col>
+      </Row>
     </Container>
   );
 }
