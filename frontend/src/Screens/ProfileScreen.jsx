@@ -15,6 +15,8 @@ import {
   MDBInput,
 } from "mdb-react-ui-kit";
 
+import FavoritesList from '../Components/FavoritesList';
+
 const ProfileScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -34,6 +36,11 @@ const ProfileScreen = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   const dateJoined = new Date(user.user_created_at);
+
+   // Define state variables for favorite books
+   const [favoriteBooks, setFavoriteBooks] = useState([]);
+   const [loadingFavoriteBooks, setLoadingFavoriteBooks] = useState(false);
+ 
 
   const calculateRemainingDays = () => {
     if (userInfo.token && userInfo.token.paid_at) {
@@ -64,6 +71,7 @@ const formattedDateJoined = dateJoined.toLocaleDateString('en-US', options);
 
   useEffect(() => {
     dispatch(getUserDetails());
+    fetchFavoriteBooks(); // Fetch favorite books when component mounts
   }, [dispatch]);
 
   const handleUpdateProfile = () => {
@@ -139,6 +147,20 @@ const formattedDateJoined = dateJoined.toLocaleDateString('en-US', options);
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
+  };
+
+  const fetchFavoriteBooks = async () => {
+    setLoadingFavoriteBooks(true);
+    try {
+      // Make a request to your backend API to fetch favorite books
+      // Replace '/api/favorite-books' with the actual endpoint
+      const response = await fetch("http://127.0.0.1:8000/api/favorites/");
+      const data = await response.json();
+      setFavoriteBooks(data);
+    } catch (error) {
+      console.error('Error fetching favorite books:', error);
+    }
+    setLoadingFavoriteBooks(false);
   };
 
   return (
@@ -388,10 +410,9 @@ const formattedDateJoined = dateJoined.toLocaleDateString('en-US', options);
                   </MDBCol>
                   <MDBCol size="6">
                     <div className="favorite-books-section bg-white p-2">
-                      <h4>Favorite Books</h4>
-                      <p>book1</p>
-                      <p>book1</p>
-                      <p>book1</p>
+                      {/* <h4>Favorite Books</h4> */}
+                      {/* Render the FavoritesList component here */}
+                      <FavoritesList userId={userInfo.token.id} />
                     </div>
                   </MDBCol>
                 </MDBRow>

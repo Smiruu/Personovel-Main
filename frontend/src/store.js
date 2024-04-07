@@ -22,6 +22,7 @@ import {
   } from "./reducers/ratingReducers";
   import { userDetailsReducer, userProfileUpdateReducer } from "./reducers/profileReducers";
   import preferenceReducer from './reducers/preferenceReducers'; 
+import favoriteReducer from './reducers/favoriteReducers';
 const reducer = combineReducers({
     userRegister: userRegisterReducer,
     userLogin: userLoginReducer,
@@ -71,6 +72,9 @@ const reducer = combineReducers({
     authorUpdate: authorUpdateReducer,
 
     preference: preferenceReducer,
+
+    favorite: favoriteReducer
+    
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null;

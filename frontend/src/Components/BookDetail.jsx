@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { listBookDetails } from "../actions/bookActions";
-import { fetchMeanRatings, retrieveRating } from "../actions/ratingActions"; // Import fetchMeanRatings and retrieveRating actions
+import { fetchMeanRatings, retrieveRating } from "../actions/ratingActions";
 import { getRatingId } from "../actions/ratingActions";
 import Loader from "../Components/Loader";
 import Message from "../Components/Message";
@@ -11,7 +11,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { Card } from "react-bootstrap";
 import Rating from "./Rating";
 import RateModal from "./RateModal";
-import { addToReadingHistory } from "../actions/preferenceActions"; // Impor
+import { addToReadingHistory } from "../actions/preferenceActions";
+import { addToFavorites, removeFromFavorites } from "../actions/favoriteActions";
 
 function BookDetail() {
   const { _id } = useParams();
@@ -21,6 +22,7 @@ function BookDetail() {
   const [meanRating, setMeanRating] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [ratingId, setRatingId] = useState(localStorage.getItem("ratingId"));
+  const [isFavorite, setIsFavorite] = useState(false); // Initialize isFavorite to false
 
   const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
@@ -40,6 +42,10 @@ function BookDetail() {
   const userRating = useSelector((state) => state.fetchRating.userRating);
 
   useEffect(() => {
+    setIsFavorite(false); // Initialize isFavorite to false
+  }, []);
+
+  useEffect(() => {
     if (!loading && !error) {
       setBook(bookData);
     }
@@ -54,7 +60,7 @@ function BookDetail() {
   useEffect(() => {
     dispatch(listBookDetails(_id));
     dispatch(fetchMeanRatings(_id));
-    if (userInfo) { // Check if userInfo is not null
+    if (userInfo) {
       dispatch(getRatingId(userId, _id));
     }
   }, [dispatch, _id, userId, userInfo]);
@@ -68,7 +74,6 @@ function BookDetail() {
   }, [dispatch, userId]);
 
   useEffect(() => {
-    // Update userRating when ratingId changes
     if (ratingId) {
       dispatch(retrieveRating(ratingId));
     }
@@ -76,7 +81,7 @@ function BookDetail() {
 
   useEffect(() => {
     if (!ratingId) {
-      dispatch({ type: "SET_USER_RATING", payload: 0 }); // Dispatch action to set userRating to 0
+      dispatch({ type: "SET_USER_RATING", payload: 0 });
     }
   }, [dispatch, ratingId]);
 
@@ -87,8 +92,15 @@ function BookDetail() {
     };
   }, []);
 
+  useEffect(() => {
+    const storedFavoriteStatus = localStorage.getItem(
+      `favorite_${userId}_${_id}`
+    );
+    setIsFavorite(storedFavoriteStatus === "true" ? true : false);
+  }, [userId, _id]);
+
   const handleReadNow = () => {
-    dispatch(addToReadingHistory(_id, userId)); // Call addToReadingHistory action when Read Now button is clicked
+    dispatch(addToReadingHistory(_id, userId));
     navigate(`/chapters/${_id}`);
   };
 
@@ -99,6 +111,18 @@ function BookDetail() {
   const handleCloseModal = () => {
     setShowModal(false);
   };
+
+  const handleToggleFavorite = () => {
+    if (isFavorite) {
+      dispatch(removeFromFavorites(userId, _id));
+      localStorage.setItem(`favorite_${userId}_${_id}`, "false"); // Update local storage
+    } else {
+      dispatch(addToFavorites(userId, _id));
+      localStorage.setItem(`favorite_${userId}_${_id}`, "true"); // Update local storage
+    }
+    setIsFavorite(!isFavorite);
+  };
+
   return (
     <Container fluid>
       <Row className="mt-5 mb-5 h-full w-full">
@@ -139,7 +163,6 @@ function BookDetail() {
           >
             {book?.title?.toUpperCase()}
           </h4>
-
           <h5
             className="mt-3"
             style={{
@@ -300,13 +323,33 @@ function BookDetail() {
                 marginTop: "20px", // Add a margin-top for spacing
               }}
               onClick={() => setShowModal(true)}
-              disabled={!userInfo || !userInfo.token.is_paid}// Open the modal
+              disabled={!userInfo || !userInfo.token.is_paid} // Open the modal
             >
               RATE
             </Button>
           </Col>
-        </Col>{" "}
-        {/* Closing tag for the second Col component */}
+          <Button
+            className="customButton"
+            type="button"
+            style={{
+              width: "90%",
+              fontWeight: "1",
+              fontSize: "20px",
+              fontFamily: "Protest Guerrilla",
+              borderRadius: "50px",
+              backgroundColor: "transparent",
+              border: "none",
+              marginTop: "20px",
+            }}
+            onClick={handleToggleFavorite}
+            disabled={!userInfo || !userInfo.token.is_paid} // Open the modal
+          >
+            <i
+              className={`fas fa-heart${isFavorite ? " text-danger" : ""}`}
+              style={{ fontSize: "30px" }}
+            ></i>
+          </Button>
+        </Col>
       </Row>
       <RateModal
         show={showModal}

@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Genre, Author, Book, Feedback, Interaction, Rating
+from .models import Genre, Author, Book, Feedback, Interaction, Rating, Favorites
 from django.db.models import Avg
+
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -52,4 +53,10 @@ class InteractionSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Interaction
+        fields = '__all__'
+
+
+class FavoritesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favorites
         fields = '__all__'

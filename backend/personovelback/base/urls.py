@@ -1,5 +1,6 @@
 from django.urls import path
-from . import views
+from . import views 
+from .views import FavoriteListView
 
 
 
@@ -42,4 +43,8 @@ urlpatterns = [
    
     path('add_to_reading_history/', views.add_to_reading_history, name='add_to_reading_history'),
     path('get_preferred_genre/<int:user_id>/', views.get_preferred_genre, name='get_preferred_genre'),  
+
+    path('<int:user_id>/add-to-favorites/<int:book_id>/', views.add_to_favorites, name='add_to_favorites'),
+    path('<int:user_id>/remove-from-favorites/<int:book_id>/', views.remove_from_favorites, name='remove_from_favorites'),
+    path('<int:user_id>/favorites/', FavoriteListView.as_view(), name='favorite_list'),
 ]
