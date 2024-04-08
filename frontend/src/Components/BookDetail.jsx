@@ -10,10 +10,17 @@ import { Button, Container, Row, Col, Card } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import Rating from "./Rating";
 import RateModal from "./RateModal";
-import { createComment, getCommentsForBook, createReply } from "../actions/commentActions";
+import {
+  createComment,
+  getCommentsForBook,
+  createReply,
+} from "../actions/commentActions";
 import CommentSection from "./CommentSection";
 import { addToReadingHistory } from "../actions/preferenceActions";
-import { addToFavorites, removeFromFavorites } from "../actions/favoriteActions";
+import {
+  addToFavorites,
+  removeFromFavorites,
+} from "../actions/favoriteActions";
 
 function BookDetail() {
   const { _id } = useParams();
@@ -27,11 +34,18 @@ function BookDetail() {
   const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
   const userInfo = userLoginInfo || userRegisterInfo;
-  const userId = userInfo ? userInfo.token.id : null;
+
+  // Define userId conditionally based on the availability of userInfo
+  const userId = userInfo && userInfo.token ? userInfo.token.id : null;
+
   const currentBookId = _id;
 
   const bookDetails = useSelector((state) => state.bookDetails);
-  const { loading: bookLoading, error: bookError, book: bookData } = bookDetails;
+  const {
+    loading: bookLoading,
+    error: bookError,
+    book: bookData,
+  } = bookDetails;
 
   const fetchedMeanRating = useSelector(
     (state) => state.fetchMeanRatings.ratings.meanRating
@@ -43,14 +57,20 @@ function BookDetail() {
   const userRating = useSelector((state) => state.fetchRating.userRating);
 
   const commentList = useSelector((state) => state.comment);
-  const { loading: loadingComments, error: commentsError, comments } = commentList || {};
+  const {
+    loading: loadingComments,
+    error: commentsError,
+    comments,
+  } = commentList || {};
 
   const [isFavorite, setIsFavorite] = useState(false); // Initialize isFavorite to false
 
   useEffect(() => {
     dispatch(listBookDetails(_id));
     dispatch(fetchMeanRatings(_id));
-    dispatch(getRatingId(userId, _id));
+    if (userId) {
+      dispatch(getRatingId(userId, _id));
+    }
     dispatch(getCommentsForBook(_id));
     setIsFavorite(false); // Initialize isFavorite to false
   }, [dispatch, _id, userId]);
@@ -89,7 +109,9 @@ function BookDetail() {
   }, []);
 
   useEffect(() => {
-    const storedFavoriteStatus = localStorage.getItem(`favorite_${userId}_${_id}`);
+    const storedFavoriteStatus = localStorage.getItem(
+      `favorite_${userId}_${_id}`
+    );
     setIsFavorite(storedFavoriteStatus === "true" ? true : false);
   }, [userId, _id]);
 
@@ -108,7 +130,9 @@ function BookDetail() {
 
   const handleCommentSubmit = (e) => {
     e.preventDefault();
-    dispatch(createComment({ book_id: _id, user_id: userId, comment: commentText }));
+    dispatch(
+      createComment({ book_id: _id, user_id: userId, comment: commentText })
+    );
     setCommentText("");
     window.location.reload();
   };
@@ -279,33 +303,33 @@ function BookDetail() {
                 fontWeight: "1",
               }}
             >
-              {bookData && bookData.synopsis ? (
-                bookData.synopsis
-              ) : (
-                "Synopsis not available"
-              )}
+              {bookData && bookData.synopsis
+                ? bookData.synopsis
+                : "Synopsis not available"}
             </p>
           </h5>
-          <h5
-            style={{
-              textAlign: "left",
-              marginLeft: "3%",
-              fontSize: "25px",
-              color: "#6F1D1B",
-              marginBottom: "5px",
-            }}
-          >
-            <strong style={{ fontFamily: "Blinker" }}>User Rating: </strong>
-            <span
+          {userInfo && (
+            <h5
               style={{
-                fontStyle: "italic",
-                fontFamily: "Blinker",
-                fontWeight: "1",
+                textAlign: "left",
+                marginLeft: "3%",
+                fontSize: "25px",
+                color: "#6F1D1B",
+                marginBottom: "5px",
               }}
             >
-              <Rating value={userRating} color="#f8e825" />
-            </span>
-          </h5>
+              <strong style={{ fontFamily: "Blinker" }}>User Rating: </strong>
+              <span
+                style={{
+                  fontStyle: "italic",
+                  fontFamily: "Blinker",
+                  fontWeight: "1",
+                }}
+              >
+                <Rating value={userRating} color="#f8e825" />
+              </span>
+            </h5>
+          )}
           <Row className="justify-content-center mb-3">
             <Col>
               <Button
@@ -326,73 +350,81 @@ function BookDetail() {
                 READ NOW!
               </Button>
             </Col>
-            
+
             <Col>
+              {/* Show the rate button only if userInfo is available and the user is paid */}
+              {userInfo && userInfo.token && userInfo.token.is_paid && (
+                <Button
+                  className="customButton"
+                  type="button"
+                  style={{
+                    width: "100%",
+                    fontWeight: "1",
+                    fontSize: "30px",
+                    color: "white",
+                    fontFamily: "Protest Guerrilla",
+                    borderRadius: "50px",
+                    backgroundColor: "#6F1D1B",
+                    marginTop: "20px",
+                  }}
+                  onClick={() => setShowModal(true)}
+                >
+                  RATE
+                </Button>
+              )}
+            </Col>
+            {/* Show favorite button if userInfo is available */}
+            {userInfo && (
               <Button
                 className="customButton"
                 type="button"
                 style={{
-                  width: "100%",
+                  width: "90%",
                   fontWeight: "1",
-                  fontSize: "30px",
-                  color: "white",
+                  fontSize: "20px",
                   fontFamily: "Protest Guerrilla",
                   borderRadius: "50px",
-                  backgroundColor: "#6F1D1B",
+                  backgroundColor: "transparent",
+                  border: "none",
                   marginTop: "20px",
                 }}
-                onClick={() => setShowModal(true)}
-                disabled={!userInfo || !userInfo.token.is_paid}
+                onClick={handleToggleFavorite}
+                disabled={!userId} // Disable if userId is not available
               >
-                RATE
+                <i
+                  className={`fas fa-heart${isFavorite ? " text-danger" : ""}`}
+                  style={{ fontSize: "30px" }}
+                ></i>
               </Button>
-            </Col>
-            <Button
-            className="customButton"
-            type="button"
-            style={{
-              width: "90%",
-              fontWeight: "1",
-              fontSize: "20px",
-              fontFamily: "Protest Guerrilla",
-              borderRadius: "50px",
-              backgroundColor: "transparent",
-              border: "none",
-              marginTop: "20px",
-            }}
-            onClick={handleToggleFavorite}
-            disabled={!userInfo || !userInfo.token.is_paid} // Open the modal
-          >
-            <i
-              className={`fas fa-heart${isFavorite ? " text-danger" : ""}`}
-              style={{ fontSize: "30px" }}
-            ></i>
-          </Button>
+            )}
           </Row>
         </Col>
       </Row>
+      {/* RateModal component */}
       <RateModal
         show={showModal}
         handleClose={handleCloseModal}
         bookId={_id}
         userId={userId}
       />
-      <Row className="mt-3">
-        <Col md={12}>
-          <CommentSection
-            comments={comments.comments}
-            replies={comments.replies}
-            loading={loadingComments}
-            commentsError={commentsError}
-            handleCommentSubmit={handleCommentSubmit}
-            handleReply={handleReply}
-            setCommentText={handleCommentTextChange}
-            commentText={commentText}
-            userId={userId}
-            userInfo={userInfo}
-          />
-        </Col>
-      </Row>
+      {userInfo && (
+        <Row className="mt-3">
+          <Col md={12}>
+            <CommentSection
+              comments={comments.comments}
+              replies={comments.replies}
+              loading={loadingComments}
+              commentsError={commentsError}
+              handleCommentSubmit={handleCommentSubmit}
+              handleReply={handleReply}
+              setCommentText={handleCommentTextChange}
+              commentText={commentText}
+              userId={userId}
+              userInfo={userInfo}
+            />
+          </Col>
+        </Row>
+      )}
     </Container>
   );
 }

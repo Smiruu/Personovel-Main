@@ -23,12 +23,12 @@ const CommentSection = ({
   const dispatch = useDispatch();
 
   const handleReplyButtonClick = (commentId) => {
-    if (userInfo.token && userInfo.token.is_paid) {
+    // Use optional chaining to safely access nested properties
+    if (userInfo?.token?.is_paid) {
       setShowReplyInput(true);
       setReplyingToCommentId(commentId);
     }
   };
-
   const handleCancelReply = () => {
     setShowReplyInput(false);
     setReplyingToCommentId(null);
