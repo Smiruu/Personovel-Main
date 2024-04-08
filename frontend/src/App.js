@@ -9,7 +9,6 @@ import LatestScreen from "./Screens/LatestScreen";
 import AboutScreen from "./Screens/AboutScreen";
 import ContactScreen from "./Screens/ContactScreen";
 import LandingScreen from "./Screens/LandingScreen";
-import Start from "./Components/Start";
 import SampleScreen from "./Screens/SampleScreen";
 import BrowseScreen from "./Screens/BrowseScreen";
 import Chapter from "./Screens/ChapterDropdown";
@@ -33,7 +32,6 @@ function App() {
             <Routes>
               <Route path="/" element={<LandingScreen />} exact />
               <Route path="/home" element={<HomeScreen />} exact />
-              <Route path="/start" element={<Start />} />
               <Route path="/chapter" element={<Chapter />} />
               <Route path="/popular" element={<PopularScreen />} />
               <Route path="/latest" element={<LatestScreen />} />

@@ -21,20 +21,28 @@ const OTPScreen = () => {
 
   const otpState = useSelector((state) => state.otp);
   const { verifyOtpLoading, verifyOtpError, resendOtpError } = otpState;
+  const verifyOtpState = useSelector((state) => state.verifyOtp.success);
+
+  
+
 
   const handleVerifyOTP = async (event) => {
     event.preventDefault();
     try {
-      await dispatch(verifyOTP(userId, otpId, otpCode));
-      const otpVerified = localStorage.getItem("OTP");
-      if (otpVerified === "true") {
+      const success = await dispatch(verifyOTP(userId, otpId, otpCode));
+      console.log('success:', success);
+      if (success) {
+        console.log('navigating to home');
         navigate("/home");
+        alert("Welcome to Personovel!");
+      } else {
+        alert("Wrong OTP. Please try again.");
       }
     } catch (error) {
       console.error("userId or otpId is not set in userInfo");
     }
   };
-
+  
   const handleResendOTP = () => {
     if (userId && otpId) {
       dispatch(resendOTP(userId, otpId, otpCode));
@@ -89,13 +97,14 @@ const OTPScreen = () => {
     >
       <div style={{ textAlign: "center", maxWidth: "400px" }}>
         <h2 style={{ fontWeight: "bold", color: "#6F1D1B" }}>
-          OTP Verification
+          OTP Verification (Check Email)
         </h2>
         {verifyOtpLoading && <p>Verifying OTP...</p>}
         {verifyOtpError && <p>Error: {verifyOtpError}</p>}
         <input
           type="text"
           value={otpCode}
+          placeholder="Enter OTP code"
           onChange={(e) => setOtpCode(e.target.value)}
           style={{
             padding: "10px",
@@ -137,6 +146,7 @@ const OTPScreen = () => {
             marginLeft: "10px",
           }}
         >
+          Resend
           {countdownActive && (
             <span style={{ position: "relative" }}>{countdown} seconds</span>
           )}

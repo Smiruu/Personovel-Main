@@ -13,12 +13,19 @@ import { Link, useNavigate } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
 import { searchBooks } from "../actions/searchActions";
 import { logout } from "../actions/userActions";
+import { getUserDetails } from "../actions/profileActions";
 
 function Header() {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState(""); // Define searchQuery state
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const userDetails = useSelector((state) => state.userDetails);
+  const { loading, error, user } = userDetails;
+
+  useEffect(() => {
+    dispatch(getUserDetails());
+  }, [dispatch]);
   const handleSearchToggle = () => {
     setIsSearchExpanded(!isSearchExpanded);
   };
@@ -178,31 +185,35 @@ function Header() {
           </Nav>
         </Navbar.Collapse>
 
-          <Button
-            class="btn btn-lg btn-info"
-            onClick={handleSearch}
-            style={{
-              backgroundColor: "#002960",
-              border: "none",
-              borderRadius: "50px",
-            }}
-          >
-            <i className="fa-solid fa-magnifying-glass" />
-          </Button>
+        <Button
+          class="btn btn-lg btn-info"
+          onClick={handleSearch}
+          style={{
+            backgroundColor: "#002960",
+            border: "none",
+            borderRadius: "50px",
+          }}
+        >
+          <i className="fa-solid fa-magnifying-glass" />
+        </Button>
 
+        {userInfo && user && (
           <Link to="/Profile" className="link-no-underline">
             <Nav.Link
               style={{ color: "#002960", marginLeft: "10px" }}
               href="#action2"
             >
-              <Image
-                src="/Icon.png"
-                className="me-1"
-                alt="User Icon"
-                style={{ width: "45px", height: "45px" }}
-              />
+              {user.image && (
+                <Image
+                  src={user.image}
+                  className="rounded-circle border border-dark me-1"
+                  alt="User Icon"
+                  style={{ width: "45px", height: "45px" }}
+                />
+              )}
             </Nav.Link>
           </Link>
+        )}
       </Container>
     </Navbar>
   );

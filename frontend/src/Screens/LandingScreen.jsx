@@ -7,7 +7,9 @@ import SampleScreen from "./SampleScreen";
 
 
 function LandingScreen() {
-  const userInfo = useSelector((state) => state.userLogin.userInfo);
+  const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
+  const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
+  const userInfo = userLoginInfo || userRegisterInfo;
 
   // If user is logged in, redirect to home page
   if (userInfo) {

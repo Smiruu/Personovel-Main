@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { updateUserToPaid } from "../actions/userActions";
 import { useSelector } from "react-redux";
+import { Modal, Button, Container, Card } from "react-bootstrap";
 
 function PaymentScreen() {
   const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
@@ -10,9 +11,9 @@ function PaymentScreen() {
   const userInfo = userLoginInfo || userRegisterInfo;
   const dispatch = useDispatch();
   const [sdkReady, setSdkReady] = useState(false);
-  const [showThankYou, setShowThankYou] = useState(false);
   const [showPayPalButtons, setShowPayPalButtons] = useState(false);
   const [subscriptionEndDate, setSubscriptionEndDate] = useState(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   useEffect(() => {
     const addPayPalScript = () => {
@@ -30,22 +31,17 @@ function PaymentScreen() {
     addPayPalScript();
     const hasReloaded = localStorage.getItem("hasReloaded");
     if (!hasReloaded) {
-      // Reload the page
       addPayPalScript();
       window.location.reload();
-      // Set the flag in localStorage to indicate that the page has been reloaded
       localStorage.setItem("hasReloaded", true);
     }
-    
 
     return () => {
-      // Cleanup function to remove the dynamically added script
       document.body.removeChild(document.body.lastChild);
     };
   }, []);
 
   useEffect(() => {
-    // Calculate subscription end date when user info changes
     if (userInfo.token && userInfo.token.is_paid) {
       const paidAt = new Date(userInfo.token.paid_at);
       const endDate = new Date(
@@ -62,7 +58,7 @@ function PaymentScreen() {
       purchase_units: [
         {
           amount: {
-            value: "5.00", // Adjust the value according to your pricing
+            value: "5.00",
             currency_code: "USD",
           },
         },
@@ -71,57 +67,134 @@ function PaymentScreen() {
   };
 
   const onSuccessHandler = (details, data) => {
-    // Handle successful payment
     console.log("Payment successful:", details);
 
-    // Dispatch the action to update user to paid
     dispatch(updateUserToPaid(userInfo.token.id));
 
-    // Show the thank you message
-    setShowThankYou(true);
+    setShowConfirmation(true);
   };
 
   const onApproveHandler = async (data, actions) => {
     const order = await actions.order.capture();
-    // Handle the captured order, you can log it or perform any other action
     console.log("Order captured:", order);
 
-    // Call the onSuccessHandler to handle the successful payment
     onSuccessHandler(order);
-  };
-
-  const closeThankYouPopup = () => {
-    setShowThankYou(false);
   };
 
   const handleRenewSubscription = () => {
     setShowPayPalButtons(true);
   };
 
+  const handleCancelClose = () => {
+    setShowConfirmation(false);
+  };
+
+  const handleConfirmClose = () => {
+    setShowConfirmation(false);
+  };
+
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Subscribe to our 3 month subscription plan</h1>
-      <p style={styles.description}>
-        to receive unlimited access to books that is a road to your imagination
-      </p>
-      <div style={styles.priceContainer}>
-        <span style={styles.price}>$5</span>{" "}
-        <span style={styles.priceInfo}>per 3 months</span>
-      </div>
-      {userInfo.token.is_paid ? (
-        <>
-          <div>
-            <button onClick={handleRenewSubscription}>
-              Renew Subscription
-            </button>
-            {subscriptionEndDate && (
-              <p>
-                Your subscription ends on: {subscriptionEndDate.toDateString()}
-              </p>
-            )}
+    <div
+      className="d-flex justify-content-center align-items-center"
+      style={{
+        fontFamily: "Arial, sans-serif",
+      }}
+    >
+      <Card style={{ maxWidth: "500px", minWidth: "300px" }}>
+        <Card.Body>
+          <div className="text-center mb-4">
+            <h1
+              className="display-4"
+              style={{ color: "#007bff", fontWeight: "bold" }}
+            >
+              Subscribe Now!
+            </h1>
+            <h2
+              className="h4"
+              style={{ color: "#495057", fontWeight: "bold" }}
+            >
+              3-Month Plan Subscription
+            </h2>
+            <p
+              style={{
+                fontStyle: "italic",
+                fontSize: "1.1rem",
+                color: "#6c757d",
+              }}
+            >
+              Transform your imagination into the different worlds of novels.
+            </p>
           </div>
-          {showPayPalButtons && (
-            <div style={styles.paypalContainer}>
+          <div className="mb-4">
+            <p
+              className="lead"
+              style={{ color: "#495057", fontSize: "1.1rem" }}
+            >
+              <i className="fas fa-check-circle mr-2" style={{ color: "green" }}></i>{" "}
+              Unlimited Access to Novels.
+            </p>
+          </div>
+
+          <div className="text-center mb-4">
+            <span
+              style={{
+                fontSize: "1.5rem",
+                fontWeight: "bold",
+                color: "#007bff",
+                marginRight: "0.5rem",
+              }}
+            >
+              $5
+            </span>
+            <span style={{ fontSize: "1.2rem", color: "#6c757d" }}>
+              per 3 months
+            </span>
+          </div>
+
+          {userInfo.token.is_paid ? (
+            <>
+              <div className="text-center mt-3">
+                <button
+                  className="btn btn-primary"
+                  onClick={handleRenewSubscription}
+                  style={{ marginBottom: "1rem" }}
+                >
+                  Renew Subscription
+                </button>
+                {subscriptionEndDate && (
+                  <p
+                    className="mb-0"
+                    style={{
+                      fontSize: "0.9rem",
+                      fontStyle: "italic",
+                      color: "#6c757d",
+                    }}
+                  >
+                    Your subscription ends on:{" "}
+                    {subscriptionEndDate.toDateString()}
+                  </p>
+                )}
+              </div>
+
+              {showPayPalButtons && (
+                <div className="mt-3">
+                  <PayPalScriptProvider
+                    options={{
+                      "client-id":
+                        "Ad1WVslFyzstzzLW0POqHs4IwuczDbgqHb1z1tlXweb1preOa8fjSxgA-KT2UBDsrDks0R7u_i1vsGLh",
+                    }}
+                  >
+                    <PayPalButtons
+                      createOrder={createOrderHandler}
+                      onSuccess={onSuccessHandler}
+                      onApprove={onApproveHandler}
+                    />
+                  </PayPalScriptProvider>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="mt-3">
               <PayPalScriptProvider
                 options={{
                   "client-id":
@@ -136,106 +209,29 @@ function PaymentScreen() {
               </PayPalScriptProvider>
             </div>
           )}
-        </>
-      ) : (
-        <div style={styles.paypalContainer}>
-          <PayPalScriptProvider
-            options={{
-              "client-id":
-                "Ad1WVslFyzstzzLW0POqHs4IwuczDbgqHb1z1tlXweb1preOa8fjSxgA-KT2UBDsrDks0R7u_i1vsGLh",
-            }}
+          <Modal show={showConfirmation} onHide={handleCancelClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Thank You! </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              Your payment was successful. Your subscription has been renewed.
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="primary" onClick={handleConfirmClose}>
+                Close
+              </Button>
+            </Modal.Footer>
+          </Modal>
+          <p
+            className="text-center mt-3"
+            style={{ fontSize: "0.9rem", fontStyle: "italic", color: "#6c757d" }}
           >
-            <PayPalButtons
-              createOrder={createOrderHandler}
-              onSuccess={onSuccessHandler}
-              onApprove={onApproveHandler}
-            />
-          </PayPalScriptProvider>
-        </div>
-      )}
-      {showThankYou && (
-        <div style={styles.modal}>
-          <div style={styles.modalContent}>
-            <span style={styles.closeButton} onClick={closeThankYouPopup}>
-              X
-            </span>
-            <h2>Thank You!</h2>
-            <p>Your patronage is greatly appreciated.</p>
-          </div>
-        </div>
-      )}
-      <p style={styles.noRefundText}>We strictly follow a no refund policy</p>
+            We strictly follow a no refund policy
+          </p>
+        </Card.Body>
+      </Card>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    textAlign: "center",
-    padding: "20px",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: "100vh", // Ensure container fills the viewport height
-  },
-  title: {
-    fontSize: "24px",
-    fontWeight: "bold",
-    marginBottom: "10px",
-  },
-  description: {
-    fontSize: "18px",
-    marginBottom: "20px",
-  },
-  priceContainer: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  price: {
-    fontSize: "28px",
-    fontWeight: "bold",
-    marginRight: "5px",
-  },
-  priceInfo: {
-    fontSize: "18px",
-  },
-  paypalContainer: {
-    marginTop: "20px",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modal: {
-    position: "fixed",
-    zIndex: 1,
-    left: 0,
-    top: 0,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(0,0,0,0.5)",
-  },
-  modalContent: {
-    backgroundColor: "#fefefe",
-    margin: "15% auto",
-    padding: "20px",
-    border: "1px solid #888",
-    width: "80%",
-    position: "relative",
-  },
-  closeButton: {
-    position: "absolute",
-    top: "10px",
-    right: "10px",
-    cursor: "pointer",
-    fontSize: "20px",
-  },
-  noRefundText: {
-    fontSize: "14px",
-    marginTop: "20px",
-    color: "red",
-  },
-};
 
 export default PaymentScreen;

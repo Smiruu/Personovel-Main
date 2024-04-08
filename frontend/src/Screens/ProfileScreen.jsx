@@ -9,12 +9,14 @@ import {
   MDBRow,
   MDBCol,
   MDBCard,
-  MDBCardText,
-  MDBCardImage,
   MDBTypography,
-  MDBInput,
 } from "mdb-react-ui-kit";
-
+import AdminScreen from "./AdminScreen";
+import StatisticScreen from "./StatisticScreen";
+import ConversationScreen from "./ConversationScreen";
+import PaymentScreen from "./PaymentScreen";
+import LatestScreen from "./LatestScreen";
+import FavoritesList from '../Components/FavoritesList';
 const ProfileScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -33,46 +35,21 @@ const ProfileScreen = () => {
   const [fileName, setFileName] = useState("");
   const [isEditing, setIsEditing] = useState(false);
 
-  const dateJoined = new Date(user.user_created_at);
+  const [favoriteBooks, setFavoriteBooks] = useState([]);
+  const [loadingFavoriteBooks, setLoadingFavoriteBooks] = useState(false);
 
-  const calculateRemainingDays = () => {
-    if (userInfo.token && userInfo.token.paid_at) {
-      const paidDate = new Date(userInfo.token.paid_at);
-      // Add 3 months to the paid date
-      const threeMonthsLater = new Date(paidDate);
-      threeMonthsLater.setMonth(threeMonthsLater.getMonth() + 3);
-      // Calculate difference in milliseconds
-      const differenceMs = threeMonthsLater - Date.now();
-      // Convert milliseconds to days
-      const remainingDays = Math.ceil(differenceMs / (1000 * 60 * 60 * 24));
-      return remainingDays;
-    }
-    return null; // Return null if paid_at date is not available
-  };
   
-  const remainingDays = calculateRemainingDays();
-
-// Define options for date formatting
-const options = {
-  year: 'numeric',
-  month: 'long', // Full month name (e.g., "February")
-  day: 'numeric',
-};
-
-// Format the date
-const formattedDateJoined = dateJoined.toLocaleDateString('en-US', options);
 
   useEffect(() => {
     dispatch(getUserDetails());
+    fetchFavoriteBooks(); // Fetch favorite books when component mounts
   }, [dispatch]);
 
   const handleUpdateProfile = () => {
     const formData = new FormData();
 
     formData.append("name", updatedName);
-
-    const bioValue = updatedBio.trim() !== "" ? updatedBio : user.bio;
-    formData.append("bio", bioValue);
+    formData.append("bio", updatedBio);
 
     if (profilePicture) {
       formData.append("image", profilePicture);
@@ -133,13 +110,53 @@ const formattedDateJoined = dateJoined.toLocaleDateString('en-US', options);
   const backgroundImage = user.cover_photo || "";
   const profileIcon = `${user.image}?${new Date().getTime()}`;
 
-  // Conversation and subscription logic
-
   const [activeTab, setActiveTab] = useState("ABOUT");
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
+
+  const dateJoined = new Date(user.user_created_at);
+
+  const calculateRemainingDays = () => {
+    if (userInfo.token && userInfo.token.paid_at) {
+      const paidDate = new Date(userInfo.token.paid_at);
+      // Add 3 months to the paid date
+      const threeMonthsLater = new Date(paidDate);
+      threeMonthsLater.setMonth(threeMonthsLater.getMonth() + 3);
+      // Calculate difference in milliseconds
+      const differenceMs = threeMonthsLater - Date.now();
+      // Convert milliseconds to days
+      const remainingDays = Math.ceil(differenceMs / (1000 * 60 * 60 * 24));
+      return remainingDays;
+    }
+    return null; // Return null if paid_at date is not available
+  };
+  
+  const remainingDays = calculateRemainingDays();
+
+// Define options for date formatting
+const options = {
+  year: 'numeric',
+  month: 'long', // Full month name (e.g., "February")
+  day: 'numeric',
+};
+const formattedDateJoined = dateJoined.toLocaleDateString('en-US', options);
+
+const fetchFavoriteBooks = async () => {
+  setLoadingFavoriteBooks(true);
+  try {
+    // Make a request to your backend API to fetch favorite books
+    // Replace '/api/favorite-books' with the actual endpoint
+    const response = await fetch("http://127.0.0.1:8000/api/favorites/");
+    const data = await response.json();
+    setFavoriteBooks(data);
+  } catch (error) {
+    console.error('Error fetching favorite books:', error);
+  }
+  setLoadingFavoriteBooks(false);
+};
+
 
   return (
     <div>
@@ -193,6 +210,7 @@ const formattedDateJoined = dateJoined.toLocaleDateString('en-US', options);
                   color: "#002960",
                   textTransform: "uppercase",
                   borderColor: "#002960",
+                  fontSize: "20px",
                 }}
                 onMouseEnter={(e) => {
                   e.target.style.color = "white";
@@ -205,29 +223,6 @@ const formattedDateJoined = dateJoined.toLocaleDateString('en-US', options);
               >
                 Edit Profile
               </Button>
-
-              {userInfo.token && userInfo.token.is_admin && (
-                <Button
-                  onClick={handleAdminPage}
-                  style={{
-                    backgroundColor: "transparent",
-                    color: "#BC1823",
-                    marginLeft: "10px",
-                    textTransform: "uppercase",
-                    borderColor: "#BC1823",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.color = "white";
-                    e.target.style.backgroundColor = "#BC1823";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.color = "#BC1823";
-                    e.target.style.backgroundColor = "transparent";
-                  }}
-                >
-                  Admin Page
-                </Button>
-              )}
             </div>
           </MDBContainer>
 
@@ -247,7 +242,7 @@ const formattedDateJoined = dateJoined.toLocaleDateString('en-US', options);
                       onChange={handleNameChange}
                     />
                   </Form.Group>
-                  <Form.Group controlId="formBio">
+                  <Form.Group controlId="formBio" className="mt-3">
                     <Form.Label>Bio</Form.Label>
                     <Form.Control
                       as="textarea"
@@ -257,7 +252,7 @@ const formattedDateJoined = dateJoined.toLocaleDateString('en-US', options);
                       onChange={handleBioChange}
                     />
                   </Form.Group>
-                  <Form.Group controlId="formProfilePicture">
+                  <Form.Group controlId="formProfilePicture" className="mt-3">
                     <Form.Label>Profile Picture</Form.Label>
                     <Form.Control
                       type="file"
@@ -277,7 +272,7 @@ const formattedDateJoined = dateJoined.toLocaleDateString('en-US', options);
                       />
                     )}
                   </Form.Group>
-                  <Form.Group controlId="formCoverPhoto">
+                  <Form.Group controlId="formCoverPhoto" className="mt-3">
                     <Form.Label>Cover Photo</Form.Label>
                     <Form.Control
                       type="file"
@@ -305,37 +300,55 @@ const formattedDateJoined = dateJoined.toLocaleDateString('en-US', options);
           )}
 
           <div className="tabs-container mt-3">
-            <button
-              style={{
-                padding: "10px 15px",
-                border: "1px solid #002960",
-                backgroundColor: activeTab === "ABOUT" ? "#002960" : "white",
-                color: activeTab === "ABOUT" ? "white" : "#002960",
-                cursor: "pointer",
-                transition: "background-color 0.3s ease",
-              }}
-              onClick={() => handleTabClick("ABOUT")}
-            >
-              ABOUT
-            </button>
-
             {userInfo.token && userInfo.token.is_admin ? (
-              <button
-                style={{
-                  padding: "10px 15px",
-                  border: "1px solid #002960",
-                  backgroundColor:
-                    activeTab === "STATISTICS" ? "#002960" : "white",
-                  color: activeTab === "STATISTICS" ? "white" : "#002960",
-                  cursor: "pointer",
-                  transition: "background-color 0.3s ease",
-                }}
-                onClick={() => handleTabClick("STATISTICS")}
-              >
-                STATISTICS
-              </button>
+              <>
+                <button
+                  style={{
+                    padding: "10px 15px",
+                    border: "1px solid #002960",
+                    backgroundColor:
+                      activeTab === "ABOUT" ? "#002960" : "white",
+                    color: activeTab === "ABOUT" ? "white" : "#002960",
+                    cursor: "pointer",
+                    transition: "background-color 0.3s ease",
+                  }}
+                  onClick={() => handleTabClick("ABOUT")}
+                >
+                  ABOUT
+                </button>
+
+                <button
+                  style={{
+                    padding: "10px 15px",
+                    border: "1px solid #002960",
+                    backgroundColor:
+                      activeTab === "STATISTICS" ? "#002960" : "white",
+                    color: activeTab === "STATISTICS" ? "white" : "#002960",
+                    cursor: "pointer",
+                    transition: "background-color 0.3s ease",
+                  }}
+                  onClick={() => handleTabClick("STATISTICS")}
+                >
+                  STATISTICS
+                </button>
+              </>
             ) : (
               <>
+                <button
+                  style={{
+                    padding: "10px 15px",
+                    border: "1px solid #002960",
+                    backgroundColor:
+                      activeTab === "ABOUT" ? "#002960" : "white",
+                    color: activeTab === "ABOUT" ? "white" : "#002960",
+                    cursor: "pointer",
+                    transition: "background-color 0.3s ease",
+                  }}
+                  onClick={() => handleTabClick("ABOUT")}
+                >
+                  ABOUT
+                </button>
+
                 <button
                   style={{
                     padding: "10px 15px",
@@ -350,6 +363,7 @@ const formattedDateJoined = dateJoined.toLocaleDateString('en-US', options);
                 >
                   CONVERSATIONS
                 </button>
+
                 <button
                   style={{
                     padding: "10px 15px",
@@ -378,7 +392,7 @@ const formattedDateJoined = dateJoined.toLocaleDateString('en-US', options);
                         <strong>BIO:</strong> {user.bio}
                       </p>
                       <p>
-                        <strong>DATE JOINED:</strong> {formattedDateJoined}
+                      <strong>DATE JOINED:</strong> {formattedDateJoined}
                       </p>
                       <p>
                         <strong>SUBSCRIPTION DURATION:</strong> {" "}
@@ -387,54 +401,58 @@ const formattedDateJoined = dateJoined.toLocaleDateString('en-US', options);
                     </div>
                   </MDBCol>
                   <MDBCol size="6">
+                    {userInfo.token && userInfo.token.is_admin ? (
+                      <div className="favorite-books-section bg-white p-2">
+                        <AdminScreen />
+                      </div>
+                    ) : (
+                      <div className="favorite-books-section bg-white p-2">
+                        <h4>LATEST READ</h4>
+                        <p>book1</p>
+                      </div>
+                    )}
+                  </MDBCol>
+
+                  <MDBCol size="12" className="mt-3">
+                    {userInfo.token && userInfo.token.is_admin ? (
+                      <div className="mt-3">
+                        <div className="favorite-books-section bg-white p-2">
+                        <LatestScreen />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="mt-3">
                     <div className="favorite-books-section bg-white p-2">
-                      <h4>Favorite Books</h4>
-                      <p>book1</p>
-                      <p>book1</p>
-                      <p>book1</p>
-                    </div>
+                      {/* <h4>Favorite Books</h4> */}
+                      {/* Render the FavoritesList component here */}
+                      <FavoritesList userId={userInfo.token.id} />
+                        </div>
+                      </div>
+                    )}
                   </MDBCol>
                 </MDBRow>
               </div>
             )}
 
-            {userInfo.token &&
-              userInfo.token.is_admin &&
-              activeTab === "STATISTICS" && (
-                <div className="statistics-container">
-                  <h3>Subscription Statistics</h3>
-                  <div className="subscription-chart">
-                    {/* Placeholder chart for subscription statistics */}
-                    {/* You can use any chart library like Chart.js, react-chartjs-2, etc. */}
-                    {/* Example: */}
-                    <img
-                      src="subscription_chart_placeholder.png"
-                      alt="Subscription Chart"
-                    />
-                  </div>
-
-                  <h3>Book Statistics</h3>
-                  <div className="book-chart">
-                    {/* Placeholder chart for book statistics */}
-                    {/* Example: */}
-                    <img src="book_chart_placeholder.png" alt="Book Chart" />
-                  </div>
-                </div>
-              )}
-
             {activeTab === "CONVERSATIONS" && (
               <div className="conversation-container">
-                <h3>Conversation Section</h3>
-                DITO UNG MGA NIREPLY/CINOMMENT NG USER
+                <ConversationScreen />
               </div>
             )}
 
             {activeTab === "SUBSCRIPTIONS" && (
               <div className="subscription-container">
-                <h3>Subscription Section</h3>
-                ITO UNG PWEDE MAG SUBSCRIBE ULIT UNG USER
+                <PaymentScreen />
               </div>
             )}
+
+            {activeTab === "STATISTICS" &&
+              userInfo.token &&
+              userInfo.token.is_admin && (
+                <div className="statistics-container">
+                  <StatisticScreen />
+                </div>
+              )}
           </div>
         </div>
       )}

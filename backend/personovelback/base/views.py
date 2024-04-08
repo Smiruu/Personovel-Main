@@ -16,6 +16,7 @@ from user.models import User
 from collections import Counter
 from django.db.models import Count, Sum
 from django.contrib.auth import get_user_model
+from rest_framework.views import APIView
 # Create your views here.
 @api_view(['GET'])
 def getRoutes(request):
@@ -621,3 +622,42 @@ def get_replies_for_comment(request, comment_id):
     else:
         return Response({'detail': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['POST'])
+def add_to_favorites(request, user_id, book_id):
+    user = get_object_or_404(User, pk=user_id)
+    book = get_object_or_404(Book, pk=book_id)
+    
+    # Check if the book is already favorited by the user
+    if Favorites.objects.filter(user=user, book=book).exists():
+        return Response({'message': 'Book is already in favorites'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Create a new favorite entry
+    favorite = Favorites(user=user, book=book)
+    favorite.save()
+    serializer = FavoritesSerializer(favorite)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['DELETE'])
+def remove_from_favorites(request, user_id, book_id):
+    user = get_object_or_404(User, pk=user_id)
+    book = get_object_or_404(Book, pk=book_id)
+    
+    if request.method == 'DELETE':
+        # Check if the book is favorited by the user
+        favorite = Favorites.objects.filter(user=user, book=book).first()
+        if favorite:
+            favorite.delete()
+            return Response({'message': 'Book removed from favorites successfully'}, status=status.HTTP_204_NO_CONTENT)
+        return Response({'message': 'Book is not in favorites'}, status=status.HTTP_400_BAD_REQUEST)
+    return Response({'message': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+class FavoriteListView(APIView):
+    def get(self, request, user_id):
+        try:
+            favorites = Favorites.objects.filter(user_id=user_id)
+            favorite_books = [fav.book for fav in favorites]  # Extracting books from favorites
+            serializer = BookSerializer(favorite_books, many=True)  # Assuming you have a BookSerializer
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Favorites.DoesNotExist:
+            return Response({'message': 'Favorites not found'}, status=status.HTTP_404_NOT_FOUND)

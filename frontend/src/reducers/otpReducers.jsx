@@ -11,17 +11,13 @@ const initialState = {
   verifyOtpLoading: false,
   verifyOtpError: null,
   resendOtpLoading: false,
-  resendOtpError: null
+  resendOtpError: null,
+  success: false,
 };
 
 export const otpReducer = (state = initialState, action) => {
   switch (action.type) {
-    case VERIFY_OTP_REQUEST:
-      return { ...state, verifyOtpLoading: true, verifyOtpError: null };
-    case VERIFY_OTP_SUCCESS:
-      return { ...state, verifyOtpLoading: false };
-    case VERIFY_OTP_FAILURE:
-      return { ...state, verifyOtpLoading: false, verifyOtpError: action.payload };
+
 
     case RESEND_OTP_REQUEST:
       return { ...state, resendOtpLoading: true, resendOtpError: null };
@@ -34,3 +30,16 @@ export const otpReducer = (state = initialState, action) => {
       return state;
   }
 };
+
+export const verifyOtpReducer = (state = {}, action) => {
+  switch(action.type){
+      case VERIFY_OTP_REQUEST:
+          return {loading: true}
+      case VERIFY_OTP_SUCCESS:
+          return {loading: false, success: true}
+      case VERIFY_OTP_FAILURE:
+          return {loading: false, error: action.payload}
+      default:
+          return state
+  }
+}

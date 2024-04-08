@@ -10,7 +10,7 @@ import { feedbackReducer, feedbackListReducer, feedbackDeleteReducer } from './r
 import { bookListReducer, bookCreateReducer, bookDetailsReducer, bookDeleteReducer, bookUpdateReducer } from './reducers/bookReducers';
 
 import searchReducer from './reducers/searchReducers';
-import { otpReducer } from './reducers/otpReducers';
+import { otpReducer, verifyOtpReducer } from './reducers/otpReducers';
 import {ConfirmChangePasswordReducer, SendChangePasswordReducer} from './reducers/resetpasswordReducers'
 import {
     createRatingReducer,
@@ -23,11 +23,14 @@ import {
   import { userDetailsReducer, userProfileUpdateReducer } from "./reducers/profileReducers";
   import preferenceReducer from './reducers/preferenceReducers'; 
 import { commentReducer, createReplyReducer } from './reducers/commentReducers';
+import favoriteReducer from './reducers/favoriteReducers';
+
 const reducer = combineReducers({
     userRegister: userRegisterReducer,
     userLogin: userLoginReducer,
     search: searchReducer,
     otp: otpReducer, 
+    verifyOtp: verifyOtpReducer,
     changePassword: SendChangePasswordReducer,
     confirmChangePasswordReducer: ConfirmChangePasswordReducer,    
     userUpdatePaid: userUpdatePaidReducer,
@@ -75,6 +78,8 @@ const reducer = combineReducers({
 
     comment: commentReducer,
     createReply: createReplyReducer,
+
+    favorite: favoriteReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null;

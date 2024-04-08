@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { checkUserPaidStatus } from "../actions/userActions";
 import { getPreferredGenre } from "../actions/preferenceActions";
 import { getUserDetails } from "../actions/profileActions";
+import Loader from "../Components/Loader"; // Import your Loader component
 
 function LandingScreen() {
   const [preferredBooks, setPreferredBooks] = useState([]);
@@ -23,11 +24,6 @@ function LandingScreen() {
   const booksInPreferredGenre = useSelector((state) => state.preference.booksInPreferredGenre);
   const userDetails = useSelector((state) => state.userDetails);
   const { loading, error, user } = userDetails;
-
-  
-  useEffect(() => {
-    dispatch(getUserDetails());
-  }, [dispatch]);
 
   // Update preferredBooks state when booksInPreferredGenre changes
   useEffect(() => {
@@ -49,30 +45,16 @@ function LandingScreen() {
     fetchBooks();
 
     if (userInfo) {
+      dispatch(getUserDetails());
       dispatch(checkUserPaidStatus(userInfo.token.id));
       dispatch(getPreferredGenre(userInfo.token.id));
     }
   }, [userInfo, dispatch]);
 
-  const handleNext = (setIndex) => {
-    setIndex((prevIndex) => prevIndex + 1);
-    setHasClickedNext(true);
-  };
-
-  const handlePrev = (setIndex) => {
-    setIndex((prevIndex) => Math.max(prevIndex - 1, 0));
-  };
-
-  const hasPrevBooks = (index) => index > 0;
-  const hasNextBooks = (index, books) => index + 4 < books.length;
-
   if (!userInfo) {
     return <Navigate to="/login" />;
   }
 
-  if (!user) {
-    return <Navigate to="/login" />;
-  }
   return (
     <Container fluid>
       <Row className="mt-3">
@@ -99,7 +81,7 @@ function LandingScreen() {
               margin: "0",
             }}
           >
-            {user.name}!
+            {user ? user.name : <Loader />}!
           </h1>
           <Card.Img
             src="/images/home-flower.png"
@@ -140,36 +122,6 @@ function LandingScreen() {
               marginTop: "1rem",
             }}
           >
-            {hasPrevBooks(recommendedIndex) && hasClickedNext && (
-              <button
-                onClick={() => handlePrev(setRecommendedIndex)}
-                style={{
-                  borderRadius: "50%",
-                  backgroundColor: "rgba(111, 29, 27, 0.7)",
-                  color: "white",
-                  padding: "0.5rem 1rem",
-                  border: "none",
-                  marginRight: "auto",
-                }}
-              >
-                {"<"}
-              </button>
-            )}
-            {hasNextBooks(recommendedIndex, preferredBooks) && (
-              <button
-                onClick={() => handleNext(setRecommendedIndex)}
-                style={{
-                  marginLeft: "auto",
-                  borderRadius: "50%",
-                  backgroundColor: "rgba(111, 29, 27, 0.7)",
-                  color: "white",
-                  padding: "0.5rem 1rem",
-                  border: "none",
-                }}
-              >
-                {">"}
-              </button>
-            )}
           </div>
         </Col>
       </Row>
@@ -205,36 +157,7 @@ function LandingScreen() {
             marginTop: "1rem",
           }}
         >
-          {hasPrevBooks(popularIndex) && hasClickedNext && (
-            <button
-              onClick={() => handlePrev(setPopularIndex)}
-              style={{
-                borderRadius: "50%",
-                backgroundColor: "rgba(0, 102, 155, 0.7)",
-                color: "white",
-                padding: "0.5rem 1rem",
-                border: "none",
-                marginRight: "auto",
-              }}
-            >
-              {"<"}
-            </button>
-          )}
-          {hasNextBooks(popularIndex, popularBooks) && (
-            <button
-              onClick={() => handleNext(setPopularIndex)}
-              style={{
-                marginLeft: "auto",
-                borderRadius: "50%",
-                backgroundColor: "rgba(0, 102, 155, 0.7)",
-                color: "white",
-                padding: "0.5rem 1rem",
-                border: "none",
-              }}
-            >
-              {">"}
-            </button>
-          )}
+
         </div>
       </Col>
 
@@ -270,36 +193,6 @@ function LandingScreen() {
               marginTop: "1rem",
             }}
           >
-            {hasPrevBooks(latestIndex) && hasClickedNext && (
-              <button
-                onClick={() => handlePrev(setLatestIndex)}
-                style={{
-                  borderRadius: "50%",
-                  backgroundColor: "rgba(188, 24, 35, 0.7)",
-                  color: "white",
-                  padding: "0.5rem 1rem",
-                  border: "none",
-                  marginRight: "auto",
-                }}
-              >
-                {"<"}
-              </button>
-            )}
-            {hasNextBooks(latestIndex, latestBooks) && (
-              <button
-                onClick={() => handleNext(setLatestIndex)}
-                style={{
-                  marginLeft: "auto",
-                  borderRadius: "50%",
-                  backgroundColor: "rgba(188, 24, 35, 0.7)",
-                  color: "white",
-                  padding: "0.5rem 1rem",
-                  border: "none",
-                }}
-              >
-                {">"}
-              </button>
-            )}
           </div>
         </section>
       </Col>

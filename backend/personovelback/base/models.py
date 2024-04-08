@@ -131,3 +131,14 @@ class Reply(models.Model):
 
     def __str__(self):
         return f"{self.user.username} replied to {self.comment.user.username}'s comment on {self.comment.book.title} at {self.created_at}"
+    
+class Favorites(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='favorite_books')
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='favorited_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'book')
+
+    def __str__(self):
+        return f"{self.user}'s Favorite - {self.book.title}"

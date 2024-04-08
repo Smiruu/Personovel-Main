@@ -35,19 +35,22 @@ export const login = (email, password) => async (dispatch) => {
       payload: data,
     });
     localStorage.setItem("userInfo", JSON.stringify(data));
+    return true;
   } catch (error) {
     dispatch({
       type: USER_LOGIN_FAIL,
-      payload:
-        error.response && error.response.data.details
-          ? error.response.data.details
-          : error.message,
+      payload: error.response && error.response.data.details
+        ? error.response.data.details
+        : error.message,
     });
+    return false; // Return false if login fails
   }
 };
 
 export const logout = () => (dispatch) => {
   dispatch({ type: USER_LOGOUT });
+  window.location.reload();
+  localStorage.removeItem('userInfo');
 };
 
 export const updateUserToPaid = (userId) => async (dispatch, getState) => {

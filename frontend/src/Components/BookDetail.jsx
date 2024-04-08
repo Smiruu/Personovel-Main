@@ -12,6 +12,8 @@ import Rating from "./Rating";
 import RateModal from "./RateModal";
 import { createComment, getCommentsForBook, createReply } from "../actions/commentActions";
 import CommentSection from "./CommentSection";
+import { addToReadingHistory } from "../actions/preferenceActions";
+import { addToFavorites, removeFromFavorites } from "../actions/favoriteActions";
 
 function BookDetail() {
   const { _id } = useParams();
@@ -20,12 +22,12 @@ function BookDetail() {
   const [book, setBook] = useState({});
   const [meanRating, setMeanRating] = useState(null);
   const [commentText, setCommentText] = useState("");
+  const [showModal, setShowModal] = useState(false);
   const [ratingId, setRatingId] = useState(localStorage.getItem("ratingId"));
   const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
   const userInfo = userLoginInfo || userRegisterInfo;
   const userId = userInfo ? userInfo.token.id : null;
-  const [showModal, setShowModal] = useState(false);
   const currentBookId = _id;
 
   const bookDetails = useSelector((state) => state.bookDetails);
@@ -43,17 +45,21 @@ function BookDetail() {
   const commentList = useSelector((state) => state.comment);
   const { loading: loadingComments, error: commentsError, comments } = commentList || {};
 
+  const [isFavorite, setIsFavorite] = useState(false); // Initialize isFavorite to false
+
   useEffect(() => {
     dispatch(listBookDetails(_id));
     dispatch(fetchMeanRatings(_id));
     dispatch(getRatingId(userId, _id));
     dispatch(getCommentsForBook(_id));
+    setIsFavorite(false); // Initialize isFavorite to false
   }, [dispatch, _id, userId]);
 
-
   useEffect(() => {
-    console.log("Comments:", comments); // Log comments data
-  }, [comments]);
+    if (!loadingComments && !commentsError) {
+      console.log("Comments:", comments); // Log comments data
+    }
+  }, [comments, loadingComments, commentsError]);
 
   useEffect(() => {
     const storedRatingId = localStorage.getItem("ratingId");
@@ -64,7 +70,6 @@ function BookDetail() {
   }, [dispatch, userId]);
 
   useEffect(() => {
-    // Update userRating when ratingId changes
     if (ratingId) {
       dispatch(retrieveRating(ratingId));
     }
@@ -83,7 +88,13 @@ function BookDetail() {
     };
   }, []);
 
+  useEffect(() => {
+    const storedFavoriteStatus = localStorage.getItem(`favorite_${userId}_${_id}`);
+    setIsFavorite(storedFavoriteStatus === "true" ? true : false);
+  }, [userId, _id]);
+
   const handleReadNow = () => {
+    dispatch(addToReadingHistory(_id, userId));
     navigate(`/chapters/${_id}`);
   };
 
@@ -103,14 +114,23 @@ function BookDetail() {
   };
 
   const handleReply = (comment_id, reply, user_id) => {
-    console.log("Comment ID:", comment_id);
-    console.log("Reply Text:", reply);
     dispatch(createReply(comment_id, reply, user_id));
     window.location.reload();
   };
 
   const handleCommentTextChange = (text) => {
     setCommentText(text);
+  };
+
+  const handleToggleFavorite = () => {
+    if (isFavorite) {
+      dispatch(removeFromFavorites(userId, _id));
+      localStorage.setItem(`favorite_${userId}_${_id}`, "false"); // Update local storage
+    } else {
+      dispatch(addToFavorites(userId, _id));
+      localStorage.setItem(`favorite_${userId}_${_id}`, "true"); // Update local storage
+    }
+    setIsFavorite(!isFavorite);
   };
 
   return (
@@ -286,43 +306,69 @@ function BookDetail() {
               <Rating value={userRating} color="#f8e825" />
             </span>
           </h5>
-          <Col>
+          <Row className="justify-content-center mb-3">
+            <Col>
+              <Button
+                className="btn-block customButton"
+                type="button"
+                style={{
+                  width: "100%",
+                  fontWeight: "1",
+                  fontSize: "30px",
+                  color: "white",
+                  fontFamily: "Protest Guerrilla",
+                  borderRadius: "50px",
+                  backgroundColor: "#6F1D1B",
+                  marginTop: "20px",
+                }}
+                onClick={handleReadNow}
+              >
+                READ NOW!
+              </Button>
+            </Col>
+            
+            <Col>
+              <Button
+                className="customButton"
+                type="button"
+                style={{
+                  width: "100%",
+                  fontWeight: "1",
+                  fontSize: "30px",
+                  color: "white",
+                  fontFamily: "Protest Guerrilla",
+                  borderRadius: "50px",
+                  backgroundColor: "#6F1D1B",
+                  marginTop: "20px",
+                }}
+                onClick={() => setShowModal(true)}
+                disabled={!userInfo || !userInfo.token.is_paid}
+              >
+                RATE
+              </Button>
+            </Col>
             <Button
-              className="btn-block customButton"
-              type="button"
-              style={{
-                width: "90%",
-                fontWeight: "1",
-                fontSize: "30px",
-                color: "white",
-                fontFamily: "Protest Guerrilla",
-                borderRadius: "50px",
-                backgroundColor: "#6F1D1B",
-                marginTop: "20px",
-              }}
-              onClick={handleReadNow}
-            >
-              READ NOW!
-            </Button>
-            <Button
-              className="customButton"
-              type="button"
-              style={{
-                width: "90%",
-                fontWeight: "1",
-                fontSize: "20px",
-                color: "white",
-                fontFamily: "Protest Guerrilla",
-                borderRadius: "50px",
-                backgroundColor: "#6F1D1B",
-                marginTop: "20px",
-              }}
-              onClick={() => setShowModal(true)}
-              disabled={!userInfo.token.is_paid}
-            >
-              RATE
-            </Button>
-          </Col>
+            className="customButton"
+            type="button"
+            style={{
+              width: "90%",
+              fontWeight: "1",
+              fontSize: "20px",
+              fontFamily: "Protest Guerrilla",
+              borderRadius: "50px",
+              backgroundColor: "transparent",
+              border: "none",
+              marginTop: "20px",
+            }}
+            onClick={handleToggleFavorite}
+            disabled={!userInfo || !userInfo.token.is_paid} // Open the modal
+          >
+            <i
+              className={`fas fa-heart${isFavorite ? " text-danger" : ""}`}
+              style={{ fontSize: "30px" }}
+            ></i>
+          </Button>
+          </Row>
         </Col>
       </Row>
       <RateModal
@@ -335,15 +381,15 @@ function BookDetail() {
         <Col md={12}>
           <CommentSection
             comments={comments.comments}
-            replies = {comments.replies}
+            replies={comments.replies}
             loading={loadingComments}
             commentsError={commentsError}
             handleCommentSubmit={handleCommentSubmit}
-            handleReply={handleReply} // Pass the handleReply function directly
+            handleReply={handleReply}
             setCommentText={handleCommentTextChange}
             commentText={commentText}
-            userId = {userId}
-            userInfo = {userInfo}
+            userId={userId}
+            userInfo={userInfo}
           />
         </Col>
       </Row>

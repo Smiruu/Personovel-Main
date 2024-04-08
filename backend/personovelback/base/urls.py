@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-
+from .views import FavoriteListView
 
 
 urlpatterns = [
@@ -48,4 +48,8 @@ urlpatterns = [
 
     path('replies/create/', views.create_reply, name='create_reply'),
     path('replies/comment/<int:comment_id>/', views.get_replies_for_comment, name='get_replies_for_comment'),
+
+    path('<int:user_id>/add-to-favorites/<int:book_id>/', views.add_to_favorites, name='add_to_favorites'),
+    path('<int:user_id>/remove-from-favorites/<int:book_id>/', views.remove_from_favorites, name='remove_from_favorites'),
+    path('<int:user_id>/favorites/', FavoriteListView.as_view(), name='favorite_list'),
 ]
