@@ -9,7 +9,8 @@ const FavoritesList = ({ userId }) => {
         dispatch(fetchFavorites(userId)); // Dispatch the fetchFavorites action with the userId
     }, [dispatch, userId]);
 
-    const favoriteBooks = useSelector(state => state.favoriteBooks);
+    const favoriteBooks = useSelector(state => state.favorite.favoriteBooks);
+    
     console.log (favoriteBooks); // Correctly access favoriteBooks from the state
     
     return (
@@ -18,9 +19,9 @@ const FavoritesList = ({ userId }) => {
             <ul>
                 {favoriteBooks && favoriteBooks.map(book => (
                     <li key={book._id}> {/* Assuming _id is the unique identifier for each book */}
+                        <img src={book.image} alt={book.title} style={{ width: '100px', height: '150px' }} />
                         <strong>{book.title}</strong> by {book.author} (Genre: {book.genre})
                         <br />
-                        Mean Rating: {book.mean_rating}
                     </li>
                 ))}
             </ul>
