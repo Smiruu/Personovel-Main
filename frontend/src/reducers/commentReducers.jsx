@@ -12,7 +12,10 @@ import {
   CREATE_REPLY_FAIL,
   GET_REPLIES_REQUEST,
   GET_REPLIES_SUCCESS,
-  GET_REPLIES_FAIL
+  GET_REPLIES_FAIL,
+  GET_USER_COMMENTS_AND_REPLIES_REQUEST,
+  GET_USER_COMMENTS_AND_REPLIES_SUCCESS,
+  GET_USER_COMMENTS_AND_REPLIES_FAILURE,
 } from '../constants/commentConstants';
 
 const initialState = {
@@ -131,6 +134,33 @@ export const getRepliesReducer = (state = initialState, action) => {
             data: []
           }
         }
+      };
+    default:
+      return state;
+  }
+};
+
+export const CommentandReplyUserReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case GET_USER_COMMENTS_AND_REPLIES_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    case GET_USER_COMMENTS_AND_REPLIES_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        comments: action.payload.comments,
+        replies: action.payload.replies,
+        error: null,
+      };
+    case GET_USER_COMMENTS_AND_REPLIES_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
       };
     default:
       return state;

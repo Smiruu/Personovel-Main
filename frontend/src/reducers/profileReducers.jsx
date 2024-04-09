@@ -7,7 +7,10 @@ import {
   USER_UPDATE_PROFILE_REQUEST,
   USER_UPDATE_PROFILE_SUCCESS,
   USER_UPDATE_PROFILE_FAIL,
-  USER_UPDATE_PROFILE_RESET
+  USER_UPDATE_PROFILE_RESET,
+  GET_USER_PROFILE_BY_ID_REQUEST,
+  GET_USER_PROFILE_BY_ID_SUCCESS,
+  GET_USER_PROFILE_BY_ID_FAIL
 } from '../constants/profileConstants';
 
 export const userDetailsReducer = (state = { user: {} }, action) => {
@@ -33,6 +36,19 @@ export const userProfileUpdateReducer = (state = {}, action) => {
       return { loading: false, error: action.payload };
     case USER_UPDATE_PROFILE_RESET:
       return {};
+    default:
+      return state;
+  }
+};
+
+export const userProfileByIdReducer = (state = { profile: {} }, action) => {
+  switch (action.type) {
+    case GET_USER_PROFILE_BY_ID_REQUEST:
+      return { loading: true, profile: {} };
+    case GET_USER_PROFILE_BY_ID_SUCCESS:
+      return { loading: false, profile: action.payload };
+    case GET_USER_PROFILE_BY_ID_FAIL:
+      return { loading: false, error: action.payload };
     default:
       return state;
   }

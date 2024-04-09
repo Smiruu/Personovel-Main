@@ -50,7 +50,7 @@ const signupHandler = async (e) => {
       if (success) {
         navigate('/otp');
       } else {
-        alert('Registration failed. Please check your information and try again.');
+        alert('This email has already been taken.');
       }
     } catch (error) {
       if (error.response && error.response.status === 400) {

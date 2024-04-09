@@ -543,6 +543,7 @@ def get_comments_for_book(request, book_id):
             modified_comment = {
                 'comment_id': comment.id,
                 'name': comment.user.profile.name,
+                'user_id': comment.user.id,
                 'picture': comment.user.profile.get_profile_image(),  # Get profile image URL
                 'book_title': comment.book.title,
                 'comment': comment.comment,
@@ -557,6 +558,7 @@ def get_comments_for_book(request, book_id):
                 'reply_id': reply.id,
                 'name': reply.user.profile.name,
                 'picture': reply.user.profile.get_profile_image(),  # Get profile image URL
+                'user_id': reply.user.id,
                 'comment_id': reply.comment.id,
                 'reply': reply.reply,
                 'created_at': reply.created_at
@@ -689,3 +691,27 @@ def delete_all_comments_and_replies(request):
         return JsonResponse({'message': 'All comments and replies have been deleted successfully.'}, status=200)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_comments_and_replies(request, user_id):
+    try:
+        # Retrieve the user object
+        user = get_user_model().objects.get(pk=user_id)
+        
+        # Retrieve all comments made by the user
+        user_comments = Comment.objects.filter(user=user)
+        comment_serializer = CommentSerializer(user_comments, many=True)
+        
+        # Retrieve all replies made by the user
+        user_replies = Reply.objects.filter(user=user)
+        reply_serializer = ReplySerializer(user_replies, many=True)
+        
+        # Return the comments and replies
+        return Response({
+            'comments': comment_serializer.data,
+            'replies': reply_serializer.data
+        }, status=200)
+    except get_user_model().DoesNotExist:
+        raise Http404("User does not exist")

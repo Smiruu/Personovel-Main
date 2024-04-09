@@ -17,6 +17,7 @@ import PaymentScreen from "./PaymentScreen";
 import LatestScreen from "./LatestScreen";
 import FavoritesList from '../Components/FavoritesList';
 
+
 const ProfileScreen = () => {
   const dispatch = useDispatch();
   const userDetails = useSelector((state) => state.userDetails);

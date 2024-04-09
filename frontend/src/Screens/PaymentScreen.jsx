@@ -151,7 +151,7 @@ function PaymentScreen() {
                 marginRight: "0.5rem",
               }}
             >
-              $5
+              $20
             </span>
             <span style={{ fontSize: "1.2rem", color: "#6c757d" }}>
               per 3 months

@@ -11,6 +11,9 @@ import {
   CREATE_REPLY_REQUEST,
   CREATE_REPLY_SUCCESS,
   CREATE_REPLY_FAIL,
+  GET_USER_COMMENTS_AND_REPLIES_REQUEST,
+  GET_USER_COMMENTS_AND_REPLIES_SUCCESS,
+  GET_USER_COMMENTS_AND_REPLIES_FAILURE,
 } from '../constants/commentConstants';
 
 const instance = axios.create({
@@ -100,3 +103,25 @@ export const createReply = (comment_id, reply, user_id) => async (dispatch) => {
   }
 };
 
+export const getUserCommentsAndReplies = (userId) => async (dispatch) => {
+  try {
+    dispatch({ type: GET_USER_COMMENTS_AND_REPLIES_REQUEST });
+
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const token = userInfo ? userInfo.token.access : null;
+
+    const config = token ? {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    } : {};
+
+    const { data } = await instance.get(`/api/users/${userId}/comments-and-replies/`, config);
+
+    dispatch({ type: GET_USER_COMMENTS_AND_REPLIES_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({ type: GET_USER_COMMENTS_AND_REPLIES_FAILURE, payload: error.message });
+  }
+};

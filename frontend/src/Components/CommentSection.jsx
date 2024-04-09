@@ -3,7 +3,7 @@ import { Button, Form, Col, Row, Card } from "react-bootstrap";
 import Message from "../Components/Message";
 import Loader from "../Components/Loader";
 import { useDispatch } from "react-redux";
-
+import { Link } from 'react-router-dom';
 const CommentSection = ({
   comments,
   replies,
@@ -24,7 +24,7 @@ const CommentSection = ({
 
   const handleReplyButtonClick = (commentId) => {
     // Use optional chaining to safely access nested properties
-    if (userInfo?.token?.is_paid) {
+    if ((userInfo?.token?.is_paid|| userInfo?.token?.is_admin)) {
       setShowReplyInput(true);
       setReplyingToCommentId(commentId);
     }
@@ -95,12 +95,14 @@ const CommentSection = ({
                 <Card key={comment.comment_id} className="mb-3">
                   <Card.Body>
                     <div className="d-flex align-items-center mb-2">
+                    <Link to={`/profile/${comment.user_id}`}>
                       <img src={comment.picture} alt="Profile" className="rounded-circle mr-2" style={{ width: '30px', height: '30px' }} />
+                      </Link>
                       <Card.Title>{comment.name}</Card.Title>
                     </div>
                     <Card.Text>{comment.comment}</Card.Text>
                     <Card.Text className="text-muted">Posted on: {new Date(comment.created_at).toLocaleString()}</Card.Text>
-                    {(userInfo.token && userInfo.token.is_paid) && (
+                    {(userInfo.token && (userInfo.token.is_paid || userInfo.token.is_admin)) && (
                       <Button variant="secondary" onClick={() => handleReplyButtonClick(comment.comment_id)}>
                         Reply
                       </Button>
@@ -117,7 +119,9 @@ const CommentSection = ({
                               <Card key={reply.reply_id} className="mt-3">
                                 <Card.Body>
                                   <div className="d-flex align-items-center mb-2">
+                                  <Link to={`/profile/${reply.user_id}`}>
                                     <img src={reply.picture} alt="Profile" className="rounded-circle mr-2" style={{ width: '30px', height: '30px' }} />
+                                    </Link>
                                     <Card.Text>{reply.reply}</Card.Text>
                                   </div>
                                   <Card.Text className="text-muted">Reply by: {reply.name}</Card.Text>
@@ -131,7 +135,7 @@ const CommentSection = ({
                       </div>
                     )}
                   </Card.Body>
-                  {userInfo.token && userInfo.token.is_paid && showReplyInput && replyingToCommentId === comment.comment_id && (
+                  {userInfo.token && (userInfo.token.is_paid|| userInfo.token.is_admin) && showReplyInput && replyingToCommentId === comment.comment_id && (
                     <Card.Footer>
                       <Form onSubmit={handleCommentReplySubmit}>
                         <Form.Group controlId="replyTextArea">

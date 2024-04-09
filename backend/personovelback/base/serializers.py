@@ -55,14 +55,18 @@ class InteractionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CommentSerializer(serializers.ModelSerializer):
+    user_profile_name = serializers.CharField(source='user.profile.name', read_only=True)  # Assuming the profile name is stored in a field called 'name'
+    user_profile_image = serializers.CharField(source='user.profile.get_profile_image', read_only=True)
     class Meta:
         model = Comment
-        fields = ['id', 'user', 'book', 'comment', 'created_at']
+        fields = ['id', 'user', 'user_profile_name', 'user_profile_image', 'comment', 'created_at']
 
 class ReplySerializer(serializers.ModelSerializer):
+    user_profile_name = serializers.CharField(source='user.profile.name', read_only=True)  # Assuming the profile name is stored in a field called 'name'
+    user_profile_image = serializers.CharField(source='user.profile.get_profile_image', read_only=True)
     class Meta:
         model = Reply
-        fields = '__all__'
+        fields = ['id', 'user', 'user_profile_name','user_profile_image', 'reply', 'created_at']
 
 class FavoritesSerializer(serializers.ModelSerializer):
     class Meta:

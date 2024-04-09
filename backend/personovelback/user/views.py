@@ -126,7 +126,7 @@ def resend_otp(request):
         send_otp_email(user.email, otp_code)
 
         cache.set(f'resend_otp_{user_id}_time', datetime.now(), timeout=None)  # Set timeout to None for cache to never expire
-        
+
         return Response({'message': 'OTP has been sent to your email'}, status=status.HTTP_200_OK)
     
     except User.DoesNotExist:
@@ -244,3 +244,17 @@ class CheckPaidStatusView(APIView):
             return JsonResponse({'is_expired': is_expired})
         else:
             return JsonResponse({'error': 'User does not have required methods'}, status=400)
+        
+@api_view(['GET'])
+def get_user_profile_by_user_id(request, user_id):
+    # Retrieve the user by user ID or return 404 if not found
+    user = get_object_or_404(User, pk=user_id)
+    
+    # Retrieve the corresponding user profile or return 404 if not found
+    profile = get_object_or_404(Profile, user=user)
+    
+    # Serialize the profile data
+    serializer = UserProfileSerializer(profile)
+    
+    # Return the serialized data in the response
+    return Response(serializer.data)

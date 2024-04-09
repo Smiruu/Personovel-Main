@@ -22,6 +22,7 @@ import RequestChangePass from "./Screens/ReqChangePassScreen";
 import PaymentScreen from "./Screens/PaymentScreen";
 import ProfileScreen from "./Screens/ProfileScreen";
 import AdminScreen from "./Screens/AdminScreen";
+import VisitProfileScreen from "./Screens/VisitProfileScreen";
 function App() {
   return (
     <Router>
@@ -50,6 +51,7 @@ function App() {
               <Route path="/subscription" element={<PaymentScreen />} />
               <Route path="/profile" element={<ProfileScreen />} />
               <Route path="/admin" element={<AdminScreen />} />
+              <Route path="/profile/:id" element={<VisitProfileScreen />} />
             </Routes>
           </Container>
         </main>

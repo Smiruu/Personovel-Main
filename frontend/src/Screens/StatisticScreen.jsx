@@ -48,8 +48,21 @@ function StatisticScreen() {
 
   const statistics = calculateStatistics(users);
 
+  const totalUsers = users ? users.length : 0;
+
+  // Calculate paid users count
+  const paidUsers = users ? users.filter(user => user.paid_at).length : 0;
+
+  // Calculate unpaid users count
+  const unpaidUsers = totalUsers - paidUsers;
+
   return (
     <div className="statistics-container">
+      <div>
+        <h4>Total Users: {totalUsers}</h4>
+        <h4>Paid Users: {paidUsers}</h4>
+        <h4>Unpaid Users: {unpaidUsers}</h4>
+      </div>
       <h3>Statistics</h3>
       <ResponsiveContainer width="100%" height={400}>
         <BarChart
