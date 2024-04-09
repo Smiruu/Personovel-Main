@@ -10,8 +10,17 @@ function PopularScreen() {
     async function fetchBooks() {
       try {
         const { data } = await axios.get("http://127.0.0.1:8000/api/books/");
+      
         // Sort the books based on mean_rating in descending order
-        const sortedBooks = data.sort((a, b) => b.mean_rating - a.mean_rating);
+        // If mean_rating is equal, sort by number of reviews in descending order
+        const sortedBooks = data.sort((a, b) => {
+          if (a.mean_rating !== b.mean_rating) {
+            return b.mean_rating - a.mean_rating;
+          } else {
+            return b.num_reviews - a.num_reviews;
+          }
+        });
+        
         setBooks(sortedBooks);
       } catch (error) {
         console.error("Error fetching books:", error);

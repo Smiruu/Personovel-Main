@@ -23,6 +23,7 @@ class BookSerializer(serializers.ModelSerializer):
         queryset=Genre.objects.all()
     )
     mean_rating = serializers.SerializerMethodField()
+    num_reviews = serializers.SerializerMethodField()
 
     class Meta:
         model = Book
@@ -32,6 +33,11 @@ class BookSerializer(serializers.ModelSerializer):
         # Calculate the mean rating for the book
         mean_rating = obj.rating.aggregate(Avg('rating'))['rating__avg']
         return mean_rating if mean_rating is not None else 0
+
+    def get_num_reviews(self, obj):
+        # Calculate the number of reviews for the book
+        num_reviews = obj.rating.count()
+        return num_reviews
 
 class RatingSerializer(serializers.ModelSerializer):
     class Meta:

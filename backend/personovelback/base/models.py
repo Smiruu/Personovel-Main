@@ -66,6 +66,10 @@ class Book(models.Model):
         # If you want to set the mean_rating explicitly, implement the setter accordingly.
         pass
 
+    @property
+    def num_reviews(self):
+        return self.rating.count()
+    
     def __str__(self):
         return self.title
 
