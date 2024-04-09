@@ -7,7 +7,8 @@ import Loader from '../Components/Loader';
 import { Modal, Form, Button, Image } from 'react-bootstrap';
 import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBTypography } from 'mdb-react-ui-kit';
 import FavoritesList from '../Components/FavoritesList'; // Import FavoritesList component
-import LatestScreen from './LatestScreen';
+import LatestScreen from './LatestScreen'; // Import LatestScreen component
+import LatestReadScreen from './LatestReadScreen'; // Import LatestReadScreen component
 
 function VisitProfileScreen() {
   const { id } = useParams();
@@ -33,6 +34,10 @@ function VisitProfileScreen() {
   if (!profiles) {
     return <div>No profile data found</div>;
   }
+
+  // Format the user joined date
+  const joinedDate = new Date(profiles.user_created_at);
+  const formattedJoinedDate = `${joinedDate.toLocaleString('default', { month: 'long' })} ${joinedDate.getDate()}, ${joinedDate.getFullYear()}`;
 
   return (
     <MDBContainer className="upc">
@@ -80,7 +85,7 @@ function VisitProfileScreen() {
                 <strong>BIO:</strong> {profiles.bio}
               </p>
               <p>
-                <strong>DATE JOINED:</strong> {profiles.user_created_at}
+                <strong>DATE JOINED:</strong> {formattedJoinedDate}
               </p>
               {/* Add remaining days logic if needed */}
             </div>
@@ -101,8 +106,14 @@ function VisitProfileScreen() {
                 </div>
               </div>
             )}
+            {/* Render the LatestReadScreen component */}
+
           </MDBCol>
         </MDBRow>
+          <MDBCol>
+          <LatestReadScreen userId={id} />
+          </MDBCol>
+
       </div>
     </MDBContainer>
   );

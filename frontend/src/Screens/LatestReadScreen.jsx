@@ -34,7 +34,7 @@ function LatestReadScreen({ userId }) { // Receive userId as a prop
                 style={{ maxWidth: '200px', maxHeight: '200px' }} // Adjust the width and height as needed
               />
               <p>Author: {history.book.author}</p>
-              <p>Read at: {history.book.read_at}</p>
+              <p>Read at: {new Date(history.read_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
               {/* Render other properties of the book as needed */}
             </div>
           ) : (
