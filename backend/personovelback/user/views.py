@@ -112,7 +112,7 @@ def resend_otp(request):
         if user.is_active:
             return Response({'message': 'Account is already active. Cannot resend OTP.'}, status=status.HTTP_400_BAD_REQUEST)
         
-        last_sent_time = cache.get(f'resend_otp{user_id}time')
+        last_sent_time = cache.get(f'resend_otp_{user_id}_time')
         if last_sent_time:
             time_since_last_sent = datetime.now() - last_sent_time
             if time_since_last_sent < timedelta(seconds=60):
