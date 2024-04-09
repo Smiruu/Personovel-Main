@@ -9,7 +9,10 @@ import {
   USER_UPDATE_PROFILE_SUCCESS,
   GET_USER_PROFILE_BY_ID_REQUEST,
   GET_USER_PROFILE_BY_ID_SUCCESS,
-  GET_USER_PROFILE_BY_ID_FAIL
+  GET_USER_PROFILE_BY_ID_FAIL,
+  LATEST_USER_READING_HISTORY_REQUEST,
+  LATEST_USER_READING_HISTORY_SUCCESS,
+  LATEST_USER_READING_HISTORY_FAIL
 } from "../constants/profileConstants";
 
 const instance = axios.create({
@@ -118,3 +121,25 @@ export const getUserProfileById = (userId) => async (dispatch) => {
   }
 };
 
+
+
+export const getLatestUserReadingHistory = (userId) => async (dispatch) => {
+  try {
+    dispatch({ type: LATEST_USER_READING_HISTORY_REQUEST });
+
+    const { data } = await axios.get(`/api/reading-history/${userId}/`);
+
+    dispatch({
+      type: LATEST_USER_READING_HISTORY_SUCCESS,
+      payload: data
+    });
+  } catch (error) {
+    dispatch({
+      type: LATEST_USER_READING_HISTORY_FAIL,
+      payload:
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message
+    });
+  }
+};

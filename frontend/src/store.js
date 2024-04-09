@@ -20,7 +20,7 @@ import {
     updateRatingReducer,
     fetchMeanRatingsReducer,
   } from "./reducers/ratingReducers";
-  import { userDetailsReducer, userProfileByIdReducer, userProfileUpdateReducer } from "./reducers/profileReducers";
+  import { latestUserReadingHistoryReducer, userDetailsReducer, userProfileByIdReducer, userProfileUpdateReducer } from "./reducers/profileReducers";
   import preferenceReducer from './reducers/preferenceReducers'; 
 import { CommentandReplyUserReducer, commentReducer, createReplyReducer } from './reducers/commentReducers';
 import favoriteReducer from './reducers/favoriteReducers';
@@ -39,6 +39,7 @@ const reducer = combineReducers({
     checkPaid: checkPaidStatusreducer,
     userList: userListReducer,
     userProfileById: userProfileByIdReducer,
+    latestUserReadingHistory: latestUserReadingHistoryReducer,
 
     fetchRating: fetchRatingReducer,
     createRating: createRatingReducer,

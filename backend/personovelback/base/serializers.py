@@ -72,3 +72,10 @@ class FavoritesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorites
         fields = '__all__'
+
+class ReadingHistorySerializer(serializers.ModelSerializer):
+    book = BookSerializer()  # Assuming you have a BookSerializer defined
+
+    class Meta:
+        model = ReadingHistory
+        fields = ['id', 'user', 'book', 'read_at']

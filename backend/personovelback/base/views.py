@@ -18,6 +18,9 @@ from django.db.models import Count, Sum
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from .permissions import IsPaidUserOrAdmin
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from .models import Comment, Reply
 # Create your views here.
 @api_view(['GET'])
 def getRoutes(request):
@@ -443,8 +446,20 @@ def add_to_reading_history(request):
     except Exception as e:
         return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['GET'])
+def latest_user_reading_history(request, user_id):
+    # Retrieve the user by user ID or return 404 if not found
+    User = get_user_model()
+    user = get_object_or_404(User, pk=user_id)
+    
+    # Retrieve the latest reading history entry for the specified user ordered by read_at timestamp
+    latest_history = ReadingHistory.objects.filter(user=user).order_by('-read_at').first()
 
-from django.contrib.auth import get_user_model
+    # Serialize the reading history data
+    serializer = ReadingHistorySerializer(latest_history)
+
+    # Return the serialized data in the response
+    return Response(serializer.data)
 
 @api_view(['GET'])
 def get_preferred_genre(request, user_id):
@@ -674,9 +689,7 @@ class FavoriteListView(APIView):
 
 
 
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-from .models import Comment, Reply
+
 
 @csrf_exempt
 @require_POST

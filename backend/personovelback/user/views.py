@@ -253,8 +253,11 @@ def get_user_profile_by_user_id(request, user_id):
     # Retrieve the corresponding user profile or return 404 if not found
     profile = get_object_or_404(Profile, user=user)
     
-    # Serialize the profile data
-    serializer = UserProfileSerializer(profile)
+    # Create a dictionary containing the profile data and the is_admin field
+    response_data = {
+        "profile": UserProfileSerializer(profile).data,
+        "is_admin": user.is_admin
+    }
     
-    # Return the serialized data in the response
-    return Response(serializer.data)
+    # Return the response data
+    return Response(response_data)

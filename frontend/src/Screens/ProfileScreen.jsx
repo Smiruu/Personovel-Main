@@ -15,8 +15,8 @@ import StatisticScreen from "./StatisticScreen";
 import ConversationScreen from "./ConversationScreen";
 import PaymentScreen from "./PaymentScreen";
 import LatestScreen from "./LatestScreen";
-import FavoritesList from '../Components/FavoritesList';
-
+import FavoritesList from "../Components/FavoritesList";
+import LatestReadScreen from "./LatestReadScreen";
 
 const ProfileScreen = () => {
   const dispatch = useDispatch();
@@ -33,10 +33,8 @@ const ProfileScreen = () => {
   const [profilePicture, setProfilePicture] = useState(null);
   const [coverPhoto, setCoverPhoto] = useState(null);
   const [fileName, setFileName] = useState("");
-  console.log(fileName)
+  console.log(fileName);
   const [isEditing, setIsEditing] = useState(false);
-
-
 
   useEffect(() => {
     dispatch(getUserDetails());
@@ -100,8 +98,6 @@ const ProfileScreen = () => {
     setFileName("");
   };
 
-
-
   const backgroundImage = user.cover_photo || "";
   const profileIcon = `${user.image}?${new Date().getTime()}`;
 
@@ -127,19 +123,16 @@ const ProfileScreen = () => {
     }
     return null; // Return null if paid_at date is not available
   };
-  
+
   const remainingDays = calculateRemainingDays();
 
-// Define options for date formatting
-const options = {
-  year: 'numeric',
-  month: 'long', // Full month name (e.g., "February")
-  day: 'numeric',
-};
-const formattedDateJoined = dateJoined.toLocaleDateString('en-US', options);
-
-
-
+  // Define options for date formatting
+  const options = {
+    year: "numeric",
+    month: "long", // Full month name (e.g., "February")
+    day: "numeric",
+  };
+  const formattedDateJoined = dateJoined.toLocaleDateString("en-US", options);
 
   return (
     <div>
@@ -236,53 +229,53 @@ const formattedDateJoined = dateJoined.toLocaleDateString('en-US', options);
                     />
                   </Form.Group>
                   <Form.Group controlId="formProfilePicture" className="mt-3">
-  <Form.Label>Profile Picture</Form.Label>
-  <Form.Control
-    type="file"
-    accept=".jpg, .png" // Limit accepted file types to .jpg and .png
-    onChange={handleProfilePictureChange}
-    // Add attributes for image size and file size limits
-    // Max size of 10 MB: 10 * 1024 * 1024
-    // Max width and height of 500 pixels
-    // Note: These are approximate values, you can adjust them according to your requirements
-    maxSize={10 * 1024 * 1024}
-    maxDimensions={{ width: 500, height: 500 }}
-  />
-  {profilePicture && (
-    <img
-      src={URL.createObjectURL(profilePicture)}
-      alt="Profile"
-      style={{
-        marginTop: "10px",
-        maxWidth: "100%",
-        width: "150px",
-        height: "150px",
-        objectFit: "cover",
-      }}
-    />
-  )}
-</Form.Group>
-<Form.Group controlId="formCoverPhoto" className="mt-3">
-  <Form.Label>Cover Photo</Form.Label>
-  <Form.Control
-    type="file"
-    accept=".jpg, .png" // Limit accepted file types to .jpg and .png
-    onChange={handleCoverPhotoChange}
-    // Add attributes for image size and file size limits
-    // Max size of 10 MB: 10 * 1024 * 1024
-    // Max width and height of 1000 pixels
-    // Note: These are approximate values, you can adjust them according to your requirements
-    maxSize={10 * 1024 * 1024}
-    maxDimensions={{ width: 1000, height: 1000 }}
-  />
-  {coverPhoto && (
-    <img
-      src={URL.createObjectURL(coverPhoto)}
-      alt="Cover"
-      style={{ marginTop: "10px", maxWidth: "100%" }}
-    />
-  )}
-</Form.Group>
+                    <Form.Label>Profile Picture</Form.Label>
+                    <Form.Control
+                      type="file"
+                      accept=".jpg, .png" // Limit accepted file types to .jpg and .png
+                      onChange={handleProfilePictureChange}
+                      // Add attributes for image size and file size limits
+                      // Max size of 10 MB: 10 * 1024 * 1024
+                      // Max width and height of 500 pixels
+                      // Note: These are approximate values, you can adjust them according to your requirements
+                      maxSize={10 * 1024 * 1024}
+                      maxDimensions={{ width: 500, height: 500 }}
+                    />
+                    {profilePicture && (
+                      <img
+                        src={URL.createObjectURL(profilePicture)}
+                        alt="Profile"
+                        style={{
+                          marginTop: "10px",
+                          maxWidth: "100%",
+                          width: "150px",
+                          height: "150px",
+                          objectFit: "cover",
+                        }}
+                      />
+                    )}
+                  </Form.Group>
+                  <Form.Group controlId="formCoverPhoto" className="mt-3">
+                    <Form.Label>Cover Photo</Form.Label>
+                    <Form.Control
+                      type="file"
+                      accept=".jpg, .png" // Limit accepted file types to .jpg and .png
+                      onChange={handleCoverPhotoChange}
+                      // Add attributes for image size and file size limits
+                      // Max size of 10 MB: 10 * 1024 * 1024
+                      // Max width and height of 1000 pixels
+                      // Note: These are approximate values, you can adjust them according to your requirements
+                      maxSize={10 * 1024 * 1024}
+                      maxDimensions={{ width: 1000, height: 1000 }}
+                    />
+                    {coverPhoto && (
+                      <img
+                        src={URL.createObjectURL(coverPhoto)}
+                        alt="Cover"
+                        style={{ marginTop: "10px", maxWidth: "100%" }}
+                      />
+                    )}
+                  </Form.Group>
                 </Form>
               </Modal.Body>
               <Modal.Footer>
@@ -389,11 +382,13 @@ const formattedDateJoined = dateJoined.toLocaleDateString('en-US', options);
                         <strong>BIO:</strong> {user.bio}
                       </p>
                       <p>
-                      <strong>DATE JOINED:</strong> {formattedDateJoined}
+                        <strong>DATE JOINED:</strong> {formattedDateJoined}
                       </p>
                       <p>
-                        <strong>SUBSCRIPTION DURATION:</strong> {" "}
-                       {remainingDays !== null ? `${remainingDays} days remaining` : "N/A"}
+                        <strong>SUBSCRIPTION DURATION:</strong>{" "}
+                        {remainingDays !== null
+                          ? `${remainingDays} days remaining`
+                          : "N/A"}
                       </p>
                     </div>
                   </MDBCol>
@@ -405,7 +400,7 @@ const formattedDateJoined = dateJoined.toLocaleDateString('en-US', options);
                     ) : (
                       <div className="favorite-books-section bg-white p-2">
                         <h4>LATEST READ</h4>
-                        <p>book1</p>
+                        <LatestReadScreen userId={userInfo.token.id} />
                       </div>
                     )}
                   </MDBCol>
@@ -414,15 +409,15 @@ const formattedDateJoined = dateJoined.toLocaleDateString('en-US', options);
                     {userInfo.token && userInfo.token.is_admin ? (
                       <div className="mt-3">
                         <div className="favorite-books-section bg-white p-2">
-                        <LatestScreen />
+                          <LatestScreen />
                         </div>
                       </div>
                     ) : (
                       <div className="mt-3">
-                    <div className="favorite-books-section bg-white p-2">
-                      {/* <h4>Favorite Books</h4> */}
-                      {/* Render the FavoritesList component here */}
-                      <FavoritesList userId={userInfo.token.id} />
+                        <div className="favorite-books-section bg-white p-2">
+                          {/* <h4>Favorite Books</h4> */}
+                          {/* Render the FavoritesList component here */}
+                          <FavoritesList userId={userInfo.token.id} />
                         </div>
                       </div>
                     )}

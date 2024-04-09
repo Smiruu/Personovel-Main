@@ -57,6 +57,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+class UserWithProfileSerializer(serializers.ModelSerializer):
+    profile = UserProfileSerializer()
+
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'name', 'is_active', 'is_admin', 'is_paid', 'paid_at', 'created_at', 'updated_at', 'profile']
 
 class UserChangePasswordSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=255, style={'input_type' : 'password'}, write_only=True)
