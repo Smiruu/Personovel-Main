@@ -24,7 +24,7 @@ export const getUserDetails = () => async (dispatch, getState) => {
       };
 
     //   console.log('Access Token:', userInfo.token.access);
-      const { data } = await axios.get('api/user/profile/', config);
+      const { data } = await instance.get('api/user/profile/', config);
       console.log('Response Data:', data);
 
       dispatch({
@@ -62,7 +62,7 @@ export const updateUserProfile = (formData) => async (dispatch, getState) => {
         },
       };
   
-      const { data } = await axios.put('api/user/profile/update/', formData, config);
+      const { data } = await instance.put('api/user/profile/update/', formData, config);
   
       dispatch({
         type: USER_UPDATE_PROFILE_SUCCESS,

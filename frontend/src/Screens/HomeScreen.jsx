@@ -24,7 +24,7 @@ function LandingScreen() {
   const booksInPreferredGenre = useSelector((state) => state.preference.booksInPreferredGenre);
   const userDetails = useSelector((state) => state.userDetails);
   const { loading, error, user } = userDetails;
-
+  console.log(user)
   // Update preferredBooks state when booksInPreferredGenre changes
   useEffect(() => {
     if (booksInPreferredGenre) {

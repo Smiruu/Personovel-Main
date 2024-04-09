@@ -67,7 +67,7 @@ const CommentSection = ({
   return (
     <>
       <h3>Comments</h3>
-      {userInfo.token && userInfo.token.is_paid && (
+      {userInfo.token && (userInfo.token.is_admin || userInfo.token.is_paid)&& (
         <Form onSubmit={handleCommentSubmit}>
           <Form.Group controlId="commentTextArea">
             <Form.Control

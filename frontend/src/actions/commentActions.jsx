@@ -11,9 +11,6 @@ import {
   CREATE_REPLY_REQUEST,
   CREATE_REPLY_SUCCESS,
   CREATE_REPLY_FAIL,
-  GET_REPLIES_REQUEST,
-  GET_REPLIES_SUCCESS,
-  GET_REPLIES_FAIL
 } from '../constants/commentConstants';
 
 const instance = axios.create({

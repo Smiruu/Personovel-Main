@@ -27,7 +27,6 @@ function BookDetail() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [book, setBook] = useState({});
-  const [meanRating, setMeanRating] = useState(null);
   const [commentText, setCommentText] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [ratingId, setRatingId] = useState(localStorage.getItem("ratingId"));
@@ -50,6 +49,8 @@ function BookDetail() {
   const fetchedMeanRating = useSelector(
     (state) => state.fetchMeanRatings.ratings.meanRating
   );
+
+
   const numReviews = useSelector(
     (state) => state.fetchMeanRatings.ratings.numReviews
   );
@@ -258,7 +259,7 @@ function BookDetail() {
               }}
             >
               <Rating
-                value={meanRating}
+                value={fetchedMeanRating}
                 text={numReviews + " reviews"}
                 color="#f8e825"
               />
@@ -353,7 +354,7 @@ function BookDetail() {
 
             <Col>
               {/* Show the rate button only if userInfo is available and the user is paid */}
-              {userInfo && userInfo.token && userInfo.token.is_paid && (
+              {userInfo && userInfo.token && (userInfo.token.is_paid || userInfo.token.is_admin) && (
                 <Button
                   className="customButton"
                   type="button"

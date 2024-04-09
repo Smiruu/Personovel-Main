@@ -23,16 +23,14 @@ const ChapterByBook = () => {
   useEffect(() => {
     if (!userInfo) {
       navigate("/login");
-    }else if (userInfo && userInfo.token && !userInfo.token.is_paid) {
+    } else if (!userInfo.token || (!userInfo.token.is_paid && !userInfo.token.is_admin)) {
       navigate("/subscription");
     } else {
       dispatch(listInteractionsByBook(id));
     }
   }, [dispatch, id, navigate, userInfo]);
 
-  useEffect(() => {
-    dispatch(listInteractionsByBook(id));
-  }, [dispatch, id]);
+
 
   const interactionListByBook = useSelector(
     (state) => state.interactionListByBook

@@ -17,6 +17,7 @@ from collections import Counter
 from django.db.models import Count, Sum
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
+from .permissions import IsPaidUserOrAdmin
 # Create your views here.
 @api_view(['GET'])
 def getRoutes(request):
@@ -133,6 +134,7 @@ def getGenres(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['PUT'])
+@permission_classes([IsAdminUser])
 def updateGenre(request, pk):
     try:
         genre = Genre.objects.get(pk=pk)
@@ -147,6 +149,7 @@ def updateGenre(request, pk):
         return Response({'detail': 'Invalid Genre ID'}, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['DELETE'])
+@permission_classes([IsAdminUser])
 def deleteGenre(request, pk):
     try:
         genre = Genre.objects.get(pk=pk)
@@ -182,6 +185,7 @@ def getAuthor(request, pk):
         return Response({'detail': 'Invalid Author ID'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT'])
+@permission_classes([IsAdminUser])
 def updateAuthor(request, pk):
     try:
         author = Author.objects.get(pk=pk)
@@ -196,6 +200,7 @@ def updateAuthor(request, pk):
         return Response({'detail': 'Invalid Author ID'}, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['DELETE'])
+@permission_classes([IsAdminUser])
 def deleteAuthor(request, pk):
     try:
         author = Author.objects.get(pk=pk)
@@ -221,6 +226,7 @@ def getFeedbacks(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['DELETE'])
+@permission_classes([IsAdminUser])
 def deleteFeedback(request, pk):
     try:
         feedback = Feedback.objects.get(pk=pk)
@@ -257,6 +263,7 @@ def getInteraction(request, pk):
         return Response({'detail': 'Invalid Interaction ID'}, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['GET'])
+@permission_classes([IsAuthenticated, IsPaidUserOrAdmin])
 def getInteractionsByBook(request, book_id):
     try:
         interactions = Interaction.objects.filter(book_id=book_id)
@@ -266,6 +273,7 @@ def getInteractionsByBook(request, book_id):
         return Response({'detail': 'Invalid Book ID'}, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['PUT'])
+@permission_classes([IsAdminUser])
 def updateInteraction(request, pk):
     try:
         interaction = Interaction.objects.get(pk=pk)
@@ -280,6 +288,7 @@ def updateInteraction(request, pk):
         return Response({'detail': 'Invalid Interaction ID'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])
+@permission_classes([IsAdminUser])
 def deleteInteraction(request, pk):
     try:
         interaction = Interaction.objects.get(pk=pk)
@@ -297,8 +306,7 @@ class RatingViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         return Rating.objects.filter(user=self.request.user)
-    
-    # Other viewset methods...
+
     
     def get_rating_id_by_user_and_book(self, request, user_id, book_id):
         print(request)
@@ -327,7 +335,7 @@ class ListRatingViewSet(viewsets.ModelViewSet):
     serializer_class = RatingSerializer
 
 class CreateRatingViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsPaidUserOrAdmin]
 
     def create(self, request, *args, **kwargs):
         print("Request Data:", request.data)
@@ -360,7 +368,7 @@ class RetrieveRatingViewSet(viewsets.ModelViewSet):
     serializer_class = RatingWithoutIdSerializer
 
 class UpdateRatingViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsPaidUserOrAdmin]
     serializer_class = RatingSerializer  # Define your serializer class here
 
     def get_queryset(self):
@@ -377,7 +385,7 @@ class UpdateRatingViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 class DestroyRatingViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsPaidUserOrAdmin]
     serializer_class = RatingSerializer  # Define your serializer class here
 
     def get_queryset(self):
@@ -487,7 +495,7 @@ def get_preferred_genre(request, user_id):
         return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)   
     
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsPaidUserOrAdmin])
 def create_comment(request):
     if request.method == 'POST':
         # Extract data from request
@@ -514,10 +522,7 @@ def create_comment(request):
         return Response({'detail': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)
     
 
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
-from .models import Book, Comment, Reply
+
 
 @api_view(['GET'])
 def get_comments_for_book(request, book_id):
@@ -568,7 +573,7 @@ def get_comments_for_book(request, book_id):
 
     
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsPaidUserOrAdmin])
 def create_reply(request):
     if request.method == 'POST':
         # Extract data from request
@@ -623,6 +628,7 @@ def get_replies_for_comment(request, comment_id):
         return Response({'detail': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def add_to_favorites(request, user_id, book_id):
     user = get_object_or_404(User, pk=user_id)
     book = get_object_or_404(Book, pk=book_id)
@@ -639,6 +645,7 @@ def add_to_favorites(request, user_id, book_id):
 
 
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def remove_from_favorites(request, user_id, book_id):
     user = get_object_or_404(User, pk=user_id)
     book = get_object_or_404(Book, pk=book_id)
@@ -661,3 +668,24 @@ class FavoriteListView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Favorites.DoesNotExist:
             return Response({'message': 'Favorites not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+
+
+
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from .models import Comment, Reply
+
+@csrf_exempt
+@require_POST
+def delete_all_comments_and_replies(request):
+    try:
+        # Delete all replies
+        Reply.objects.all().delete()
+
+        # Delete all comments
+        Comment.objects.all().delete()
+
+        return JsonResponse({'message': 'All comments and replies have been deleted successfully.'}, status=200)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

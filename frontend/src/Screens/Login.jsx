@@ -33,10 +33,15 @@ function LoginScreen() {
     navigate('/home');
   }
 };
+
 const signupHandler = async (e) => {
   e.preventDefault();
+  // Password requirements without special characters
+  const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
   if (password !== password2) {
     alert('Passwords do not match');
+  } else if (!passwordRegex.test(password)) {
+    alert('Password must contain at least 8 characters, including uppercase, lowercase, and number.');
   } else if (/\s/.test(name)) { // Check if name contains spaces
     alert('Name cannot contain spaces');
   } else {
@@ -57,6 +62,7 @@ const signupHandler = async (e) => {
     }
   }
 };
+
 
 const handleForgotPassword = () => {
   navigate('/reset-password'); // Navigate to reset-password route

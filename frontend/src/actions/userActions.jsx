@@ -7,9 +7,9 @@ import {
   USER_UPDATE_PAID_REQUEST,
   USER_UPDATE_PAID_SUCCESS,
   USER_UPDATE_PAID_FAIL,
-  CHECK_PAID_STATUS_FAILURE,
-  CHECK_PAID_STATUS_SUCCESS,
-  CHECK_PAID_STATUS_REQUEST
+  USER_LIST_REQUEST,
+  USER_LIST_SUCCESS,
+  USER_LIST_FAIL
 } from "../constants/userConstants";
 
 const instance = axios.create({
@@ -97,7 +97,7 @@ export const checkUserPaidStatus = (userId) => async (dispatch, getState) => {
   try {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     const token = userInfo ? userInfo.token : null;
-    console.log("token", token);
+
     const config = token
       ? {
           headers: {
@@ -131,6 +131,39 @@ export const checkUserPaidStatus = (userId) => async (dispatch, getState) => {
         error.response && error.response.data.error
           ? error.response.data.error
           : error.message,
+    });
+  }
+};
+
+export const listUsers = () => async (dispatch) => {
+  try {
+    dispatch({ type: USER_LIST_REQUEST });
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.token : null;
+    console.log("token", token);
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token.access}`,
+          },
+        }
+      : {};
+
+    const { data } = await instance.get('/api/user/list/', config); // Adjust the endpoint URL as needed
+
+    dispatch({
+      type: USER_LIST_SUCCESS,
+      payload: data
+    });
+  } catch (error) {
+    dispatch({
+      type: USER_LIST_FAIL,
+      payload:
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message
     });
   }
 };

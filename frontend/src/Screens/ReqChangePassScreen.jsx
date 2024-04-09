@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Card, Form, Button } from 'react-bootstrap'; // Import Form and Button from react-bootstrap
+import { Form, Button } from 'react-bootstrap'; // Import Form and Button from react-bootstrap
 
 function RequestChangePass() {
   const [email, setEmail] = useState('');

@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Col, Button, Collapse, Form, Row } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import Book from '../Components/Book'; // Import Book component
 import { listBooks } from '../actions/bookActions'; // Import listBooks action
 import { useDispatch, useSelector } from 'react-redux'; // Import useDispatch and useSelector
 import Loader from '../Components/Loader';
 import Message from '../Components/Message';
-
+import { Link, Navigate } from "react-router-dom";
 function BrowseScreen() {
   const dispatch = useDispatch();
   const bookList = useSelector((state) => state.bookList);
@@ -15,6 +14,12 @@ function BrowseScreen() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [sortedBooks, setSortedBooks] = useState([]);
   const [selectedGenre, setSelectedGenre] = useState("All");
+
+  const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
+  const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
+  const userInfo = userLoginInfo || userRegisterInfo;
+
+
 
   const toggleFilter = () => {
     setIsFilterOpen(!isFilterOpen);
@@ -76,7 +81,10 @@ function BrowseScreen() {
     const filteredBooks = genre === "All" ? [...books] : books.filter(book => book.genre.includes(genre));
     setSortedBooks(filteredBooks);
   };
-
+  
+  if (!userInfo) {
+    return <Navigate to="/login" />;
+  }
   return (
     <div className="mb-5">
       <h1

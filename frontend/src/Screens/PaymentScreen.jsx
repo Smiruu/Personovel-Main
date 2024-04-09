@@ -3,7 +3,8 @@ import { useDispatch } from "react-redux";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { updateUserToPaid } from "../actions/userActions";
 import { useSelector } from "react-redux";
-import { Modal, Button, Container, Card } from "react-bootstrap";
+import { Modal, Button,  Card } from "react-bootstrap";
+import Loader from "../Components/Loader";
 
 function PaymentScreen() {
   const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
@@ -93,6 +94,12 @@ function PaymentScreen() {
     setShowConfirmation(false);
   };
 
+  const [loading, setLoading] = useState(false);
+
+  const onButtonLoading = (loadingState) => {
+    setLoading(loadingState);
+  };
+
   return (
     <div
       className="d-flex justify-content-center align-items-center"
@@ -150,7 +157,12 @@ function PaymentScreen() {
               per 3 months
             </span>
           </div>
-
+          {loading ? (
+        <div className="text-center mt-3">
+          <Loader />
+        </div>
+      ) : (
+        <>
           {userInfo.token.is_paid ? (
             <>
               <div className="text-center mt-3">
@@ -209,6 +221,8 @@ function PaymentScreen() {
               </PayPalScriptProvider>
             </div>
           )}
+          </>
+        )}
           <Modal show={showConfirmation} onHide={handleCancelClose}>
             <Modal.Header closeButton>
               <Modal.Title>Thank You! </Modal.Title>

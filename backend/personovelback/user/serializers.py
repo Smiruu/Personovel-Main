@@ -124,4 +124,7 @@ class UserPasswordResetSerializer(serializers.Serializer):
 
 
 
-
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['name', 'is_paid', 'paid_at']

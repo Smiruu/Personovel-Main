@@ -63,6 +63,7 @@ export const resendOTP = (user_id, otp_id, otp_code) => async (dispatch) => {
     );
 
     dispatch({ type: RESEND_OTP_SUCCESS, payload: data });
+    return true;
   } catch (error) {
     dispatch({
       type: RESEND_OTP_FAILURE,
@@ -70,5 +71,7 @@ export const resendOTP = (user_id, otp_id, otp_code) => async (dispatch) => {
         ? error.response.data.message
         : error.message,
     });
+
+  return false;
   }
 };

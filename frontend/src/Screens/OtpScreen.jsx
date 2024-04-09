@@ -43,16 +43,18 @@ const OTPScreen = () => {
     }
   };
   
-  const handleResendOTP = () => {
-    if (userId && otpId) {
-      dispatch(resendOTP(userId, otpId, otpCode));
-      setResendDisabled(true);
-      localStorage.setItem("resendDisabled", "true"); // Set button disabled flag
-      setCountdown(300);
-      localStorage.setItem("countdown", 300);
-      setCountdownActive(true);
-    } else {
-      console.error("userId or otpId is not set in userInfo");
+  const handleResendOTP = async () => {
+    try {
+      if (userId && otpId) {
+        dispatch(resendOTP(userId, otpId, otpCode));
+        setResendDisabled(true); // Disable the resend button immediately
+        setCountdown(60); // Set countdown to 60 seconds
+        setCountdownActive(true); // Start the countdown
+      } else {
+        console.error("userId or otpId is not set in userInfo");
+      }
+    } catch (error) {
+      alert("Wait for the timer to reset");
     }
   };
 

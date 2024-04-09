@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
 from user.utils import Util
-from user.serializers import SendPasswordResetEmailSerializer, UserChangePasswordSerializer, UserPasswordResetSerializer, UserRegistrationSerializers, UserLoginSerializer, UserProfileSerializer
+from user.serializers import *
 from django.contrib.auth import authenticate
 from user.renderers import UserRenderer
 from rest_framework_simplejwt.tokens import RefreshToken, Token
@@ -17,6 +17,7 @@ from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.cache import cache
 # Generate token Manually
 def get_tokens_for_user(user):
     # Generate refresh token
@@ -111,11 +112,21 @@ def resend_otp(request):
         if user.is_active:
             return Response({'message': 'Account is already active. Cannot resend OTP.'}, status=status.HTTP_400_BAD_REQUEST)
         
+        last_sent_time = cache.get(f'resend_otp{user_id}time')
+        if last_sent_time:
+            time_since_last_sent = datetime.now() - last_sent_time
+            if time_since_last_sent < timedelta(seconds=60):
+                time_remaining = timedelta(seconds=60) - time_since_last_sent
+                return Response({"error": f"Please wait {time_remaining.seconds} seconds before resending OTP"}, status=status.HTTP_400_BAD_REQUEST)
+            
         otp = OTP.objects.get(user=user)
         otp_key = otp.otp_secret
         otp_instance = pyotp.TOTP(otp_key, digits=6)
         otp_code = otp_instance.now()
         send_otp_email(user.email, otp_code)
+
+        cache.set(f'resend_otp_{user_id}_time', datetime.now(), timeout=None)  # Set timeout to None for cache to never expire
+        
         return Response({'message': 'OTP has been sent to your email'}, status=status.HTTP_200_OK)
     
     except User.DoesNotExist:
@@ -156,9 +167,8 @@ class UserLists(APIView):
 
     def get(self, request, format=None):
         users = User.objects.all()  # Assuming User model is imported correctly
-        serializer = UserProfileSerializer(users, many=True)
+        serializer = UserDetailSerializer(users, many=True)  # Use the new serializer
         return Response(serializer.data, status=status.HTTP_200_OK)
-
     
 
 class UserChangePasswordView(APIView):

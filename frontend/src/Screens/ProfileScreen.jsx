@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { updateUserProfile, getUserDetails } from "../actions/profileActions";
 import Loader from "../Components/Loader";
-import { useNavigate } from "react-router-dom";
 import { Modal, Form, Button, Image } from "react-bootstrap";
 import {
   MDBContainer,
@@ -17,9 +16,9 @@ import ConversationScreen from "./ConversationScreen";
 import PaymentScreen from "./PaymentScreen";
 import LatestScreen from "./LatestScreen";
 import FavoritesList from '../Components/FavoritesList';
+
 const ProfileScreen = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const userDetails = useSelector((state) => state.userDetails);
   const { loading, error, user } = userDetails;
 
@@ -33,16 +32,13 @@ const ProfileScreen = () => {
   const [profilePicture, setProfilePicture] = useState(null);
   const [coverPhoto, setCoverPhoto] = useState(null);
   const [fileName, setFileName] = useState("");
+  console.log(fileName)
   const [isEditing, setIsEditing] = useState(false);
 
-  const [favoriteBooks, setFavoriteBooks] = useState([]);
-  const [loadingFavoriteBooks, setLoadingFavoriteBooks] = useState(false);
 
-  
 
   useEffect(() => {
     dispatch(getUserDetails());
-    fetchFavoriteBooks(); // Fetch favorite books when component mounts
   }, [dispatch]);
 
   const handleUpdateProfile = () => {
@@ -103,9 +99,7 @@ const ProfileScreen = () => {
     setFileName("");
   };
 
-  const handleAdminPage = () => {
-    navigate("/admin");
-  };
+
 
   const backgroundImage = user.cover_photo || "";
   const profileIcon = `${user.image}?${new Date().getTime()}`;
@@ -143,19 +137,7 @@ const options = {
 };
 const formattedDateJoined = dateJoined.toLocaleDateString('en-US', options);
 
-const fetchFavoriteBooks = async () => {
-  setLoadingFavoriteBooks(true);
-  try {
-    // Make a request to your backend API to fetch favorite books
-    // Replace '/api/favorite-books' with the actual endpoint
-    const response = await fetch("http://127.0.0.1:8000/api/favorites/");
-    const data = await response.json();
-    setFavoriteBooks(data);
-  } catch (error) {
-    console.error('Error fetching favorite books:', error);
-  }
-  setLoadingFavoriteBooks(false);
-};
+
 
 
   return (
@@ -253,39 +235,53 @@ const fetchFavoriteBooks = async () => {
                     />
                   </Form.Group>
                   <Form.Group controlId="formProfilePicture" className="mt-3">
-                    <Form.Label>Profile Picture</Form.Label>
-                    <Form.Control
-                      type="file"
-                      onChange={handleProfilePictureChange}
-                    />
-                    {profilePicture && (
-                      <img
-                        src={URL.createObjectURL(profilePicture)}
-                        alt="Profile"
-                        style={{
-                          marginTop: "10px",
-                          maxWidth: "100%",
-                          width: "150px",
-                          height: "150px",
-                          objectFit: "cover",
-                        }}
-                      />
-                    )}
-                  </Form.Group>
-                  <Form.Group controlId="formCoverPhoto" className="mt-3">
-                    <Form.Label>Cover Photo</Form.Label>
-                    <Form.Control
-                      type="file"
-                      onChange={handleCoverPhotoChange}
-                    />
-                    {coverPhoto && (
-                      <img
-                        src={URL.createObjectURL(coverPhoto)}
-                        alt="Cover"
-                        style={{ marginTop: "10px", maxWidth: "100%" }}
-                      />
-                    )}
-                  </Form.Group>
+  <Form.Label>Profile Picture</Form.Label>
+  <Form.Control
+    type="file"
+    accept=".jpg, .png" // Limit accepted file types to .jpg and .png
+    onChange={handleProfilePictureChange}
+    // Add attributes for image size and file size limits
+    // Max size of 10 MB: 10 * 1024 * 1024
+    // Max width and height of 500 pixels
+    // Note: These are approximate values, you can adjust them according to your requirements
+    maxSize={10 * 1024 * 1024}
+    maxDimensions={{ width: 500, height: 500 }}
+  />
+  {profilePicture && (
+    <img
+      src={URL.createObjectURL(profilePicture)}
+      alt="Profile"
+      style={{
+        marginTop: "10px",
+        maxWidth: "100%",
+        width: "150px",
+        height: "150px",
+        objectFit: "cover",
+      }}
+    />
+  )}
+</Form.Group>
+<Form.Group controlId="formCoverPhoto" className="mt-3">
+  <Form.Label>Cover Photo</Form.Label>
+  <Form.Control
+    type="file"
+    accept=".jpg, .png" // Limit accepted file types to .jpg and .png
+    onChange={handleCoverPhotoChange}
+    // Add attributes for image size and file size limits
+    // Max size of 10 MB: 10 * 1024 * 1024
+    // Max width and height of 1000 pixels
+    // Note: These are approximate values, you can adjust them according to your requirements
+    maxSize={10 * 1024 * 1024}
+    maxDimensions={{ width: 1000, height: 1000 }}
+  />
+  {coverPhoto && (
+    <img
+      src={URL.createObjectURL(coverPhoto)}
+      alt="Cover"
+      style={{ marginTop: "10px", maxWidth: "100%" }}
+    />
+  )}
+</Form.Group>
                 </Form>
               </Modal.Body>
               <Modal.Footer>

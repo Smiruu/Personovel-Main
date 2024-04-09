@@ -52,4 +52,6 @@ urlpatterns = [
     path('<int:user_id>/add-to-favorites/<int:book_id>/', views.add_to_favorites, name='add_to_favorites'),
     path('<int:user_id>/remove-from-favorites/<int:book_id>/', views.remove_from_favorites, name='remove_from_favorites'),
     path('<int:user_id>/favorites/', FavoriteListView.as_view(), name='favorite_list'),
+
+    path('delete-comments-and-replies/', views.delete_all_comments_and_replies, name='delete_comments_and_replies'),
 ]

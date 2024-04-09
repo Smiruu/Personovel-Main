@@ -12,7 +12,7 @@ const RateModal = ({ show, handleClose, bookId, userId }) => {
   const dispatch = useDispatch();
   const createRatingState = useSelector((state) => state.createRating); // Get createRating state from Redux store
   const getRatingIdState = useSelector((state) => state.getRatingId); // Get getRatingId state from Redux store
-  const { error } = createRatingState;
+
   const ratingId = localStorage.getItem("ratingId"); // Extract ratingId from the getRatingId state
 
   const [rating, setRating] = useState(0);
@@ -39,7 +39,7 @@ const RateModal = ({ show, handleClose, bookId, userId }) => {
     if (show) {
       fetchRatingId();
     }
-  }, [dispatch, getRatingId, show, userId, bookId]);
+  }, [dispatch, show, userId, bookId]);
 
   // Effect to update ratingId state when it changes in the Redux store
   useEffect(() => {
