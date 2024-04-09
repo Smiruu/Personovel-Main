@@ -86,6 +86,7 @@ def getBook(request, pk):
     
 
 @api_view(['PUT'])
+@permission_classes([IsAdminUser])
 def updateBook(request, pk):
     try:
         book = Book.objects.get(pk=pk)
@@ -100,6 +101,7 @@ def updateBook(request, pk):
         return Response({'detail': 'Invalid Book ID'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])
+@permission_classes([IsAdminUser])
 def deleteBook(request, pk):
     try:
         book = Book.objects.get(pk=pk)
@@ -645,7 +647,7 @@ def get_replies_for_comment(request, comment_id):
         return Response({'detail': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsPaidUserOrAdmin])
 def add_to_favorites(request, user_id, book_id):
     user = get_object_or_404(User, pk=user_id)
     book = get_object_or_404(Book, pk=book_id)
@@ -662,7 +664,7 @@ def add_to_favorites(request, user_id, book_id):
 
 
 @api_view(['DELETE'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsPaidUserOrAdmin])
 def remove_from_favorites(request, user_id, book_id):
     user = get_object_or_404(User, pk=user_id)
     book = get_object_or_404(Book, pk=book_id)
