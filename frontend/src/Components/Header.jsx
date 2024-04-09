@@ -7,6 +7,7 @@ import {
   Button,
   Image,
   NavDropdown,
+  Modal
 } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -22,6 +23,7 @@ function Header() {
   const navigate = useNavigate();
   const userDetails = useSelector((state) => state.userDetails);
   const { loading, error, user } = userDetails;
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     dispatch(getUserDetails());
@@ -51,9 +53,12 @@ function Header() {
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
   const userInfo = userLoginInfo || userRegisterInfo;
 
+  const handleCloseLogoutModal = () => setShowLogoutModal(false);
+  const handleShowLogoutModal = () => setShowLogoutModal(true);
+
+
   const logoutHandler = () => {
-    dispatch(logout());
-    localStorage.removeItem("userInfo"); // Remove user info from localStorage
+    dispatch(logout());// Remove user info from localStorage
     navigate("/login"); // Redirect the user to the login page
   };
 
@@ -148,7 +153,7 @@ function Header() {
                 <Nav title={userInfo.name} id="username">
                   <Nav.Item
                     href="#action2"
-                    onClick={logoutHandler}
+                    onClick={handleShowLogoutModal}
                     style={logoutButtonStyle}
                     onMouseEnter={(e) => (e.target.style.color = "#002960")}
                     onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
@@ -215,6 +220,20 @@ function Header() {
           </Link>
         )}
       </Container>
+      <Modal show={showLogoutModal} onHide={handleCloseLogoutModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Logout Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to logout?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseLogoutModal}>
+            No
+          </Button>
+          <Button variant="primary" onClick={logoutHandler}>
+            Yes
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Navbar>
   );
 }

@@ -158,6 +158,10 @@ function BookDetail() {
     setIsFavorite(!isFavorite);
   };
 
+
+  const handleCloseButtonClick = () => {
+    navigate(-1); // Go back to the previous page
+  };
   return (
     <Container fluid>
       <Row className="mt-5 mb-5 h-full w-full">
@@ -172,7 +176,7 @@ function BookDetail() {
         </Col>
         <Col md={5} style={{ backgroundColor: "#FCD5CE" }}>
           <Link
-            to="/"
+            to="#"
             className="close-button mt-3"
             style={{
               float: "right",
@@ -181,6 +185,7 @@ function BookDetail() {
               borderColor: "#6F1D1B",
               position: "relative",
             }}
+            onClick={handleCloseButtonClick}
           >
             <i className="fas fa-times" style={{ color: "#6F1D1B" }}></i>
           </Link>

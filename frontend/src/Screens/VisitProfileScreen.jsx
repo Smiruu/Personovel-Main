@@ -1,27 +1,36 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getUserProfileById } from '../actions/profileActions';
-import { fetchFavorites } from '../actions/favoriteActions'; // Import fetchFavorites action
+import { fetchFavorites } from '../actions/favoriteActions';
 import Loader from '../Components/Loader';
 import { Modal, Form, Button, Image } from 'react-bootstrap';
-import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBTypography } from 'mdb-react-ui-kit';
-import FavoritesList from '../Components/FavoritesList'; // Import FavoritesList component
-import LatestScreen from './LatestScreen'; // Import LatestScreen component
-import LatestReadScreen from './LatestReadScreen'; // Import LatestReadScreen component
+import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBTypography,  } from 'mdb-react-ui-kit';
+import FavoritesList from '../Components/FavoritesList';
+import LatestScreen from './LatestScreen';
+import LatestReadScreen from './LatestReadScreen';
 
 function VisitProfileScreen() {
   const { id } = useParams();
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const userProfileById = useSelector((state) => state.userProfileById);
   const { loading, error, profile } = userProfileById;
   const profiles = profile.profile;
+  const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
+  const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
+  const userInfo = userLoginInfo || userRegisterInfo;
 
   useEffect(() => {
     dispatch(getUserProfileById(id));
-    dispatch(fetchFavorites(id)); // Dispatch the fetchFavorites action with the userId
+    dispatch(fetchFavorites(id));
   }, [dispatch, id]);
+
+  useEffect(() => {
+    if (userInfo && userInfo.token.id === id) {
+      navigate('/profile');
+    }
+  }, [userInfo, id, navigate]);
 
   if (loading) {
     return <Loader />;
@@ -35,7 +44,6 @@ function VisitProfileScreen() {
     return <div>No profile data found</div>;
   }
 
-  // Format the user joined date
   const joinedDate = new Date(profiles.user_created_at);
   const formattedJoinedDate = `${joinedDate.toLocaleString('default', { month: 'long' })} ${joinedDate.getDate()}, ${joinedDate.getFullYear()}`;
 
@@ -54,19 +62,18 @@ function VisitProfileScreen() {
                 width: '100%',
                 height: '300px',
               }}
-            >
-              <Image
-                src={profiles.image}
-                alt="User Profile"
-                className="profile-icon mt-5 mb-2 p-3"
-                roundedCircle
-                style={{
-                  width: '250px',
-                  height: '250px',
-                  objectFit: 'cover',
-                }}
-              />
-            </div>
+            />
+            <Image
+              src={profiles.image}
+              alt="User Profile"
+              className="profile-icon mt-5 mb-2 p-3"
+              roundedCircle
+              style={{
+                width: '250px',
+                height: '250px',
+                objectFit: 'cover',
+              }}
+            />
           </MDBCard>
         </MDBCol>
       </MDBRow>
@@ -87,7 +94,6 @@ function VisitProfileScreen() {
               <p>
                 <strong>DATE JOINED:</strong> {formattedJoinedDate}
               </p>
-              {/* Add remaining days logic if needed */}
             </div>
           </MDBCol>
           <MDBCol size="6">
@@ -100,20 +106,15 @@ function VisitProfileScreen() {
             ) : (
               <div className="mt-3">
                 <div className="favorite-books-section bg-white p-2">
-                  {/* <h4>Favorite Books</h4> */}
-                  {/* Render the FavoritesList component here */}
                   <FavoritesList userId={id} />
                 </div>
               </div>
             )}
-            {/* Render the LatestReadScreen component */}
-
           </MDBCol>
         </MDBRow>
-          <MDBCol>
+        <MDBCol>
           <LatestReadScreen userId={id} />
-          </MDBCol>
-
+        </MDBCol>
       </div>
     </MDBContainer>
   );
