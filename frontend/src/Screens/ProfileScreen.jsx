@@ -17,6 +17,7 @@ import PaymentScreen from "./PaymentScreen";
 import LatestScreen from "./LatestScreen";
 import FavoritesList from "../Components/FavoritesList";
 import LatestReadScreen from "./LatestReadScreen";
+import { FaUser, FaCalendarAlt, FaClock } from "react-icons/fa";
 
 const ProfileScreen = () => {
   const dispatch = useDispatch();
@@ -174,9 +175,27 @@ const ProfileScreen = () => {
             </MDBRow>
 
             <div className="username d-flex align-items-center ms-5 mt-4">
-              <MDBTypography tag="h5" className="me-2">
-                <h1>{user.name}</h1>
-              </MDBTypography>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <FaUser
+                  style={{
+                    marginRight: "10px",
+                    fontSize: "24px",
+                    color: "#002960",
+                  }}
+                />
+                <MDBTypography
+                  tag="h1"
+                  className="me-2"
+                  style={{ fontSize: "30px", color: "#002960" }}
+                >
+                  {user.name}
+                </MDBTypography>
+              </div>
 
               <Button
                 className="edit-profile ms-auto"
@@ -375,31 +394,48 @@ const ProfileScreen = () => {
           <div className="tab-content mt-3">
             {activeTab === "ABOUT" && (
               <div className="about-container">
-                <MDBRow>
+                <MDBRow style={{ height: "100%", marginBottom: "30px" }}>
                   <MDBCol size="6">
-                    <div className="bio-section bg-white p-2">
-                      <p>
-                        <strong>BIO:</strong> {user.bio}
-                      </p>
-                      <p>
+                    <div
+                      className="bio-section bg-white p-2 d-flex flex-column justify-content-center align-items-center"
+                      style={{
+                        height: "100%",
+                        fontFamily: "Arial, sans-serif",
+                      }}
+                    >
+                      {user.bio && (
+                        <div className="text-center mb-3">
+                          <FaUser size={20} className="me-1" />
+                          <strong>BIO:</strong> {user.bio}
+                        </div>
+                      )}
+                      <div className="text-center mb-3">
+                        <FaCalendarAlt size={20} className="me-1" />
                         <strong>DATE JOINED:</strong> {formattedDateJoined}
-                      </p>
-                      <p>
+                      </div>
+                      <div className="text-center">
+                        <FaClock size={20} className="me-1" />
                         <strong>SUBSCRIPTION DURATION:</strong>{" "}
                         {remainingDays !== null
                           ? `${remainingDays} days remaining`
                           : "N/A"}
-                      </p>
+                      </div>
                     </div>
                   </MDBCol>
+
                   <MDBCol size="6">
                     {userInfo.token && userInfo.token.is_admin ? (
-                      <div className="favorite-books-section bg-white p-2">
+                      <div
+                        className="favorite-books-section bg-white p-2"
+                        style={{ height: "100%" }}
+                      >
                         <AdminScreen />
                       </div>
                     ) : (
-                      <div className="favorite-books-section bg-white p-2">
-                        <h4>LATEST READ</h4>
+                      <div
+                        className="favorite-books-section bg-white p-2"
+                        style={{ height: "100%" }}
+                      >
                         <LatestReadScreen userId={userInfo.token.id} />
                       </div>
                     )}
@@ -407,16 +443,20 @@ const ProfileScreen = () => {
 
                   <MDBCol size="12" className="mt-3">
                     {userInfo.token && userInfo.token.is_admin ? (
-                      <div className="mt-3">
-                        <div className="favorite-books-section bg-white p-2">
+                      <div className="mt-3" style={{ height: "100%" }}>
+                        <div
+                          className="favorite-books-section bg-white p-2"
+                          style={{ height: "100%" }}
+                        >
                           <LatestScreen />
                         </div>
                       </div>
                     ) : (
-                      <div className="mt-3">
-                        <div className="favorite-books-section bg-white p-2">
-                          {/* <h4>Favorite Books</h4> */}
-                          {/* Render the FavoritesList component here */}
+                      <div className="mt-3" style={{ height: "100%" }}>
+                        <div
+                          className="favorite-books-section bg-white p-2"
+                          style={{ height: "100%" }}
+                        >
                           <FavoritesList userId={userInfo.token.id} />
                         </div>
                       </div>

@@ -1,68 +1,31 @@
 import React, { useState, useEffect } from "react";
-import {
-  Navbar,
-  Nav,
-  Container,
-  Form,
-  Button,
-  Image,
-  NavDropdown,
-  Modal
-} from "react-bootstrap";
+import { Navbar, Nav, Container, Button, Image, Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
-import { searchBooks } from "../actions/searchActions";
 import { logout } from "../actions/userActions";
 import { getUserDetails } from "../actions/profileActions";
 
 function Header() {
-  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(""); // Define searchQuery state
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userDetails = useSelector((state) => state.userDetails);
-  const { loading, error, user } = userDetails;
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const { user } = userDetails;
 
   useEffect(() => {
     dispatch(getUserDetails());
   }, [dispatch]);
-  const handleSearchToggle = () => {
-    setIsSearchExpanded(!isSearchExpanded);
-  };
-  const logoutButtonStyle = {
-    cursor: "pointer",
-  };
 
-  const navLinkStyle = {
-    color: "#BC1823",
-    transition: "color 0.3s",
-  };
-
-  const customNavbarToggleStyle = {
-    marginLeft: "32%",
-    border: "2px solid #002960",
-    backgroundColor: "transparent",
-    borderRadius: "10px",
-    borderColor: "#002960",
-    boxShadow: "none",
-  };
-
-  const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
-  const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
-  const userInfo = userLoginInfo || userRegisterInfo;
-
-  const handleCloseLogoutModal = () => setShowLogoutModal(false);
   const handleShowLogoutModal = () => setShowLogoutModal(true);
-
+  const handleCloseLogoutModal = () => setShowLogoutModal(false);
 
   const logoutHandler = () => {
-    dispatch(logout());// Remove user info from localStorage
-    navigate("/login"); // Redirect the user to the login page
+    dispatch(logout());
+    navigate("/login");
   };
 
-  const handleSearch = (e) => {
+  const handleSearch = () => {
     navigate("/search");
   };
 
@@ -75,32 +38,32 @@ function Header() {
               <Image
                 src="/PERSONOVEL.png"
                 className="logo img-fluid"
-                style={{ width: "200px", height: "50px", marginLeft: "70px" }}
+                style={{ width: "200px", height: "50px", marginLeft: "20px" }}
                 alt="Brand Logo"
               />
             </Link>
           </Navbar.Brand>
         </Link>
 
-        <Navbar.Toggle aria-controls="navbarScroll" />
+        {user && (
+          <>
+            <Navbar.Toggle aria-controls="navbarScroll" />
 
-        <Navbar.Collapse id="navbarScroll">
-          <Nav
-            className="mb-2 mb-lg-0"
-            style={{
-              maxHeight: "100px",
-              marginLeft: "50px",
-              fontFamily: "Fira Mono",
-              display: "flex",
-              alignItems: "center",
-            }}
-            navbarScroll
-          >
-            {userInfo ? (
-              <>
+            <Navbar.Collapse id="navbarScroll">
+              <Nav
+                className="mb-2 mb-lg-0"
+                style={{
+                  maxHeight: "100px",
+                  marginLeft: "30px",
+                  fontFamily: "Fira Mono",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+                navbarScroll
+              >
                 <Link to="/" className="link-no-underline">
                   <Nav.Link
-                    style={navLinkStyle}
+                    style={{ color: "#BC1823", transition: "color 0.3s" }}
                     href="#action2"
                     onMouseEnter={(e) => (e.target.style.color = "#002960")}
                     onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
@@ -113,7 +76,7 @@ function Header() {
 
                 <Link to="/browse" className="link-no-underline">
                   <Nav.Link
-                    style={navLinkStyle}
+                    style={{ color: "#BC1823", transition: "color 0.3s" }}
                     href="#action2"
                     onMouseEnter={(e) => (e.target.style.color = "#002960")}
                     onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
@@ -126,7 +89,7 @@ function Header() {
 
                 <Link to="/popular" className="link-no-underline">
                   <Nav.Link
-                    style={navLinkStyle}
+                    style={{ color: "#BC1823", transition: "color 0.3s" }}
                     href="#action2"
                     onMouseEnter={(e) => (e.target.style.color = "#002960")}
                     onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
@@ -139,7 +102,7 @@ function Header() {
 
                 <Link to="/latest" className="link-no-underline">
                   <Nav.Link
-                    style={navLinkStyle}
+                    style={{ color: "#BC1823", transition: "color 0.3s" }}
                     href="#action2"
                     onMouseEnter={(e) => (e.target.style.color = "#002960")}
                     onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
@@ -150,48 +113,24 @@ function Header() {
 
                 <span style={{ color: "#BC1823", margin: "0 10px" }}>|</span>
 
-                <Nav title={userInfo.name} id="username">
+                <Nav title={user.name} id="username">
                   <Nav.Item
                     href="#action2"
                     onClick={handleShowLogoutModal}
-                    style={logoutButtonStyle}
+                    style={{ cursor: "pointer" }}
                     onMouseEnter={(e) => (e.target.style.color = "#002960")}
                     onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
                   >
                     LOGOUT
                   </Nav.Item>
                 </Nav>
-              </>
-            ) : (
-              <>
-                <LinkContainer to="/login">
-                  <Nav.Link
-                    href="#action2"
-                    onMouseEnter={(e) => (e.target.style.color = "#002960")}
-                    onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
-                  >
-                    LOGIN
-                  </Nav.Link>
-                </LinkContainer>
-
-                <span style={{ color: "#BC1823", margin: "0 10px" }}>|</span>
-
-                <LinkContainer to="/login">
-                  <Nav.Link
-                    href="#action2"
-                    onMouseEnter={(e) => (e.target.style.color = "#BC1823")}
-                    onMouseLeave={(e) => (e.target.style.color = "#002960")}
-                  >
-                    REGISTER
-                  </Nav.Link>
-                </LinkContainer>
-              </>
-            )}
-          </Nav>
-        </Navbar.Collapse>
+              </Nav>
+            </Navbar.Collapse>
+          </>
+        )}
 
         <Button
-          class="btn btn-lg btn-info"
+          className="me-2"
           onClick={handleSearch}
           style={{
             backgroundColor: "#002960",
@@ -202,7 +141,7 @@ function Header() {
           <i className="fa-solid fa-magnifying-glass" />
         </Button>
 
-        {userInfo && user && (
+        {user ? (
           <Link to="/Profile" className="link-no-underline">
             <Nav.Link
               style={{ color: "#002960", marginLeft: "10px" }}
@@ -211,13 +150,78 @@ function Header() {
               {user.image && (
                 <Image
                   src={user.image}
-                  className="rounded-circle border border-dark me-1"
+                  className="me-2"
                   alt="User Icon"
-                  style={{ width: "45px", height: "45px" }}
+                  style={{
+                    width: "45px",
+                    height: "45px",
+                    borderRadius: "50%",
+                    border: "3px solid black",
+                  }}
                 />
               )}
             </Nav.Link>
           </Link>
+        ) : (
+          <>
+            <Nav className="ms-auto">
+              <div className="d-flex flex-row">
+                {" "}
+                <Link
+                  to="/login"
+                  style={{
+                    fontFamily: "Blinker, san-serif",
+                    fontWeight: "bold",
+                    color: "white",
+                    textDecoration: "none",
+                  }}
+                >
+                  <Button
+                    className="custom-button me-2"
+                    style={{ borderColor: "black", backgroundColor: "#BC1823" }}
+                    onMouseEnter={(e) => (
+                      (e.target.style.color = "white"),
+                      (e.target.style.backgroundColor = "#BC1823"),
+                      (e.target.style.textDecoration = "none")
+                    )}
+                    onMouseLeave={(e) => (
+                      (e.target.style.color = "white"),
+                      (e.target.style.backgroundColor = "#002960"),
+                      (e.target.style.textDecoration = "none")
+                    )}
+                  >
+                    LOGIN
+                  </Button>
+                </Link>
+                <Link
+                  to="/login"
+                  style={{
+                    fontFamily: "Blinker, san-serif",
+                    fontWeight: "bold",
+                    color: "white",
+                    textDecoration: "none",
+                  }}
+                >
+                  <Button
+                    className="custom-button"
+                    style={{ borderColor: "black", backgroundColor: "#002960" }}
+                    onMouseEnter={(e) => (
+                      (e.target.style.color = "white"),
+                      (e.target.style.backgroundColor = "#002960"),
+                      (e.target.style.textDecoration = "none")
+                    )}
+                    onMouseLeave={(e) => (
+                      (e.target.style.color = "white"),
+                      (e.target.style.backgroundColor = "#BC1823"),
+                      (e.target.style.textDecoration = "none")
+                    )}
+                  >
+                    REGISTER
+                  </Button>
+                </Link>
+              </div>
+            </Nav>
+          </>
         )}
       </Container>
       <Modal show={showLogoutModal} onHide={handleCloseLogoutModal}>

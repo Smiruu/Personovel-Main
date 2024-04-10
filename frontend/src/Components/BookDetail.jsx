@@ -34,7 +34,6 @@ function BookDetail() {
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
   const userInfo = userLoginInfo || userRegisterInfo;
 
-  // Define userId conditionally based on the availability of userInfo
   const userId = userInfo && userInfo.token ? userInfo.token.id : null;
 
   const currentBookId = _id;
@@ -50,7 +49,6 @@ function BookDetail() {
     (state) => state.fetchMeanRatings.ratings.meanRating
   );
 
-
   const numReviews = useSelector(
     (state) => state.fetchMeanRatings.ratings.numReviews
   );
@@ -64,7 +62,7 @@ function BookDetail() {
     comments,
   } = commentList || {};
 
-  const [isFavorite, setIsFavorite] = useState(false); // Initialize isFavorite to false
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     dispatch(listBookDetails(_id));
@@ -73,12 +71,12 @@ function BookDetail() {
       dispatch(getRatingId(userId, _id));
     }
     dispatch(getCommentsForBook(_id));
-    setIsFavorite(false); // Initialize isFavorite to false
+    setIsFavorite(false);
   }, [dispatch, _id, userId]);
 
   useEffect(() => {
     if (!loadingComments && !commentsError) {
-      console.log("Comments:", comments); // Log comments data
+      console.log("Comments:", comments);
     }
   }, [comments, loadingComments, commentsError]);
 
@@ -98,7 +96,7 @@ function BookDetail() {
 
   useEffect(() => {
     if (!ratingId) {
-      dispatch({ type: "SET_USER_RATING", payload: 0 }); // Dispatch action to set userRating to 0
+      dispatch({ type: "SET_USER_RATING", payload: 0 });
     }
   }, [dispatch, ratingId]);
 
@@ -150,17 +148,16 @@ function BookDetail() {
   const handleToggleFavorite = () => {
     if (isFavorite) {
       dispatch(removeFromFavorites(userId, _id));
-      localStorage.setItem(`favorite_${userId}_${_id}`, "false"); // Update local storage
+      localStorage.setItem(`favorite_${userId}_${_id}`, "false");
     } else {
       dispatch(addToFavorites(userId, _id));
-      localStorage.setItem(`favorite_${userId}_${_id}`, "true"); // Update local storage
+      localStorage.setItem(`favorite_${userId}_${_id}`, "true");
     }
     setIsFavorite(!isFavorite);
   };
 
-
   const handleCloseButtonClick = () => {
-    navigate(-1); // Go back to the previous page
+    navigate(-1);
   };
   return (
     <Container fluid>
@@ -255,7 +252,7 @@ function BookDetail() {
               marginBottom: "5px",
             }}
           >
-            <strong style={{ fontFamily: "Blinker" }}>Rating: </strong>
+            <strong style={{ fontFamily: "Blinker" }}>RATING: </strong>
             <span
               style={{
                 fontStyle: "italic",
@@ -324,7 +321,7 @@ function BookDetail() {
                 marginBottom: "5px",
               }}
             >
-              <strong style={{ fontFamily: "Blinker" }}>User Rating: </strong>
+              <strong style={{ fontFamily: "Blinker" }}>USER RATING: </strong>
               <span
                 style={{
                   fontStyle: "italic",
@@ -338,10 +335,42 @@ function BookDetail() {
           )}
           <Row className="justify-content-center mb-3">
             <Col>
+              {userInfo && (
+                <Button
+                  className="btn-block customButton"
+                  type="button"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "100%",
+                    fontWeight: "1",
+                    fontSize: "30px",
+                    color: "white",
+                    fontFamily: "Protest Guerrilla",
+                    borderRadius: "50px",
+                    backgroundColor: "#6F1D1B",
+                    marginTop: "20px",
+                    marginRight: "10px",
+                  }}
+                  onClick={handleToggleFavorite}
+                  disabled={!userId}
+                >
+                  <i
+                    className={`bi bi-suit-heart${
+                      isFavorite ? " text-danger" : ""
+                    }`}
+                    style={{ fontSize: "30px", marginRight: "10px" }}
+                  >ADD TO FAVORITE</i> 
+                </Button>
+              )}
               <Button
                 className="btn-block customButton"
                 type="button"
                 style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                   width: "100%",
                   fontWeight: "1",
                   fontSize: "30px",
@@ -355,58 +384,34 @@ function BookDetail() {
               >
                 READ NOW!
               </Button>
+              {userInfo &&
+                userInfo.token &&
+                (userInfo.token.is_paid || userInfo.token.is_admin) && (
+                  <Button
+                    className="customButton"
+                    type="button"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "100%",
+                      fontWeight: "1",
+                      fontSize: "30px",
+                      color: "white",
+                      fontFamily: "Protest Guerrilla",
+                      borderRadius: "50px",
+                      backgroundColor: "#6F1D1B",
+                      marginTop: "20px",
+                    }}
+                    onClick={() => setShowModal(true)}
+                  >
+                    RATE
+                  </Button>
+                )}
             </Col>
-
-            <Col>
-              {/* Show the rate button only if userInfo is available and the user is paid */}
-              {userInfo && userInfo.token && (userInfo.token.is_paid || userInfo.token.is_admin) && (
-                <Button
-                  className="customButton"
-                  type="button"
-                  style={{
-                    width: "100%",
-                    fontWeight: "1",
-                    fontSize: "30px",
-                    color: "white",
-                    fontFamily: "Protest Guerrilla",
-                    borderRadius: "50px",
-                    backgroundColor: "#6F1D1B",
-                    marginTop: "20px",
-                  }}
-                  onClick={() => setShowModal(true)}
-                >
-                  RATE
-                </Button>
-              )}
-            </Col>
-            {/* Show favorite button if userInfo is available */}
-            {userInfo && (
-              <Button
-                className="customButton"
-                type="button"
-                style={{
-                  width: "90%",
-                  fontWeight: "1",
-                  fontSize: "20px",
-                  fontFamily: "Protest Guerrilla",
-                  borderRadius: "50px",
-                  backgroundColor: "transparent",
-                  border: "none",
-                  marginTop: "20px",
-                }}
-                onClick={handleToggleFavorite}
-                disabled={!userId} // Disable if userId is not available
-              >
-                <i
-                  className={`fas fa-heart${isFavorite ? " text-danger" : ""}`}
-                  style={{ fontSize: "30px" }}
-                ></i>
-              </Button>
-            )}
           </Row>
         </Col>
       </Row>
-      {/* RateModal component */}
       <RateModal
         show={showModal}
         handleClose={handleCloseModal}
@@ -414,7 +419,13 @@ function BookDetail() {
         userId={userId}
       />
       {userInfo && (
-        <Row className="mt-3">
+        <Row
+          className="mt-3 bg-white p-3 border border-2 border-grey"
+          style={{
+            borderRadius: "10px",
+            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+          }}
+        >
           <Col md={12}>
             <CommentSection
               comments={comments.comments}

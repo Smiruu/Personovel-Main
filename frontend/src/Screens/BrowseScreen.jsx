@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Col, Button, Collapse, Form, Row } from "react-bootstrap";
-import Book from '../Components/Book'; // Import Book component
-import { listBooks } from '../actions/bookActions'; // Import listBooks action
-import { useDispatch, useSelector } from 'react-redux'; // Import useDispatch and useSelector
-import Loader from '../Components/Loader';
-import Message from '../Components/Message';
+import Book from "../Components/Book";
+import { listBooks } from "../actions/bookActions";
+import { useDispatch, useSelector } from "react-redux";
+import Loader from "../Components/Loader";
+import Message from "../Components/Message";
 import { Link, Navigate } from "react-router-dom";
 function BrowseScreen() {
   const dispatch = useDispatch();
@@ -19,13 +19,11 @@ function BrowseScreen() {
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
   const userInfo = userLoginInfo || userRegisterInfo;
 
-
-
   const toggleFilter = () => {
     setIsFilterOpen(!isFilterOpen);
   };
 
-  const genres = [ // Include "All" as the first option
+  const genres = [
     "Romance",
     "Mystery/Thriller",
     "Science Fiction",
@@ -43,7 +41,7 @@ function BrowseScreen() {
   ];
 
   useEffect(() => {
-    dispatch(listBooks()); // Fetch books data
+    dispatch(listBooks());
   }, [dispatch]);
 
   useEffect(() => {
@@ -52,12 +50,11 @@ function BrowseScreen() {
 
   const handleSort = (sortBy) => {
     let sorted = [];
-  
+
     switch (sortBy) {
       case "A-Z":
         sorted = [...books].sort((a, b) => {
-          // Check if 'title' property exists and is not undefined
-          const titleA = (a.title || "").toUpperCase(); // Convert to uppercase for case-insensitive sorting
+          const titleA = (a.title || "").toUpperCase();
           const titleB = (b.title || "").toUpperCase();
           return titleA.localeCompare(titleB);
         });
@@ -66,22 +63,24 @@ function BrowseScreen() {
         sorted = [...books].sort((a, b) => new Date(b.date) - new Date(a.date));
         break;
       case "Popularity":
-        // Add sorting logic for popularity if needed
         break;
       default:
         sorted = [...books];
         break;
     }
-  
+
     setSortedBooks(sorted);
   };
 
   const filterBooksByGenre = (genre) => {
-    setSelectedGenre(genre); 
-    const filteredBooks = genre === "All" ? [...books] : books.filter(book => book.genre.includes(genre));
+    setSelectedGenre(genre);
+    const filteredBooks =
+      genre === "All"
+        ? [...books]
+        : books.filter((book) => book.genre.includes(genre));
     setSortedBooks(filteredBooks);
   };
-  
+
   if (!userInfo) {
     return <Navigate to="/login" />;
   }
@@ -162,64 +161,70 @@ function BrowseScreen() {
                     <strong>GENRES</strong>
                   </Form.Label>
 
-                  <div style={{ display: "flex", flexWrap: "wrap", marginLeft: "40px" }}>
-    <Button
-      key="All"
-      variant="outline-secondary"
-      className="me-2 mb-2"
-      style={{
-        color: "#6F1D1B",
-        borderColor: "#6F1D1B",
-        borderRadius: "50px",
-        fontFamily: "Blinker",
-        fontWeight: "1",
-        marginRight: "8px",
-        marginBottom: "8px",
-        padding: "10px 20px",
-        transition: "background-color 0.3s, color 0.3s",
-      }}
-      onClick={() => filterBooksByGenre("All")} // Filter by "All" genre
-    >
-      All
-    </Button>
-    {genres.map((genre) => (
-      <Button
-        key={genre}
-        variant="outline-secondary"
-        className="me-2 mb-2"
-        style={{
-          color: "#6F1D1B",
-          borderColor: "#6F1D1B",
-          borderRadius: "50px",
-          fontFamily: "Blinker",
-          fontWeight: "1",
-          marginRight: "8px",
-          marginBottom: "8px",
-          padding: "10px 20px",
-          transition: "background-color 0.3s, color 0.3s",
-        }}
-        onClick={() => filterBooksByGenre(genre)} // Filter by selected genre
-      >
-        {genre.toUpperCase()}
-      </Button>
-    ))}
-  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      marginLeft: "40px",
+                    }}
+                  >
+                    <Button
+                      key="All"
+                      variant="outline-secondary"
+                      className="me-2 mb-2"
+                      style={{
+                        color: "#6F1D1B",
+                        borderColor: "#6F1D1B",
+                        borderRadius: "50px",
+                        fontFamily: "Blinker",
+                        fontWeight: "1",
+                        marginRight: "8px",
+                        marginBottom: "8px",
+                        padding: "10px 20px",
+                        transition: "background-color 0.3s, color 0.3s",
+                      }}
+                      onClick={() => filterBooksByGenre("All")} // Filter by "All" genre
+                    >
+                      All
+                    </Button>
+                    {genres.map((genre) => (
+                      <Button
+                        key={genre}
+                        variant="outline-secondary"
+                        className="me-2 mb-2"
+                        style={{
+                          color: "#6F1D1B",
+                          borderColor: "#6F1D1B",
+                          borderRadius: "50px",
+                          fontFamily: "Blinker",
+                          fontWeight: "1",
+                          marginRight: "8px",
+                          marginBottom: "8px",
+                          padding: "10px 20px",
+                          transition: "background-color 0.3s, color 0.3s",
+                        }}
+                        onClick={() => filterBooksByGenre(genre)}
+                      >
+                        {genre.toUpperCase()}
+                      </Button>
+                    ))}
+                  </div>
                 </Form.Group>
               </Form>
             </div>
           </Collapse>
 
           {isFilterOpen && (
-              <i
-                className="bi bi-dash-circle-fill"
-                style={{
-                  fontSize: "2rem",
-                  cursor: "pointer",
-                  color: "#6F1D1B",
-                }}
-                onClick={toggleFilter}
-              />
-            )}
+            <i
+              className="bi bi-dash-circle-fill"
+              style={{
+                fontSize: "2rem",
+                cursor: "pointer",
+                color: "#6F1D1B",
+              }}
+              onClick={toggleFilter}
+            />
+          )}
         </div>
       </Col>
 

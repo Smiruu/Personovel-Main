@@ -11,7 +11,6 @@ function LandingScreen() {
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
   const userInfo = userLoginInfo || userRegisterInfo;
 
-  // If user is logged in, redirect to home page
   if (userInfo) {
     return <Navigate to="/home" />;
   }
@@ -21,7 +20,6 @@ function LandingScreen() {
       <Card className="border-0">
         <Card.Body className="color">
           <Row>
-            {/* Image Column - Order in Mobile: 1, Desktop: 2 */}
             <Col md={6} className="text-center order-1 order-md-2">
               <Card.Img
                 src="/images/books.png"
@@ -30,7 +28,6 @@ function LandingScreen() {
               />
             </Col>
 
-            {/* Text Column - Order in Mobile: 2, Desktop: 1 */}
             <Col md={6} className="text-center order-2 order-md-1">
               <h1
                 style={{

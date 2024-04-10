@@ -31,7 +31,7 @@ function SampleScreen() {
               change the course of your destiny?
             </h1>
 
-            <div style={{ margin: "10px" }}>
+            <div style={{ margin: "10px", marginBottom: "50px" }}>
               <Row className="g-2">
                 {books.map((book) => (
                   <Col key={book._id}>
@@ -58,7 +58,7 @@ function SampleScreen() {
           style={{
             backgroundColor: "#FCD5CE",
             padding: "20px",
-            marginTop: "10%",
+            marginTop: "5%",
             marginBottom: "10%",
           }}
         >
@@ -68,7 +68,7 @@ function SampleScreen() {
                 textAlign: "center",
                 marginRight: "20px",
                 marginLeft: "20px",
-                marginTop: "40px",
+                marginTop: "20px",
                 color: "#AB0043",
                 fontFamily: "Indie Flower",
               }}
@@ -102,7 +102,7 @@ function SampleScreen() {
             register now and be part of a community where every page turned
             reveals new connections and possibilities.
           </h1>
-          <h1 style={{ textAlign: "center", marginBottom: "60px" }}>
+          <h1 style={{ textAlign: "center", marginBottom: "40px" }}>
             <Nav.Link as={Link} to="/login">
               <Button
                 style={{

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
+import { FaUser, FaComment, FaTags, FaBook, FaCog } from "react-icons/fa"; // Import icons
 import AuthorAdmin from "../Components/Admin/AuthorAdmin";
 import FeedbackAdmin from "../Components/Admin/FeedbackAdmin";
 import GenreAdmin from "../Components/Admin/GenreAdmin";
@@ -27,9 +28,18 @@ function AdminScreen() {
     cursor: "pointer",
   };
 
+  const headingStyle = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontFamily: "Arial, sans-serif",
+    fontSize: "3rem",
+  };
   return (
-    <div className="container mt-2 d-flex flex-column align-items-center">
-      <h1 className="mb-4">Admin Screen</h1>
+    <div className="container mt-2">
+      <h1 style={headingStyle}>
+        <FaCog className="me-2" /> Admin Screen
+      </h1>
       <div className="d-flex flex-wrap">
         <Button
           style={{
@@ -38,16 +48,15 @@ function AdminScreen() {
           }}
           onClick={() => setShowInteractionAdmin(!showInteractionAdmin)}
           className="me-3 mb-3"
-          onMouseEnter={(e) => {
-            e.target.style.color = "white";
-            e.target.style.backgroundColor = "#BC1823";
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.color = "white";
-            e.target.style.backgroundColor = "#002960";
-          }}
         >
-          {showInteractionAdmin ? "Hide Interaction Admin" : "Show Interaction Admin"}
+          {showInteractionAdmin ? (
+            <FaCog className="me-2" />
+          ) : (
+            <FaCog className="me-2" />
+          )}
+          {showInteractionAdmin
+            ? "Hide Interaction Admin"
+            : "Show Interaction Admin"}
         </Button>
 
         <Button
@@ -57,15 +66,12 @@ function AdminScreen() {
           }}
           onClick={() => setShowAuthorAdmin(!showAuthorAdmin)}
           className="me-3 mb-3"
-          onMouseEnter={(e) => {
-            e.target.style.color = "white";
-            e.target.style.backgroundColor = "#BC1823";
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.color = "white";
-            e.target.style.backgroundColor = "#002960";
-          }}
         >
+          {showAuthorAdmin ? (
+            <FaUser className="me-2" />
+          ) : (
+            <FaUser className="me-2" />
+          )}
           {showAuthorAdmin ? "Hide Author Admin" : "Show Author Admin"}
         </Button>
 
@@ -76,15 +82,12 @@ function AdminScreen() {
           }}
           onClick={() => setShowGenreAdmin(!showGenreAdmin)}
           className="me-3 mb-3"
-          onMouseEnter={(e) => {
-            e.target.style.color = "white";
-            e.target.style.backgroundColor = "#BC1823";
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.color = "white";
-            e.target.style.backgroundColor = "#002960";
-          }}
         >
+          {showGenreAdmin ? (
+            <FaTags className="me-2" />
+          ) : (
+            <FaTags className="me-2" />
+          )}
           {showGenreAdmin ? "Hide Genre Admin" : "Show Genre Admin"}
         </Button>
 
@@ -95,15 +98,12 @@ function AdminScreen() {
           }}
           onClick={() => setShowBookAdmin(!showBookAdmin)}
           className="me-3 mb-3"
-          onMouseEnter={(e) => {
-            e.target.style.color = "white";
-            e.target.style.backgroundColor = "#BC1823";
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.color = "white";
-            e.target.style.backgroundColor = "#002960";
-          }}
         >
+          {showBookAdmin ? (
+            <FaBook className="me-2" />
+          ) : (
+            <FaBook className="me-2" />
+          )}
           {showBookAdmin ? "Hide Book Admin" : "Show Book Admin"}
         </Button>
 
@@ -114,15 +114,12 @@ function AdminScreen() {
           }}
           onClick={() => setShowFeedbackAdmin(!showFeedbackAdmin)}
           className="mb-3"
-          onMouseEnter={(e) => {
-            e.target.style.color = "white";
-            e.target.style.backgroundColor = "#BC1823";
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.color = "white";
-            e.target.style.backgroundColor = "#002960";
-          }}
         >
+          {showFeedbackAdmin ? (
+            <FaComment className="me-2" />
+          ) : (
+            <FaComment className="me-2" />
+          )}
           {showFeedbackAdmin ? "Hide Feedback Admin" : "Show Feedback Admin"}
         </Button>
       </div>

@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { checkUserPaidStatus } from "../actions/userActions";
 import { getPreferredGenre } from "../actions/preferenceActions";
 import { getUserDetails } from "../actions/profileActions";
-import Loader from "../Components/Loader"; // Import your Loader component
+import Loader from "../Components/Loader";
 
 function LandingScreen() {
   const [preferredBooks, setPreferredBooks] = useState([]);
@@ -21,11 +21,12 @@ function LandingScreen() {
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
   const userInfo = userLoginInfo || userRegisterInfo;
   const dispatch = useDispatch();
-  const booksInPreferredGenre = useSelector((state) => state.preference.booksInPreferredGenre);
+  const booksInPreferredGenre = useSelector(
+    (state) => state.preference.booksInPreferredGenre
+  );
   const userDetails = useSelector((state) => state.userDetails);
   const { loading, error, user } = userDetails;
-  console.log(user)
-  // Update preferredBooks state when booksInPreferredGenre changes
+  console.log(user);
   useEffect(() => {
     if (booksInPreferredGenre) {
       setPreferredBooks(booksInPreferredGenre);
@@ -35,11 +36,13 @@ function LandingScreen() {
   useEffect(() => {
     async function fetchBooks() {
       const { data } = await axios.get("http://127.0.0.1:8000/api/books/");
-      // Sort the books by popularity (assuming 'mean_rating' is a property of each book)
-      const sortedPopularBooks = [...data].sort((a, b) => b.mean_rating - a.mean_rating);
+      const sortedPopularBooks = [...data].sort(
+        (a, b) => b.mean_rating - a.mean_rating
+      );
       setPopularBooks(sortedPopularBooks);
-      // Sort the books by latest date
-      const sortedLatestBooks = [...data].sort((a, b) => new Date(b.date_added) - new Date(a.date_added));
+      const sortedLatestBooks = [...data].sort(
+        (a, b) => new Date(b.date_added) - new Date(a.date_added)
+      );
       setLatestBooks(sortedLatestBooks);
     }
     fetchBooks();
@@ -104,8 +107,9 @@ function LandingScreen() {
           >
             Recommended For You
           </h1>
-          <div style={{ overflowX: "auto" }}>
-            <Row className="g-2">
+          <div
+          >
+            <Row className="g-1">
               {preferredBooks
                 .slice(recommendedIndex, recommendedIndex + 4)
                 .map((book) => (
@@ -121,8 +125,7 @@ function LandingScreen() {
               justifyContent: "center",
               marginTop: "1rem",
             }}
-          >
-          </div>
+          ></div>
         </Col>
       </Row>
 
@@ -141,8 +144,8 @@ function LandingScreen() {
             Popular Novels
           </h1>
         </Link>
-        <div style={{ overflowX: "auto" }}>
-          <Row className="g-2">
+        <div>
+          <Row className="g-1">
             {popularBooks.slice(popularIndex, popularIndex + 4).map((book) => (
               <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
                 <Book book={book} />
@@ -156,9 +159,7 @@ function LandingScreen() {
             justifyContent: "center",
             marginTop: "1rem",
           }}
-        >
-
-        </div>
+        ></div>
       </Col>
 
       <Col style={{ marginBottom: "10%" }}>
@@ -177,8 +178,8 @@ function LandingScreen() {
               Latest Novels
             </h1>
           </Link>
-          <div style={{ overflowX: "auto" }}>
-            <Row className="g-2">
+          <div>
+            <Row className="g-1">
               {latestBooks.slice(latestIndex, latestIndex + 4).map((book) => (
                 <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
                   <Book book={book} />
@@ -192,8 +193,7 @@ function LandingScreen() {
               justifyContent: "center",
               marginTop: "1rem",
             }}
-          >
-          </div>
+          ></div>
         </section>
       </Col>
     </Container>
