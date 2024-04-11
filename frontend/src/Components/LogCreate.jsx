@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createLog, resetCreateLog } from "../actions/logActions";
+import { createLog } from "../actions/logActions";
 
 const LogCreate = ({ user }) => {
   const dispatch = useDispatch();
@@ -8,7 +8,7 @@ const LogCreate = ({ user }) => {
     user: user && user.id ? user.id : "",
     action: "",
   });
-  const { loading, error, success } = useSelector((state) => state.logCreate);
+  const { error, success } = useSelector((state) => state.logCreate);
 
   const handleChange = (e) => {
     setLogData({ ...logData, [e.target.name]: e.target.value });
@@ -17,8 +17,13 @@ const LogCreate = ({ user }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(createLog(logData));
-  };
 
+    // Delay reload by 1 second (adjust the timeout as needed)
+    setTimeout(() => {
+      window.location.reload(); // Refresh the page after form submission
+    }, 300);
+  };
+  
   return (
     <div className="log-create">
       <form onSubmit={handleSubmit}>
@@ -60,7 +65,6 @@ const LogCreate = ({ user }) => {
           </div>
         </div>
       </form>
-      {loading && <p>Loading...</p>}
       {error && <p>Error: {error}</p>}
       {success && <p>Log created successfully!</p>}
     </div>
