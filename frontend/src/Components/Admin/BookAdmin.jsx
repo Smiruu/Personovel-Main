@@ -10,6 +10,7 @@ import {
   deleteBook,
 } from "../../actions/bookActions";
 import { Modal, Button, Form } from "react-bootstrap";
+import LogCreate from "../../Components/LogCreate";
 
 const BookAdmin = () => {
   const [formData, setFormData] = useState({
@@ -25,6 +26,8 @@ const BookAdmin = () => {
   const [showCurrentImage, setShowCurrentImage] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [bookToDelete, setBookToDelete] = useState(null);
+  const [showLogCreate, setShowLogCreate] = useState(false);
+  const [isLogCreateCompleted, setIsLogCreateCompleted] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -94,6 +97,7 @@ const BookAdmin = () => {
         author: "",
       });
       dispatch(listBooks());
+      setShowLogCreate(true);
     } catch (error) {
       console.error("Error performing book operation:", error);
       setOperationMessage("An error occurred while performing the operation.");
@@ -141,7 +145,9 @@ const BookAdmin = () => {
     await dispatch(deleteBook(bookToDelete));
     dispatch(listBooks());
     setShowConfirmation(false);
+    setShowLogCreate(true); // Prompt LogCreate modal after delete confirmation
   };
+  
 
   const handleCancelDelete = () => {
     setShowConfirmation(false);
@@ -149,6 +155,16 @@ const BookAdmin = () => {
 
   const handleToggleImageDisplay = () => {
     setShowCurrentImage(!showCurrentImage);
+  };
+
+  const handleCloseLogCreate = () => {
+    setIsLogCreateCompleted(true);
+    setShowLogCreate(false);
+  };
+
+  const handleShowLogCreate = () => {
+    setIsLogCreateCompleted(false);
+    setShowLogCreate(true);
   };
 
   return (
@@ -351,6 +367,26 @@ const BookAdmin = () => {
             Yes
           </Button>
         </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={showLogCreate && !isLogCreateCompleted}
+        onHide={handleCloseLogCreate}
+        centered
+      >
+        <Modal.Header>
+          <Modal.Title className="text-center">LOG</Modal.Title>
+        </Modal.Header>
+        <Modal.Body
+          style={{
+            display: "flex",
+            justifyContent: "center", // Center horizontally
+            alignItems: "center", // Center vertically
+            marginTop: "10%",
+          }}
+        >
+          <LogCreate onClose={handleCloseLogCreate} />
+        </Modal.Body>
       </Modal>
     </div>
   );

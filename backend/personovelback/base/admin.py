@@ -7,4 +7,5 @@ admin.site.register(Book)
 admin.site.register(Feedback)
 admin.site.register(Interaction)
 admin.site.register(ReadingHistory)
+admin.site.register(Log)
 # Register your models here.

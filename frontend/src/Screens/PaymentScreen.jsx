@@ -58,9 +58,31 @@ function PaymentScreen() {
       purchase_units: [
         {
           amount: {
-            value: "5.00",
+            value: "20.00", // Total amount
             currency_code: "USD",
+            breakdown: {
+              item_total: { currency_code: "USD", value: "20.00" },
+            },
           },
+          description: "Personovel 3 months subscription plan", // Subscription description
+          items: [
+            {
+              name: "Subscription",
+              unit_amount: {
+                currency_code: "USD",
+                value: "16.00", // Subscription amount
+              },
+              quantity: "1",
+            },
+            {
+              name: "Royalty",
+              unit_amount: {
+                currency_code: "USD",
+                value: "4.00", // Royalty amount
+              },
+              quantity: "1",
+            },
+          ],
         },
       ],
     });
@@ -144,7 +166,7 @@ function PaymentScreen() {
                 marginRight: "0.5rem",
               }}
             >
-              $5
+              $20
             </span>
             <span style={{ fontSize: "1.2rem", color: "#6c757d" }}>
               per 3 months

@@ -8,7 +8,7 @@ import { interactionListReducer, interactionDetailsReducer, interactionListByBoo
 import { authorListReducer, authorDetailsReducer, authorCreateReducer, authorDeleteReducer, authorUpdateReducer} from './reducers/authorReducers';
 import { feedbackReducer, feedbackListReducer, feedbackDeleteReducer } from './reducers/feedbackReducers';
 import { bookListReducer, bookCreateReducer, bookDetailsReducer, bookDeleteReducer, bookUpdateReducer } from './reducers/bookReducers';
-
+import { logListReducer, logCreateReducer } from './reducers/logReducers';
 import searchReducer from './reducers/searchReducers';
 import { otpReducer, verifyOtpReducer } from './reducers/otpReducers';
 import {ConfirmChangePasswordReducer, SendChangePasswordReducer} from './reducers/resetpasswordReducers'
@@ -80,6 +80,9 @@ const reducer = combineReducers({
     createReply: createReplyReducer,
 
     favorite: favoriteReducer,
+
+    logList : logListReducer,
+    logCreate: logCreateReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null;

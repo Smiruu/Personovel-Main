@@ -52,4 +52,8 @@ urlpatterns = [
     path('<int:user_id>/add-to-favorites/<int:book_id>/', views.add_to_favorites, name='add_to_favorites'),
     path('<int:user_id>/remove-from-favorites/<int:book_id>/', views.remove_from_favorites, name='remove_from_favorites'),
     path('<int:user_id>/favorites/', FavoriteListView.as_view(), name='favorite_list'),
+
+    path('logs/', views.getLogs, name='logs'),
+
+
 ]

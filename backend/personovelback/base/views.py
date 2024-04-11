@@ -17,6 +17,9 @@ from collections import Counter
 from django.db.models import Count, Sum
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
+from .serializers import LogSerializer
+from .models import Log
+
 # Create your views here.
 @api_view(['GET'])
 def getRoutes(request):
@@ -661,3 +664,20 @@ class FavoriteListView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Favorites.DoesNotExist:
             return Response({'message': 'Favorites not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+
+@api_view(['GET', 'POST'])
+def getLogs(request):
+    if request.method == 'GET':
+        logs = Log.objects.all()
+        serializer = LogSerializer(logs, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        # Include the user ID in the request data before passing it to the serializer
+        data = request.data.copy()
+        data['user'] = request.user.id  # Assuming user ID is accessible via request.user
+        serializer = LogSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

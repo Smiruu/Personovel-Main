@@ -16,7 +16,9 @@ import StatisticScreen from "./StatisticScreen";
 import ConversationScreen from "./ConversationScreen";
 import PaymentScreen from "./PaymentScreen";
 import LatestScreen from "./LatestScreen";
-import FavoritesList from '../Components/FavoritesList';
+import FavoritesList from "../Components/FavoritesList";
+import LogList from "../Components/LogList";
+
 const ProfileScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -37,8 +39,6 @@ const ProfileScreen = () => {
 
   const [favoriteBooks, setFavoriteBooks] = useState([]);
   const [loadingFavoriteBooks, setLoadingFavoriteBooks] = useState(false);
-
-  
 
   useEffect(() => {
     dispatch(getUserDetails());
@@ -132,31 +132,30 @@ const ProfileScreen = () => {
     }
     return null; // Return null if paid_at date is not available
   };
-  
+
   const remainingDays = calculateRemainingDays();
 
-// Define options for date formatting
-const options = {
-  year: 'numeric',
-  month: 'long', // Full month name (e.g., "February")
-  day: 'numeric',
-};
-const formattedDateJoined = dateJoined.toLocaleDateString('en-US', options);
+  // Define options for date formatting
+  const options = {
+    year: "numeric",
+    month: "long", // Full month name (e.g., "February")
+    day: "numeric",
+  };
+  const formattedDateJoined = dateJoined.toLocaleDateString("en-US", options);
 
-const fetchFavoriteBooks = async () => {
-  setLoadingFavoriteBooks(true);
-  try {
-    // Make a request to your backend API to fetch favorite books
-    // Replace '/api/favorite-books' with the actual endpoint
-    const response = await fetch("http://127.0.0.1:8000/api/favorites/");
-    const data = await response.json();
-    setFavoriteBooks(data);
-  } catch (error) {
-    console.error('Error fetching favorite books:', error);
-  }
-  setLoadingFavoriteBooks(false);
-};
-
+  const fetchFavoriteBooks = async () => {
+    setLoadingFavoriteBooks(true);
+    try {
+      // Make a request to your backend API to fetch favorite books
+      // Replace '/api/favorite-books' with the actual endpoint
+      const response = await fetch("http://127.0.0.1:8000/api/favorites/");
+      const data = await response.json();
+      setFavoriteBooks(data);
+    } catch (error) {
+      console.error("Error fetching favorite books:", error);
+    }
+    setLoadingFavoriteBooks(false);
+  };
 
   return (
     <div>
@@ -392,11 +391,13 @@ const fetchFavoriteBooks = async () => {
                         <strong>BIO:</strong> {user.bio}
                       </p>
                       <p>
-                      <strong>DATE JOINED:</strong> {formattedDateJoined}
+                        <strong>DATE JOINED:</strong> {formattedDateJoined}
                       </p>
                       <p>
-                        <strong>SUBSCRIPTION DURATION:</strong> {" "}
-                       {remainingDays !== null ? `${remainingDays} days remaining` : "N/A"}
+                        <strong>SUBSCRIPTION DURATION:</strong>{" "}
+                        {remainingDays !== null
+                          ? `${remainingDays} days remaining`
+                          : "N/A"}
                       </p>
                     </div>
                   </MDBCol>
@@ -413,19 +414,30 @@ const fetchFavoriteBooks = async () => {
                     )}
                   </MDBCol>
 
+                  <MDBCol size="6" className="mt-3">
+                    {userInfo.token && userInfo.token.is_admin ? (
+                      <div
+                        className="favorite-books-section bg-white p-2"
+                        style={{ maxHeight: "200px", overflow: "auto" }}
+                      >
+                        <LogList />
+                      </div>
+                    ) : null}
+                  </MDBCol>
+
                   <MDBCol size="12" className="mt-3">
                     {userInfo.token && userInfo.token.is_admin ? (
                       <div className="mt-3">
                         <div className="favorite-books-section bg-white p-2">
-                        <LatestScreen />
+                          <LatestScreen />
                         </div>
                       </div>
                     ) : (
                       <div className="mt-3">
-                    <div className="favorite-books-section bg-white p-2">
-                      {/* <h4>Favorite Books</h4> */}
-                      {/* Render the FavoritesList component here */}
-                      <FavoritesList userId={userInfo.token.id} />
+                        <div className="favorite-books-section bg-white p-2">
+                          {/* <h4>Favorite Books</h4> */}
+                          {/* Render the FavoritesList component here */}
+                          <FavoritesList userId={userInfo.token.id} />
                         </div>
                       </div>
                     )}
