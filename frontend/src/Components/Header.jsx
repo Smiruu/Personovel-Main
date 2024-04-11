@@ -12,6 +12,9 @@ function Header() {
   const navigate = useNavigate();
   const userDetails = useSelector((state) => state.userDetails);
   const { user } = userDetails;
+  const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
+  const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
+  const userInfo = userLoginInfo || userRegisterInfo;
 
   useEffect(() => {
     dispatch(getUserDetails());
@@ -23,6 +26,7 @@ function Header() {
   const logoutHandler = () => {
     dispatch(logout());
     navigate("/login");
+    setShowLogoutModal(false);
   };
 
   const handleSearch = () => {
@@ -45,7 +49,7 @@ function Header() {
           </Navbar.Brand>
         </Link>
 
-        {user && (
+        {user && userInfo && (
           <>
             <Navbar.Toggle aria-controls="navbarScroll" />
 
@@ -141,7 +145,7 @@ function Header() {
           <i className="fa-solid fa-magnifying-glass" />
         </Button>
 
-        {user ? (
+        {user && userInfo ? (
           <Link to="/Profile" className="link-no-underline">
             <Nav.Link
               style={{ color: "#002960", marginLeft: "10px" }}

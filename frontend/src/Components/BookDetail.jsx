@@ -159,6 +159,7 @@ function BookDetail() {
   const handleCloseButtonClick = () => {
     navigate(-1);
   };
+
   return (
     <Container fluid>
       <Row className="mt-5 mb-5 h-full w-full">
@@ -321,7 +322,7 @@ function BookDetail() {
                 marginBottom: "5px",
               }}
             >
-              <strong style={{ fontFamily: "Blinker" }}>USER RATING: </strong>
+              <strong style={{ fontFamily: "Blinker" }}>YOUR RATING: </strong>
               <span
                 style={{
                   fontStyle: "italic",

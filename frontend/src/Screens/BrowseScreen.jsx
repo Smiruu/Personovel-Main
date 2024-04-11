@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Col, Button, Collapse, Form, Row } from "react-bootstrap";
-import Book from "../Components/Book";
-import { listBooks } from "../actions/bookActions";
-import { useDispatch, useSelector } from "react-redux";
-import Loader from "../Components/Loader";
-import Message from "../Components/Message";
+import Book from '../Components/Book'; // Import Book component
+import { listBooks } from '../actions/bookActions'; // Import listBooks action
+import { listGenres } from '../actions/genreActions'; // Import listGenres action
+import { useDispatch, useSelector } from 'react-redux'; // Import useDispatch and useSelector
+import Loader from '../Components/Loader';
+import Message from '../Components/Message';
 import { Link, Navigate } from "react-router-dom";
+
 function BrowseScreen() {
   const dispatch = useDispatch();
-  const bookList = useSelector((state) => state.bookList);
-  const { loading, error, books } = bookList;
+  const { loading: bookLoading, error: bookError, books } = useSelector((state) => state.bookList);
+  const { loading: genreLoading, error: genreError, genres } = useSelector((state) => state.genreList);
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [sortedBooks, setSortedBooks] = useState([]);
@@ -23,25 +25,9 @@ function BrowseScreen() {
     setIsFilterOpen(!isFilterOpen);
   };
 
-  const genres = [
-    "Romance",
-    "Mystery/Thriller",
-    "Science Fiction",
-    "Fantasy",
-    "Historical",
-    "Crime",
-    "Horror",
-    "Adventure",
-    "Young Adult",
-    "Dystopian",
-    "Contemporary",
-    "Psychological",
-    "Tragedy",
-    "Comedy",
-  ];
-
   useEffect(() => {
-    dispatch(listBooks());
+    dispatch(listBooks()); // Fetch books data
+    dispatch(listGenres()); // Fetch genres data
   }, [dispatch]);
 
   useEffect(() => {
@@ -54,7 +40,8 @@ function BrowseScreen() {
     switch (sortBy) {
       case "A-Z":
         sorted = [...books].sort((a, b) => {
-          const titleA = (a.title || "").toUpperCase();
+          // Check if 'title' property exists and is not undefined
+          const titleA = (a.title || "").toUpperCase(); // Convert to uppercase for case-insensitive sorting
           const titleB = (b.title || "").toUpperCase();
           return titleA.localeCompare(titleB);
         });
@@ -63,6 +50,7 @@ function BrowseScreen() {
         sorted = [...books].sort((a, b) => new Date(b.date) - new Date(a.date));
         break;
       case "Popularity":
+        // Add sorting logic for popularity if needed
         break;
       default:
         sorted = [...books];
@@ -73,17 +61,15 @@ function BrowseScreen() {
   };
 
   const filterBooksByGenre = (genre) => {
-    setSelectedGenre(genre);
-    const filteredBooks =
-      genre === "All"
-        ? [...books]
-        : books.filter((book) => book.genre.includes(genre));
+    setSelectedGenre(genre); 
+    const filteredBooks = genre === "All" ? [...books] : books.filter(book => book.genre.includes(genre));
     setSortedBooks(filteredBooks);
   };
 
   if (!userInfo) {
     return <Navigate to="/login" />;
   }
+
   return (
     <div className="mb-5">
       <h1
@@ -161,13 +147,7 @@ function BrowseScreen() {
                     <strong>GENRES</strong>
                   </Form.Label>
 
-                  <div
-                    style={{
-                      display: "flex",
-                      flexWrap: "wrap",
-                      marginLeft: "40px",
-                    }}
-                  >
+                  <div style={{ display: "flex", flexWrap: "wrap", marginLeft: "40px" }}>
                     <Button
                       key="All"
                       variant="outline-secondary"
@@ -189,24 +169,24 @@ function BrowseScreen() {
                     </Button>
                     {genres.map((genre) => (
                       <Button
-                        key={genre}
-                        variant="outline-secondary"
-                        className="me-2 mb-2"
-                        style={{
-                          color: "#6F1D1B",
-                          borderColor: "#6F1D1B",
-                          borderRadius: "50px",
-                          fontFamily: "Blinker",
-                          fontWeight: "1",
-                          marginRight: "8px",
-                          marginBottom: "8px",
-                          padding: "10px 20px",
-                          transition: "background-color 0.3s, color 0.3s",
-                        }}
-                        onClick={() => filterBooksByGenre(genre)}
-                      >
-                        {genre.toUpperCase()}
-                      </Button>
+  key={genre.id} // Assuming genre has an id property
+  variant="outline-secondary"
+  className="me-2 mb-2"
+  style={{
+    color: "#6F1D1B",
+    borderColor: "#6F1D1B",
+    borderRadius: "50px",
+    fontFamily: "Blinker",
+    fontWeight: "1",
+    marginRight: "8px",
+    marginBottom: "8px",
+    padding: "10px 20px",
+    transition: "background-color 0.3s, color 0.3s",
+  }}
+  onClick={() => filterBooksByGenre(genre.name)} // Assuming genre has a name property
+>
+  {typeof genre.name === 'string' ? genre.name.toUpperCase() : genre.name}
+</Button>
                     ))}
                   </div>
                 </Form.Group>
@@ -316,10 +296,10 @@ function BrowseScreen() {
         </div>
 
         <Row className="g-3">
-          {loading ? (
+          {bookLoading ? (
             <Loader />
-          ) : error ? (
-            <Message variant="danger">{error}</Message>
+          ) : bookError ? (
+            <Message variant="danger">{bookError}</Message>
           ) : (
             sortedBooks.map((book) => (
               <Col key={book._id} sm={12} md={6} lg={4} xl={3} className="mb-4">

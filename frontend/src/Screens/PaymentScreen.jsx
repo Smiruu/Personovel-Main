@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { updateUserToPaid } from "../actions/userActions";
 import { useSelector } from "react-redux";
-import { Modal, Button,  Card } from "react-bootstrap";
+import { Modal, Button, Card } from "react-bootstrap";
 import Loader from "../Components/Loader";
 
 function PaymentScreen() {
@@ -15,6 +15,10 @@ function PaymentScreen() {
   const [showPayPalButtons, setShowPayPalButtons] = useState(false);
   const [subscriptionEndDate, setSubscriptionEndDate] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
+
+  const onError = (err) => {
+    console.error("PayPal SDK error:", err);
+  };
 
   useEffect(() => {
     const addPayPalScript = () => {
@@ -138,10 +142,7 @@ function PaymentScreen() {
             >
               Subscribe Now!
             </h1>
-            <h2
-              className="h4"
-              style={{ color: "#495057", fontWeight: "bold" }}
-            >
+            <h2 className="h4" style={{ color: "#495057", fontWeight: "bold" }}>
               3-Month Plan Subscription
             </h2>
             <p
@@ -159,7 +160,10 @@ function PaymentScreen() {
               className="lead"
               style={{ color: "#495057", fontSize: "1.1rem" }}
             >
-              <i className="fas fa-check-circle mr-2" style={{ color: "green" }}></i>{" "}
+              <i
+                className="fas fa-check-circle mr-2"
+                style={{ color: "green" }}
+              ></i>{" "}
               Unlimited Access to Novels.
             </p>
           </div>
@@ -180,37 +184,55 @@ function PaymentScreen() {
             </span>
           </div>
           {loading ? (
-        <div className="text-center mt-3">
-          <Loader />
-        </div>
-      ) : (
-        <>
-          {userInfo.token.is_paid ? (
+            <div className="text-center mt-3">
+              <Loader />
+            </div>
+          ) : (
             <>
-              <div className="text-center mt-3">
-                <button
-                  className="btn btn-primary"
-                  onClick={handleRenewSubscription}
-                  style={{ marginBottom: "1rem" }}
-                >
-                  Renew Subscription
-                </button>
-                {subscriptionEndDate && (
-                  <p
-                    className="mb-0"
-                    style={{
-                      fontSize: "0.9rem",
-                      fontStyle: "italic",
-                      color: "#6c757d",
-                    }}
-                  >
-                    Your subscription ends on:{" "}
-                    {subscriptionEndDate.toDateString()}
-                  </p>
-                )}
-              </div>
+              {userInfo.token.is_paid ? (
+                <>
+                  <div className="text-center mt-3">
+                    <button
+                      className="btn btn-primary"
+                      onClick={handleRenewSubscription}
+                      style={{ marginBottom: "1rem" }}
+                    >
+                      Renew Subscription
+                    </button>
+                    {subscriptionEndDate && (
+                      <p
+                        className="mb-0"
+                        style={{
+                          fontSize: "0.9rem",
+                          fontStyle: "italic",
+                          color: "#6c757d",
+                        }}
+                      >
+                        Your subscription ends on:{" "}
+                        {subscriptionEndDate.toDateString()}
+                      </p>
+                    )}
+                  </div>
 
-              {showPayPalButtons && (
+                  {showPayPalButtons && (
+                    <div className="mt-3">
+                      <PayPalScriptProvider
+                        options={{
+                          "client-id":
+                            "Ad1WVslFyzstzzLW0POqHs4IwuczDbgqHb1z1tlXweb1preOa8fjSxgA-KT2UBDsrDks0R7u_i1vsGLh",
+                        }}
+                      >
+                        <PayPalButtons
+                          createOrder={createOrderHandler}
+                          onSuccess={onSuccessHandler}
+                          onApprove={onApproveHandler}
+                          onError={onError}
+                        />
+                      </PayPalScriptProvider>
+                    </div>
+                  )}
+                </>
+              ) : (
                 <div className="mt-3">
                   <PayPalScriptProvider
                     options={{
@@ -222,29 +244,13 @@ function PaymentScreen() {
                       createOrder={createOrderHandler}
                       onSuccess={onSuccessHandler}
                       onApprove={onApproveHandler}
+                      onError={onError}
                     />
                   </PayPalScriptProvider>
                 </div>
               )}
             </>
-          ) : (
-            <div className="mt-3">
-              <PayPalScriptProvider
-                options={{
-                  "client-id":
-                    "Ad1WVslFyzstzzLW0POqHs4IwuczDbgqHb1z1tlXweb1preOa8fjSxgA-KT2UBDsrDks0R7u_i1vsGLh",
-                }}
-              >
-                <PayPalButtons
-                  createOrder={createOrderHandler}
-                  onSuccess={onSuccessHandler}
-                  onApprove={onApproveHandler}
-                />
-              </PayPalScriptProvider>
-            </div>
           )}
-          </>
-        )}
           <Modal show={showConfirmation} onHide={handleCancelClose}>
             <Modal.Header closeButton>
               <Modal.Title>Thank You! </Modal.Title>
@@ -260,7 +266,11 @@ function PaymentScreen() {
           </Modal>
           <p
             className="text-center mt-3"
-            style={{ fontSize: "0.9rem", fontStyle: "italic", color: "#6c757d" }}
+            style={{
+              fontSize: "0.9rem",
+              fontStyle: "italic",
+              color: "#6c757d",
+            }}
           >
             We strictly follow a no refund policy
           </p>

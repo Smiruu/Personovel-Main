@@ -61,18 +61,26 @@ class InteractionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CommentSerializer(serializers.ModelSerializer):
-    user_profile_name = serializers.CharField(source='user.profile.name', read_only=True)  # Assuming the profile name is stored in a field called 'name'
+    user_profile_name = serializers.CharField(source='user.profile.name', read_only=True)
     user_profile_image = serializers.CharField(source='user.profile.get_profile_image', read_only=True)
+    book_name = serializers.SerializerMethodField()   # Assuming Comment is related to Book
     class Meta:
         model = Comment
-        fields = ['id', 'user', 'user_profile_name', 'user_profile_image', 'comment', 'created_at']
+        fields = ['id', 'user', 'user_profile_name', 'user_profile_image', 'comment', 'created_at', 'book_name']
 
+    def get_book_name(self, obj):
+        return obj.book.title if obj.book else None
 class ReplySerializer(serializers.ModelSerializer):
-    user_profile_name = serializers.CharField(source='user.profile.name', read_only=True)  # Assuming the profile name is stored in a field called 'name'
+    user_profile_name = serializers.CharField(source='user.profile.name', read_only=True)
     user_profile_image = serializers.CharField(source='user.profile.get_profile_image', read_only=True)
+    comment = serializers.PrimaryKeyRelatedField(queryset=Comment.objects.all())  # Assuming Reply is related to Comment
+    book_name = serializers.SerializerMethodField()  # Add a field for book name
     class Meta:
         model = Reply
-        fields = ['id', 'user', 'user_profile_name','user_profile_image', 'reply', 'created_at']
+        fields = ['id', 'user', 'user_profile_name', 'user_profile_image', 'reply', 'created_at', 'comment', 'book_name']
+
+    def get_book_name(self, obj):
+        return obj.comment.book.title if obj.comment and obj.comment.book else None
 
 class FavoritesSerializer(serializers.ModelSerializer):
     class Meta:

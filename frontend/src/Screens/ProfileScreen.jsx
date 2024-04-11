@@ -396,7 +396,7 @@ const ProfileScreen = () => {
             {activeTab === "ABOUT" && (
               <div className="about-container">
                 <MDBRow style={{ height: "100%", marginBottom: "30px" }}>
-                  <MDBCol size="6">
+                  <MDBCol size="12" sm="6">
                     <div
                       className="bio-section bg-white p-2 d-flex flex-column justify-content-center align-items-center"
                       style={{
@@ -405,7 +405,7 @@ const ProfileScreen = () => {
                       }}
                     >
                       {user.bio && (
-                        <div className="text-center mb-3">
+                        <div className="text-center mb-3 mt-3">
                           <FaUser size={20} className="me-1" />
                           <strong>BIO:</strong> {user.bio}
                         </div>
@@ -424,7 +424,7 @@ const ProfileScreen = () => {
                     </div>
                   </MDBCol>
 
-                  <MDBCol size="6">
+                  <MDBCol size="12" sm="6">
                     {userInfo.token && userInfo.token.is_admin ? (
                       <div
                         className="favorite-books-section bg-white p-2"

@@ -104,9 +104,7 @@ function ConversationScreen() {
                   />
                 )}
               </div>
-              <p style={{ marginTop: "10px", fontSize: "16px" }}>
-                {comment.book}
-              </p>
+
               <div>
                 <p
                   style={{ margin: "0", fontSize: "16px", fontWeight: "bold" }}
@@ -115,6 +113,9 @@ function ConversationScreen() {
                 </p>
                 <p style={{ margin: "0", fontSize: "14px", color: "#555" }}>
                   Created At: {comment.created_at}
+                </p>
+                <p style={{ margin: "0", fontSize: "14px", color: "#555" }}>
+                  Replied from: {comment.book_name}
                 </p>
               </div>
             </div>
@@ -182,6 +183,9 @@ function ConversationScreen() {
                   </p>
                   <p style={{ margin: "0", fontSize: "14px", color: "#555" }}>
                     Created At: {reply.created_at}
+                  </p>
+                  <p style={{ margin: "0", fontSize: "14px", color: "#555" }}>
+                    Replied from: {reply.book_name}
                   </p>
                 </div>
               </div>
