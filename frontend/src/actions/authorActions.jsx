@@ -45,11 +45,16 @@ export const createAuthor = (authorData) => async (dispatch) => {
   try {
     dispatch({ type: AUTHOR_CREATE_REQUEST });
 
-    const config = {
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const token = userInfo ? userInfo.token.access : null;
+
+    const config = token ? {
       headers: {
         'Content-Type': 'application/json',
-      },
-    };
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    } : {};
 
     const { data } = await instance.post('api/authors/', authorData, config);
 
@@ -76,11 +81,16 @@ export const updateAuthor = (id, updatedAuthorData) => async (dispatch) => {
   try {
     dispatch({ type: AUTHOR_UPDATE_REQUEST });
 
-    const config = {
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const token = userInfo ? userInfo.token.access : null;
+
+    const config = token ? {
       headers: {
         'Content-Type': 'application/json',
-      },
-    };
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    } : {};
 
     const { data } = await instance.put(
       `api/authors/${id}/update`,
@@ -111,7 +121,18 @@ export const deleteAuthor = (id) => async (dispatch) => {
   try {
     dispatch({ type: AUTHOR_DELETE_REQUEST });
 
-    await instance.delete(`api/authors/${id}/delete`);
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        const token = userInfo ? userInfo.token.access : null;
+    
+        const config = token ? {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        } : {};
+
+    await instance.delete(`api/authors/${id}/delete`, config);
 
     dispatch({ type: AUTHOR_DELETE_SUCCESS });
   } catch (error) {

@@ -45,6 +45,15 @@ class Author(models.Model):
     def __str__(self):
         return self.name
 
+class Log(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    action = models.TextField(max_length=100)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.name + " - " + self.date.strftime("%Y-%m-%d %H:%M:%S")
+
+
 class Book(models.Model):
     title = models.CharField(max_length=100)
     image = models.ImageField(upload_to=upload_image_path, null=True, blank=True)

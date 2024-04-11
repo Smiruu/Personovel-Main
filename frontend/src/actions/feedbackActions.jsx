@@ -61,6 +61,7 @@ export const resetFeedback = () => (dispatch) => {
 export const fetchFeedbacks = () => async (dispatch) => {
     try {
         dispatch({ type: USER_FEEDBACK_LIST_REQUEST });
+
         const { data } = await instance.get('api/feedbacks/');
         dispatch({
             type: USER_FEEDBACK_LIST_SUCCESS,
@@ -79,7 +80,19 @@ export const fetchFeedbacks = () => async (dispatch) => {
 export const deleteFeedback = (id) => async (dispatch) => {
     try {
         dispatch({ type: USER_FEEDBACK_DELETE_REQUEST });
-        await instance.delete(`/api/feedbacks/${id}/delete`);
+
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        const token = userInfo ? userInfo.token.access : null;
+    
+        const config = token ? {
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Authorization': `Bearer ${token}`
+            }
+          } : {};
+
+        await instance.delete(`/api/feedbacks/${id}/delete`, config);
         dispatch({ type: USER_FEEDBACK_DELETE_SUCCESS });
     } catch (error) {
         dispatch({

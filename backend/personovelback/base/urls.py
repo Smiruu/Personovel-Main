@@ -57,4 +57,7 @@ urlpatterns = [
     path('<int:user_id>/favorites/', FavoriteListView.as_view(), name='favorite_list'),
 
     path('delete-comments-and-replies/', views.delete_all_comments_and_replies, name='delete_comments_and_replies'),
+
+    path('logs/', views.getLogs, name='logs'),
+
 ]

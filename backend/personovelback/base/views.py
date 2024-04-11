@@ -730,3 +730,20 @@ def get_user_comments_and_replies(request, user_id):
         }, status=200)
     except get_user_model().DoesNotExist:
         raise Http404("User does not exist")
+    
+@api_view(['GET', 'POST'])
+@permission_classes([IsAdminUser])
+def getLogs(request):
+    if request.method == 'GET':
+        logs = Log.objects.all()
+        serializer = LogSerializer(logs, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        # Include the user ID in the request data before passing it to the serializer
+        data = request.data.copy()
+        data['user'] = request.user.id  # Assuming user ID is accessible via request.user
+        serializer = LogSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -10,6 +10,7 @@ import {
   deleteBook,
 } from "../../actions/bookActions";
 import { Modal, Button, Form } from "react-bootstrap";
+import LogCreate from "../../Components/LogCreate";
 
 const BookAdmin = () => {
   const [formData, setFormData] = useState({
@@ -25,6 +26,8 @@ const BookAdmin = () => {
   const [showCurrentImage, setShowCurrentImage] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [bookToDelete, setBookToDelete] = useState(null);
+  const [showLogCreate, setShowLogCreate] = useState(false);
+  const [isLogCreateCompleted, setIsLogCreateCompleted] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -94,6 +97,7 @@ const BookAdmin = () => {
         author: "",
       });
       dispatch(listBooks());
+      setShowLogCreate(true);
     } catch (error) {
       console.error("Error performing book operation:", error);
       setOperationMessage("An error occurred while performing the operation.");
@@ -141,7 +145,9 @@ const BookAdmin = () => {
     await dispatch(deleteBook(bookToDelete));
     dispatch(listBooks());
     setShowConfirmation(false);
+    setShowLogCreate(true); // Prompt LogCreate modal after delete confirmation
   };
+  
 
   const handleCancelDelete = () => {
     setShowConfirmation(false);
@@ -149,6 +155,16 @@ const BookAdmin = () => {
 
   const handleToggleImageDisplay = () => {
     setShowCurrentImage(!showCurrentImage);
+  };
+
+  const handleCloseLogCreate = () => {
+    setIsLogCreateCompleted(true);
+    setShowLogCreate(false);
+  };
+
+  const handleShowLogCreate = () => {
+    setIsLogCreateCompleted(false);
+    setShowLogCreate(true);
   };
 
   return (
@@ -282,58 +298,65 @@ const BookAdmin = () => {
           <p>Error loading books: {errorBooks}</p>
         ) : (
           <ul className="list-unstyled">
-            {books.map((book) => (
-              <li
-                key={book._id}
-                className="d-flex justify-content-between align-items-center mt-3"
-              >
-                <span>
-                  ID: {book._id}, Title: {book.title}
-                </span>
-                <div>
-                  <Button
-                    onClick={() => handleEdit(book._id)}
-                    className="ms-2"
-                    style={{
-                      backgroundColor: "transparent",
-                      color: "#002960",
-                      textTransform: "uppercase",
-                      borderColor: "#002960",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.color = "white";
-                      e.target.style.backgroundColor = "#002960";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.color = "#002960";
-                      e.target.style.backgroundColor = "transparent";
-                    }}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    onClick={() => handleDeleteConfirmation(book._id)}
-                    className="ms-2"
-                    style={{
-                      backgroundColor: "transparent",
-                      color: "#BC1823",
-                      textTransform: "uppercase",
-                      borderColor: "#BC1823",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.color = "white";
-                      e.target.style.backgroundColor = "#BC1823";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.color = "#BC1823";
-                      e.target.style.backgroundColor = "transparent";
-                    }}
-                  >
-                    Delete
-                  </Button>
-                </div>
-              </li>
-            ))}
+        {books
+  .slice() // Create a copy of the array to avoid mutating the original array
+  .sort((a, b) => {
+    // Convert _id to numbers and compare
+    return parseInt(a._id) - parseInt(b._id);
+  })
+  .map((book) => (
+    <li
+      key={book._id}
+      className="d-flex justify-content-between align-items-center mt-3"
+    >
+      <span>
+        ID: {book._id}, Title: {book.title}
+      </span>
+      <div>
+        <Button
+          onClick={() => handleEdit(book._id)}
+          className="ms-2"
+          style={{
+            backgroundColor: "transparent",
+            color: "#002960",
+            textTransform: "uppercase",
+            borderColor: "#002960",
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.color = "white";
+            e.target.style.backgroundColor = "#002960";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.color = "#002960";
+            e.target.style.backgroundColor = "transparent";
+          }}
+        >
+          Edit
+        </Button>
+        <Button
+          onClick={() => handleDeleteConfirmation(book._id)}
+          className="ms-2"
+          style={{
+            backgroundColor: "transparent",
+            color: "#BC1823",
+            textTransform: "uppercase",
+            borderColor: "#BC1823",
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.color = "white";
+            e.target.style.backgroundColor = "#BC1823";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.color = "#BC1823";
+            e.target.style.backgroundColor = "transparent";
+          }}
+        >
+          Delete
+        </Button>
+      </div>
+    </li>
+  ))}
+
           </ul>
         )}
       </div>
@@ -351,6 +374,26 @@ const BookAdmin = () => {
             Yes
           </Button>
         </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={showLogCreate && !isLogCreateCompleted}
+        onHide={handleCloseLogCreate}
+        centered
+      >
+        <Modal.Header>
+          <Modal.Title className="text-center">LOG</Modal.Title>
+        </Modal.Header>
+        <Modal.Body
+          style={{
+            display: "flex",
+            justifyContent: "center", // Center horizontally
+            alignItems: "center", // Center vertically
+            marginTop: "10%",
+          }}
+        >
+          <LogCreate onClose={handleCloseLogCreate} />
+        </Modal.Body>
       </Modal>
     </div>
   );

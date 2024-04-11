@@ -44,11 +44,16 @@ export const createGenre = (genreData) => async (dispatch) => {
   try {
     dispatch({ type: GENRE_CREATE_REQUEST });
 
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        const token = userInfo ? userInfo.token.access : null;
+    
+        const config = token ? {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        } : {};
 
     const { data } = await instance.post('api/genres/', genreData, config);
 
@@ -73,11 +78,16 @@ export const updateGenre = (id, updatedGenreData) => async (dispatch) => {
   try {
     dispatch({ type: GENRE_UPDATE_REQUEST });
 
-    const config = {
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const token = userInfo ? userInfo.token.access : null;
+
+    const config = token ? {
       headers: {
         'Content-Type': 'application/json',
-      },
-    };
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    } : {};
 
     const { data } = await instance.put(
       `/api/genres/${id}/update`,
@@ -108,8 +118,19 @@ export const resetGenre = () => (dispatch) => {
 export const deleteGenre = (id) => async (dispatch) => {
   try {
     dispatch({ type: GENRE_DELETE_REQUEST });
+    
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        const token = userInfo ? userInfo.token.access : null;
+    
+        const config = token ? {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        } : {};
 
-    await instance.delete(`/api/genres/${id}/delete`);
+    await instance.delete(`/api/genres/${id}/delete`, config);
 
     dispatch({ type: GENRE_DELETE_SUCCESS });
   } catch (error) {

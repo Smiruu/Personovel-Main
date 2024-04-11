@@ -9,12 +9,15 @@ import {
   resetDeleteGenre,
 } from "../../actions/genreActions";
 import { Modal, Button, Form } from "react-bootstrap";
+import LogCreate from "../../Components/LogCreate";
 
 const GenreAdmin = () => {
   const [name, setName] = useState("");
   const [selectedGenreId, setSelectedGenreId] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [genreToDelete, setGenreToDelete] = useState(null);
+  const [showLogCreate, setShowLogCreate] = useState(false);
+  const [isLogCreateCompleted, setIsLogCreateCompleted] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -45,6 +48,7 @@ const GenreAdmin = () => {
         .then(() => {
           setName("");
           setSelectedGenreId(null);
+          setShowLogCreate(true);
           dispatch(listGenres());
         })
         .catch((error) => console.error("Error updating genre:", error));
@@ -53,6 +57,7 @@ const GenreAdmin = () => {
         .then(() => {
           setName("");
           setSelectedGenreId(null);
+          setShowLogCreate(true);
           dispatch(listGenres());
         })
         .catch((error) => console.error("Error creating genre:", error));
@@ -73,6 +78,7 @@ const GenreAdmin = () => {
     dispatch(deleteGenre(genreToDelete))
       .then(() => {
         setShowConfirmation(false);
+        setShowLogCreate(true);
         dispatch(listGenres());
       })
       .catch((error) => console.error("Error deleting genre:", error));
@@ -107,6 +113,16 @@ const GenreAdmin = () => {
 
   const genreList = useSelector((state) => state.genreList);
   const { loading: loadingGenres, error: errorGenres, genres } = genreList;
+
+  const handleCloseLogCreate = () => {
+    setIsLogCreateCompleted(true);
+    setShowLogCreate(false);
+  };
+
+  const handleShowLogCreate = () => {
+    setIsLogCreateCompleted(false);
+    setShowLogCreate(true);
+  };
 
   return (
     <div>
@@ -150,18 +166,12 @@ const GenreAdmin = () => {
               : "Create Genre"}
           </Button>
 
-        {selectedGenreId && (
-          <Button variant="secondary" onClick={handleCancelEdit}>
-            Cancel Edit
-          </Button>
-        )}
-        {error && <div>Error: {error}</div>}
-        {errorUpdate && <div>Error: {errorUpdate}</div>}
-        {(success || successUpdate) && (
-          <div>
-            Genre {selectedGenreId ? "updated" : "created"} successfully!
-          </div>
-        )}</div>
+          {selectedGenreId && (
+            <Button variant="secondary" onClick={handleCancelEdit}>
+              Cancel Edit
+            </Button>
+          )}
+        </div>
       </Form>
 
       <hr />
@@ -243,6 +253,26 @@ const GenreAdmin = () => {
             Yes
           </Button>
         </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={showLogCreate && !isLogCreateCompleted}
+        onHide={handleCloseLogCreate}
+        centered
+      >
+        <Modal.Header>
+          <Modal.Title className="text-center">LOG</Modal.Title>
+        </Modal.Header>
+        <Modal.Body
+          style={{
+            display: "flex",
+            justifyContent: "center", // Center horizontally
+            alignItems: "center", // Center vertically
+            marginTop: "10%",
+          }}
+        >
+          <LogCreate onClose={handleCloseLogCreate} />
+        </Modal.Body>
       </Modal>
     </div>
   );

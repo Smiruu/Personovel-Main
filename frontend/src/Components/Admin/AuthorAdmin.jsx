@@ -10,12 +10,15 @@ import {
   resetDeleteAuthor,
 } from "../../actions/authorActions";
 import { Modal, Button, Form } from "react-bootstrap";
+import LogCreate from "../../Components/LogCreate";
 
 const AuthorAdmin = () => {
   const [authorName, setAuthorName] = useState("");
   const [authorIdToUpdate, setAuthorIdToUpdate] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [authorToDelete, setAuthorToDelete] = useState(null);
+  const [showLogCreate, setShowLogCreate] = useState(false);
+  const [isLogCreateCompleted, setIsLogCreateCompleted] = useState(false);
 
   const dispatch = useDispatch();
   const authorCreate = useSelector((state) => state.authorCreate);
@@ -40,6 +43,7 @@ const AuthorAdmin = () => {
           setAuthorIdToUpdate(null);
           setAuthorName("");
           setShowConfirmation(false);
+          setShowLogCreate(true);
           dispatch(listAuthors());
         })
         .catch((error) => console.error("Error updating author:", error));
@@ -48,21 +52,11 @@ const AuthorAdmin = () => {
         .then(() => {
           setAuthorName("");
           setShowConfirmation(false);
+          setShowLogCreate(true);
           dispatch(listAuthors());
         })
         .catch((error) => console.error("Error creating author:", error));
     }
-  };
-
-  const handleUpdateAuthor = (id, name) => {
-    setAuthorIdToUpdate(id);
-    setAuthorName(name);
-  };
-
-  const cancelEditHandler = () => {
-    setAuthorIdToUpdate(null);
-    setAuthorName("");
-    dispatch(resetAuthorUpdate());
   };
 
   const handleDeleteConfirmation = (id) => {
@@ -74,6 +68,7 @@ const AuthorAdmin = () => {
     dispatch(deleteAuthor(authorToDelete))
       .then(() => {
         setShowConfirmation(false);
+        setShowLogCreate(true);
         dispatch(listAuthors());
       })
       .catch((error) => console.error("Error deleting author:", error));
@@ -82,6 +77,27 @@ const AuthorAdmin = () => {
   const handleCancelDelete = () => {
     setShowConfirmation(false);
     dispatch(resetDeleteAuthor());
+  };
+
+  const cancelEditHandler = () => {
+    setAuthorIdToUpdate(null);
+    setAuthorName("");
+    dispatch(resetAuthorUpdate());
+  };
+
+  const handleUpdateAuthor = (id, name) => {
+    setAuthorIdToUpdate(id);
+    setAuthorName(name);
+  };
+
+  const handleCloseLogCreate = () => {
+    setIsLogCreateCompleted(true);
+    setShowLogCreate(false);
+  };
+
+  const handleShowLogCreate = () => {
+    setIsLogCreateCompleted(false);
+    setShowLogCreate(true);
   };
 
   return (
@@ -215,6 +231,27 @@ const AuthorAdmin = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      <Modal
+  show={showLogCreate && !isLogCreateCompleted}
+  onHide={handleShowLogCreate}
+  centered
+>
+  <Modal.Header>
+    <Modal.Title className="text-center">LOG</Modal.Title>
+  </Modal.Header>
+  <Modal.Body
+    style={{
+      display: 'flex',
+      justifyContent: 'center', // Center horizontally
+      alignItems: 'center', // Center vertically
+      marginTop: '10%',
+    }}
+  >
+    <LogCreate onClose={handleCloseLogCreate} />
+  </Modal.Body>
+</Modal>
+
     </div>
   );
 };

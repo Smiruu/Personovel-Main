@@ -9,4 +9,6 @@ admin.site.register(Interaction)
 admin.site.register(ReadingHistory)
 admin.site.register(Comment)
 admin.site.register(Reply)
+admin.site.register(Log)
+
 # Register your models here.

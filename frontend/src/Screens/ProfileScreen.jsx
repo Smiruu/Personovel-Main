@@ -18,6 +18,7 @@ import LatestScreen from "./LatestScreen";
 import FavoritesList from "../Components/FavoritesList";
 import LatestReadScreen from "./LatestReadScreen";
 import { FaUser, FaCalendarAlt, FaClock } from "react-icons/fa";
+import LogList from "../Components/LogList";
 
 const ProfileScreen = () => {
   const dispatch = useDispatch();
@@ -439,6 +440,17 @@ const ProfileScreen = () => {
                         <LatestReadScreen userId={userInfo.token.id} />
                       </div>
                     )}
+                  </MDBCol>
+
+                  <MDBCol size="6" className="mt-3">
+                    {userInfo.token && userInfo.token.is_admin ? (
+                      <div
+                        className="favorite-books-section bg-white p-2"
+                        style={{ maxHeight: "200px", overflow: "auto" }}
+                      >
+                        <LogList />
+                      </div>
+                    ) : null}
                   </MDBCol>
 
                   <MDBCol size="12" className="mt-3">

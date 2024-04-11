@@ -25,6 +25,9 @@ import {
 import { CommentandReplyUserReducer, commentReducer, createReplyReducer } from './reducers/commentReducers';
 import favoriteReducer from './reducers/favoriteReducers';
 
+import { logListReducer, logCreateReducer } from './reducers/logReducers';
+
+
 const reducer = combineReducers({
     userRegister: userRegisterReducer,
     userLogin: userLoginReducer,
@@ -84,6 +87,10 @@ const reducer = combineReducers({
     CommentandReplyUser: CommentandReplyUserReducer,
 
     favorite: favoriteReducer,
+
+    logList : logListReducer,
+    logCreate: logCreateReducer,
+
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null;
