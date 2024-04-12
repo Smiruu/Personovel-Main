@@ -161,158 +161,75 @@ function BookDetail() {
   };
 
   return (
-    <Container fluid>
-      <Row className="mt-5 mb-5 h-full w-full">
-        <Col md={6} style={{ margin: "0", padding: "0" }}>
-          {bookLoading ? (
-            <Loader />
-          ) : bookError ? (
-            <Message variant="danger">{bookError}</Message>
-          ) : (
-            <Card.Img src={bookData.image} alt={bookData.title} fluid />
-          )}
-        </Col>
-        <Col md={5} style={{ backgroundColor: "#FCD5CE" }}>
-          <Link
-            to="#"
-            className="close-button mt-3"
-            style={{
-              float: "right",
-              padding: "1% 2% 1% 2%",
-              border: "2px solid #6F1D1B",
-              borderColor: "#6F1D1B",
-              position: "relative",
-            }}
-            onClick={handleCloseButtonClick}
-          >
-            <i className="fas fa-times" style={{ color: "#6F1D1B" }}></i>
-          </Link>
-
-          <h4
-            className="mt-4"
-            style={{
-              textAlign: "left",
-              marginLeft: "3%",
-              fontFamily: "Protest Guerrilla",
-              fontWeight: "1",
-              fontSize: "45px",
-              color: "#6F1D1B",
-            }}
-          >
-            {bookData?.title?.toUpperCase()}
-          </h4>
-
-          <h5
-            className="mt-3"
-            style={{
-              textAlign: "left",
-              marginLeft: "3%",
-              fontSize: "25px",
-              color: "#6F1D1B",
-              marginBottom: "5px",
-            }}
-          >
-            <strong style={{ fontFamily: "Blinker" }}>AUTHOR: </strong>
-            <span
-              style={{
-                fontStyle: "italic",
-                fontFamily: "Blinker",
-                fontWeight: "1",
-              }}
-            >
-              {bookData?.author?.toUpperCase()}
-            </span>
-          </h5>
-
-          <h5
-            style={{
-              textAlign: "left",
-              marginLeft: "3%",
-              fontSize: "25px",
-              color: "#6F1D1B",
-              marginBottom: "5px",
-            }}
-          >
-            <strong style={{ fontFamily: "Blinker" }}>GENRE: </strong>
-            <span
-              style={{
-                fontStyle: "italic",
-                fontFamily: "Blinker",
-                fontWeight: "1",
-              }}
-            >
-              {bookData?.genre?.toUpperCase()}
-            </span>
-          </h5>
-          <h5
-            style={{
-              textAlign: "left",
-              marginLeft: "3%",
-              fontSize: "25px",
-              color: "#6F1D1B",
-              marginBottom: "5px",
-            }}
-          >
-            <strong style={{ fontFamily: "Blinker" }}>RATING: </strong>
-            <span
-              style={{
-                fontStyle: "italic",
-                fontFamily: "Blinker",
-                fontWeight: "1",
-              }}
-            >
-              <Rating
-                value={fetchedMeanRating}
-                text={numReviews + " reviews"}
-                color="#f8e825"
+    <div style={{ display: "flex", justifyContent: "center" }}>
+      <Container fluid>
+        <Row className="mt-5 mb-5 h-full w-full">
+          <Col md={6} style={{ margin: "0", padding: "0", height: "100%" }}>
+            {bookLoading ? (
+              <Loader />
+            ) : bookError ? (
+              <Message variant="danger">{bookError}</Message>
+            ) : (
+              <Card.Img
+                src={bookData.image}
+                alt={bookData.title}
+                fluid
+                style={{ height: "100%" }}
               />
-            </span>
-          </h5>
-          <h5
-            style={{
-              textAlign: "left",
-              marginLeft: "3%",
-              fontSize: "25px",
-              color: "#6F1D1B",
-              marginBottom: "5px",
-            }}
-          >
-            <strong style={{ fontFamily: "Blinker" }}>LANGUAGE: </strong>
-            <span
-              style={{
-                fontStyle: "italic",
-                fontFamily: "Blinker",
-                fontWeight: "1",
-              }}
-            >
-              {bookData?.language?.toUpperCase()}
-            </span>
-          </h5>
+            )}
+          </Col>
 
-          <h5
-            style={{
-              textAlign: "left",
-              marginLeft: "3%",
-              fontSize: "25px",
-              color: "#6F1D1B",
-              marginBottom: "5px",
-            }}
-          >
-            <strong style={{ fontFamily: "Blinker" }}>SYNOPSIS: </strong>
-            <p
-              className="mt-2"
+          <Col md={5} style={{ backgroundColor: "#FCD5CE" }}>
+            <Link
+              to="#"
+              className="close-button mt-3"
               style={{
-                fontStyle: "italic",
-                fontFamily: "Blinker",
+                float: "right",
+                padding: "1% 2% 1% 2%",
+                border: "2px solid #6F1D1B",
+                borderColor: "#6F1D1B",
+                position: "relative",
+              }}
+              onClick={handleCloseButtonClick}
+            >
+              <i className="fas fa-times" style={{ color: "#6F1D1B" }}></i>
+            </Link>
+
+            <h4
+              className="mt-4"
+              style={{
+                textAlign: "left",
+                marginLeft: "3%",
+                fontFamily: "Protest Guerrilla",
                 fontWeight: "1",
+                fontSize: "45px",
+                color: "#6F1D1B",
               }}
             >
-              {bookData && bookData.synopsis
-                ? bookData.synopsis
-                : "Synopsis not available"}
-            </p>
-          </h5>
-          {userInfo && (
+              {bookData?.title?.toUpperCase()}
+            </h4>
+
+            <h5
+              className="mt-3"
+              style={{
+                textAlign: "left",
+                marginLeft: "3%",
+                fontSize: "25px",
+                color: "#6F1D1B",
+                marginBottom: "5px",
+              }}
+            >
+              <strong style={{ fontFamily: "Blinker" }}>AUTHOR: </strong>
+              <span
+                style={{
+                  fontStyle: "italic",
+                  fontFamily: "Blinker",
+                }}
+              >
+                {bookData?.author?.toUpperCase()}
+              </span>
+            </h5>
+
             <h5
               style={{
                 textAlign: "left",
@@ -322,21 +239,143 @@ function BookDetail() {
                 marginBottom: "5px",
               }}
             >
-              <strong style={{ fontFamily: "Blinker" }}>YOUR RATING: </strong>
+              <strong style={{ fontFamily: "Blinker" }}>GENRE: </strong>
               <span
                 style={{
                   fontStyle: "italic",
                   fontFamily: "Blinker",
-                  fontWeight: "1",
                 }}
               >
-                <Rating value={userRating} color="#f8e825" />
+                {bookData?.genre?.toUpperCase()}
               </span>
             </h5>
-          )}
-          <Row className="justify-content-center mb-3">
-            <Col>
-              {userInfo && (
+            <h5
+              style={{
+                textAlign: "left",
+                marginLeft: "3%",
+                fontSize: "25px",
+                color: "#6F1D1B",
+                marginBottom: "5px",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <strong style={{ fontFamily: "Blinker" }}>RATING: </strong>
+                <span
+                  style={{
+                    fontStyle: "italic",
+                    fontFamily: "Blinker",
+                    marginLeft: "5px",
+                  }}
+                >
+                  <Rating
+                    value={fetchedMeanRating}
+                    text={numReviews + " reviews"}
+                    color="#f8e825"
+                  />
+                </span>
+              </div>
+            </h5>
+            <h5
+              style={{
+                textAlign: "left",
+                marginLeft: "3%",
+                fontSize: "25px",
+                color: "#6F1D1B",
+                marginBottom: "5px",
+              }}
+            >
+              <strong style={{ fontFamily: "Blinker" }}>LANGUAGE: </strong>
+              <span
+                style={{
+                  fontStyle: "italic",
+                  fontFamily: "Blinker",
+                }}
+              >
+                {bookData?.language?.toUpperCase()}
+              </span>
+            </h5>
+
+            <h5
+              style={{
+                textAlign: "left",
+                marginLeft: "3%",
+                fontSize: "25px",
+                color: "#6F1D1B",
+                marginBottom: "5px",
+              }}
+            >
+              <strong style={{ fontFamily: "Blinker" }}>SYNOPSIS: </strong>
+              <p
+                className="mt-2"
+                style={{
+                  fontStyle: "italic",
+                  fontFamily: "Blinker",
+                }}
+              >
+                {bookData && bookData.synopsis
+                  ? bookData.synopsis
+                  : "Synopsis not available"}
+              </p>
+            </h5>
+            {userInfo && (
+              <h5
+                style={{
+                  textAlign: "left",
+                  marginLeft: "3%",
+                  fontSize: "25px",
+                  color: "#6F1D1B",
+                  marginBottom: "5px",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <strong style={{ fontFamily: "Blinker" }}>
+                    YOUR RATING:{" "}
+                  </strong>
+                  <span
+                    style={{
+                      fontStyle: "italic",
+                      fontFamily: "Blinker",
+                      marginLeft: "5px",
+                    }}
+                  >
+                    <Rating value={userRating} color="#f8e825" />
+                  </span>
+                </div>
+              </h5>
+            )}
+            <Row className="justify-content-center mb-3">
+              <Col>
+                {userInfo && (
+                  <Button
+                    className="btn-block customButton"
+                    type="button"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "100%",
+                      fontWeight: "1",
+                      fontSize: "30px",
+                      color: "white",
+                      fontFamily: "Protest Guerrilla",
+                      borderRadius: "50px",
+                      backgroundColor: "#6F1D1B",
+                      marginTop: "20px",
+                      marginRight: "10px",
+                    }}
+                    onClick={handleToggleFavorite}
+                    disabled={!userId}
+                  >
+                    <i
+                      className={`bi bi-suit-heart${
+                        isFavorite ? " text-danger" : ""
+                      }`}
+                      style={{ fontSize: "30px", marginRight: "10px" }}
+                    >
+                      ADD TO FAVORITE
+                    </i>
+                  </Button>
+                )}
                 <Button
                   className="btn-block customButton"
                   type="button"
@@ -351,99 +390,72 @@ function BookDetail() {
                     fontFamily: "Protest Guerrilla",
                     borderRadius: "50px",
                     backgroundColor: "#6F1D1B",
-                    marginTop: "20px",
-                    marginRight: "10px",
+                    marginTop: "10px",
                   }}
-                  onClick={handleToggleFavorite}
-                  disabled={!userId}
+                  onClick={handleReadNow}
                 >
-                  <i
-                    className={`bi bi-suit-heart${
-                      isFavorite ? " text-danger" : ""
-                    }`}
-                    style={{ fontSize: "30px", marginRight: "10px" }}
-                  >ADD TO FAVORITE</i> 
+                  READ NOW!
                 </Button>
-              )}
-              <Button
-                className="btn-block customButton"
-                type="button"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "100%",
-                  fontWeight: "1",
-                  fontSize: "30px",
-                  color: "white",
-                  fontFamily: "Protest Guerrilla",
-                  borderRadius: "50px",
-                  backgroundColor: "#6F1D1B",
-                  marginTop: "20px",
-                }}
-                onClick={handleReadNow}
-              >
-                READ NOW!
-              </Button>
-              {userInfo &&
-                userInfo.token &&
-                (userInfo.token.is_paid || userInfo.token.is_admin) && (
-                  <Button
-                    className="customButton"
-                    type="button"
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      width: "100%",
-                      fontWeight: "1",
-                      fontSize: "30px",
-                      color: "white",
-                      fontFamily: "Protest Guerrilla",
-                      borderRadius: "50px",
-                      backgroundColor: "#6F1D1B",
-                      marginTop: "20px",
-                    }}
-                    onClick={() => setShowModal(true)}
-                  >
-                    RATE
-                  </Button>
-                )}
-            </Col>
-          </Row>
-        </Col>
-      </Row>
-      <RateModal
-        show={showModal}
-        handleClose={handleCloseModal}
-        bookId={_id}
-        userId={userId}
-      />
-      {userInfo && (
-        <Row
-          className="mt-3 bg-white p-3 border border-2 border-grey"
-          style={{
-            borderRadius: "10px",
-            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          <Col md={12}>
-            <CommentSection
-              comments={comments.comments}
-              replies={comments.replies}
-              loading={loadingComments}
-              commentsError={commentsError}
-              handleCommentSubmit={handleCommentSubmit}
-              handleReply={handleReply}
-              setCommentText={handleCommentTextChange}
-              commentText={commentText}
-              userId={userId}
-              userInfo={userInfo}
-            />
+                {userInfo &&
+                  userInfo.token &&
+                  (userInfo.token.is_paid || userInfo.token.is_admin) && (
+                    <Button
+                      className="customButton"
+                      type="button"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%",
+                        fontWeight: "1",
+                        fontSize: "30px",
+                        color: "white",
+                        fontFamily: "Protest Guerrilla",
+                        borderRadius: "50px",
+                        backgroundColor: "#6F1D1B",
+                        marginTop: "20px",
+                      }}
+                      onClick={() => setShowModal(true)}
+                    >
+                      RATE
+                    </Button>
+                  )}
+              </Col>
+            </Row>
           </Col>
         </Row>
-      )}
-    </Container>
+        <RateModal
+          show={showModal}
+          handleClose={handleCloseModal}
+          bookId={_id}
+          userId={userId}
+        />
+        {userInfo && (
+          <Row
+            className="mt-3 bg-white p-3 border border-2 border-grey"
+            style={{
+              borderRadius: "10px",
+              boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <Col md={12}>
+              <CommentSection
+                comments={comments.comments}
+                replies={comments.replies}
+                loading={loadingComments}
+                commentsError={commentsError}
+                handleCommentSubmit={handleCommentSubmit}
+                handleReply={handleReply}
+                setCommentText={handleCommentTextChange}
+                commentText={commentText}
+                userId={userId}
+                userInfo={userInfo}
+              />
+            </Col>
+          </Row>
+        )}
+      </Container>
+    </div>
   );
 }
 

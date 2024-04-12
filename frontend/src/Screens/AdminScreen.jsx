@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
-import { FaUser, FaComment, FaTags, FaBook, FaCog } from "react-icons/fa"; // Import icons
+import { FaUser, FaComment, FaTags, FaBook, FaCog, FaHistory } from "react-icons/fa"; // Import icons
 import AuthorAdmin from "../Components/Admin/AuthorAdmin";
 import FeedbackAdmin from "../Components/Admin/FeedbackAdmin";
 import GenreAdmin from "../Components/Admin/GenreAdmin";
 import BookAdmin from "../Components/Admin/BookAdmin";
 import InteractionAdmin from "../Components/Admin/InteractionAdmin";
+import LogList from "../Components/LogList";
 
 function AdminScreen() {
   const [showAuthorAdmin, setShowAuthorAdmin] = useState(false);
@@ -13,6 +14,7 @@ function AdminScreen() {
   const [showGenreAdmin, setShowGenreAdmin] = useState(false);
   const [showBookAdmin, setShowBookAdmin] = useState(false);
   const [showInteractionAdmin, setShowInteractionAdmin] = useState(false);
+  const [showLogHistory, setShowLogHistory] = useState(false);
 
   const handleClose = (setter) => {
     setter(false);
@@ -40,7 +42,7 @@ function AdminScreen() {
       <h1 style={headingStyle}>
         <FaCog className="me-2" /> Admin Screen
       </h1>
-      <div className="d-flex flex-wrap">
+      <div className="d-flex flex-wrap justify-content-center">
         <Button
           style={{
             ...buttonStyle,
@@ -122,6 +124,22 @@ function AdminScreen() {
           )}
           {showFeedbackAdmin ? "Hide Feedback Admin" : "Show Feedback Admin"}
         </Button>
+
+        <Button
+          style={{
+            ...buttonStyle,
+            backgroundColor: showLogHistory ? "#BC1823" : "#002960",
+          }}
+          onClick={() => setShowLogHistory(!showLogHistory)}
+          className="mb-3"
+        >
+          {showLogHistory ? (
+            <FaHistory className="me-2" />
+          ) : (
+            <FaHistory className="me-2" />
+          )}
+          {showLogHistory ? "Hide Log History" : "Show Log HIstory"}
+        </Button>
       </div>
 
       <Modal
@@ -186,6 +204,19 @@ function AdminScreen() {
         </Modal.Header>
         <Modal.Body>
           <FeedbackAdmin />
+        </Modal.Body>
+      </Modal>
+
+      <Modal
+        show={showLogHistory}
+        onHide={() => handleClose(setShowLogHistory)}
+        dialogClassName="modal-md"
+      >
+        <Modal.Header closeButton style={{ textTransform: "uppercase" }}>
+          <Modal.Title>Log History</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <LogList />
         </Modal.Body>
       </Modal>
     </div>

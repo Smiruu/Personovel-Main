@@ -252,12 +252,8 @@ const ProfileScreen = () => {
                     <Form.Label>Profile Picture</Form.Label>
                     <Form.Control
                       type="file"
-                      accept=".jpg, .png" // Limit accepted file types to .jpg and .png
+                      accept=".jpg, .png"
                       onChange={handleProfilePictureChange}
-                      // Add attributes for image size and file size limits
-                      // Max size of 10 MB: 10 * 1024 * 1024
-                      // Max width and height of 500 pixels
-                      // Note: These are approximate values, you can adjust them according to your requirements
                       maxSize={10 * 1024 * 1024}
                       maxDimensions={{ width: 500, height: 500 }}
                     />
@@ -279,12 +275,8 @@ const ProfileScreen = () => {
                     <Form.Label>Cover Photo</Form.Label>
                     <Form.Control
                       type="file"
-                      accept=".jpg, .png" // Limit accepted file types to .jpg and .png
+                      accept=".jpg, .png"
                       onChange={handleCoverPhotoChange}
-                      // Add attributes for image size and file size limits
-                      // Max size of 10 MB: 10 * 1024 * 1024
-                      // Max width and height of 1000 pixels
-                      // Note: These are approximate values, you can adjust them according to your requirements
                       maxSize={10 * 1024 * 1024}
                       maxDimensions={{ width: 1000, height: 1000 }}
                     />
@@ -440,17 +432,6 @@ const ProfileScreen = () => {
                         <LatestReadScreen userId={userInfo.token.id} />
                       </div>
                     )}
-                  </MDBCol>
-
-                  <MDBCol size="6" className="mt-3">
-                    {userInfo.token && userInfo.token.is_admin ? (
-                      <div
-                        className="favorite-books-section bg-white p-2"
-                        style={{ maxHeight: "200px", overflow: "auto" }}
-                      >
-                        <LogList />
-                      </div>
-                    ) : null}
                   </MDBCol>
 
                   <MDBCol size="12" className="mt-3">

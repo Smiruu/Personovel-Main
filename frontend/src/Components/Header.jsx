@@ -198,7 +198,7 @@ function Header() {
                   </Button>
                 </Link>
                 <Link
-                  to="/login"
+                  to="/register"
                   style={{
                     fontFamily: "Blinker, san-serif",
                     fontWeight: "bold",

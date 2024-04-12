@@ -12,7 +12,6 @@ import LandingScreen from "./Screens/LandingScreen";
 import SampleScreen from "./Screens/SampleScreen";
 import BrowseScreen from "./Screens/BrowseScreen";
 import Chapter from "./Screens/ChapterDropdown";
-import Login from "./Screens/Login";
 import ChapterDetailScreen from "./Screens/ChapterDetailScreen";
 import BookScreen from "./Screens/BookScreen";
 import SearchPage from "./Screens/SearchScreen";
@@ -23,6 +22,9 @@ import PaymentScreen from "./Screens/PaymentScreen";
 import ProfileScreen from "./Screens/ProfileScreen";
 import AdminScreen from "./Screens/AdminScreen";
 import VisitProfileScreen from "./Screens/VisitProfileScreen";
+import LoginScreen from "./Screens/LoginScreen";
+import RegistrationScreen from "./Screens/RegistrationScreen";
+
 function App() {
   return (
     <Router>
@@ -41,7 +43,6 @@ function App() {
               <Route path="/landing" element={<LandingScreen />} />
               <Route path="/sample" element={<SampleScreen />} />
               <Route path="/browse" element={<BrowseScreen />} />
-              <Route path="/login" element={<Login />} />
               <Route path="/chapters/:id" element={<ChapterDetailScreen />} />
               <Route path="/books/:_id" element={<BookScreen />} />
               <Route path="/search" element={<SearchPage />} />
@@ -52,6 +53,8 @@ function App() {
               <Route path="/profile" element={<ProfileScreen />} />
               <Route path="/admin" element={<AdminScreen />} />
               <Route path="/profile/:id" element={<VisitProfileScreen />} />
+              <Route path="/login" element={<LoginScreen />} />
+              <Route path="/register" element={<RegistrationScreen />} />
             </Routes>
           </Container>
         </main>

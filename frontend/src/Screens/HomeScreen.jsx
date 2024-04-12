@@ -84,12 +84,12 @@ function LandingScreen() {
               margin: "0",
             }}
           >
-            {user ? user.name : <Loader />}!
+            {user ? user.name : <Loader />}!! ^-^
           </h1>
           <Card.Img
-            src="/images/home-flower.png"
+            src="/images/home-flower.gif"
             className="logo_book"
-            style={{ maxWidth: "100%", height: "auto", marginTop: "5%" }}
+            style={{ maxWidth: "100%", height: "auto" }}
           />
         </Col>
 

@@ -34,7 +34,7 @@ const OTPScreen = () => {
       if (success) {
         console.log('navigating to home');
         navigate("/home");
-        alert("Welcome to Personovel!");
+        alert("Welcome to Personovel! Please refresh the page to see the changes.");
       } else {
         alert("Wrong OTP. Please try again.");
       }
