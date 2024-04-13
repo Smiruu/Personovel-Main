@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { register } from "../actions/registerActions";
 import { Link, useNavigate } from "react-router-dom";
@@ -15,7 +15,13 @@ function RegistrationScreen() {
   const [showEmptyFieldsModal, setShowEmptyFieldsModal] = useState(false);
   const [showRegistrationErrorsModal, setShowRegistrationErrorsModal] =
     useState(false);
-  const userRegister = useSelector((state) => state.userRegister.userInfo);
+  const userInfo = useSelector((state) => state.userRegister.userInfo);
+  
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/home");
+    }
+  }, [userInfo, navigate]);
 
   const signupHandler = async (e) => {
     e.preventDefault();
@@ -67,6 +73,8 @@ function RegistrationScreen() {
     setShowEmptyFieldsModal(false);
     setShowRegistrationErrorsModal(false);
   };
+
+  
 
   return (
     <Container fluid>

@@ -2,21 +2,19 @@ import React, { useState, useEffect } from "react";
 import { Row, Col, Card, Container } from "react-bootstrap";
 import Book from "../Components/Book";
 import { Link, Navigate } from "react-router-dom";
-import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { checkUserPaidStatus } from "../actions/userActions";
 import { getPreferredGenre } from "../actions/preferenceActions";
 import { getUserDetails } from "../actions/profileActions";
 import Loader from "../Components/Loader";
+import { listBooks } from "../actions/bookActions";
 
 function LandingScreen() {
-  const [preferredBooks, setPreferredBooks] = useState([]);
-  const [popularBooks, setPopularBooks] = useState([]);
-  const [latestBooks, setLatestBooks] = useState([]);
+  const [hasClickedNext, setHasClickedNext] = useState(false);
   const [recommendedIndex, setRecommendedIndex] = useState(0);
   const [popularIndex, setPopularIndex] = useState(0);
   const [latestIndex, setLatestIndex] = useState(0);
-  const [hasClickedNext, setHasClickedNext] = useState(false);
+
   const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
   const userInfo = userLoginInfo || userRegisterInfo;
@@ -26,7 +24,23 @@ function LandingScreen() {
   );
   const userDetails = useSelector((state) => state.userDetails);
   const { loading, error, user } = userDetails;
-  console.log(user);
+  const bookList = useSelector((state) => state.bookList);
+  const { books } = bookList;
+  const [preferredBooks, setPreferredBooks] = useState([]);
+  const [popularBooks, setPopularBooks] = useState([]);
+  const [latestBooks, setLatestBooks] = useState([]);
+
+  useEffect(() => {
+    if (!userInfo) {
+      return; // Exit early if userInfo is not available
+    }
+
+    dispatch(getUserDetails());
+    dispatch(checkUserPaidStatus(userInfo.token.id));
+    dispatch(getPreferredGenre(userInfo.token.id));
+    dispatch(listBooks());
+  }, [userInfo, dispatch]);
+
   useEffect(() => {
     if (booksInPreferredGenre) {
       setPreferredBooks(booksInPreferredGenre);
@@ -34,25 +48,18 @@ function LandingScreen() {
   }, [booksInPreferredGenre]);
 
   useEffect(() => {
-    async function fetchBooks() {
-      const { data } = await axios.get("http://127.0.0.1:8000/api/books/");
-      const sortedPopularBooks = [...data].sort(
+    if (books.length > 0) {
+      const sortedPopularBooks = [...books].sort(
         (a, b) => b.mean_rating - a.mean_rating
       );
       setPopularBooks(sortedPopularBooks);
-      const sortedLatestBooks = [...data].sort(
+
+      const sortedLatestBooks = [...books].sort(
         (a, b) => new Date(b.date_added) - new Date(a.date_added)
       );
       setLatestBooks(sortedLatestBooks);
     }
-    fetchBooks();
-
-    if (userInfo) {
-      dispatch(getUserDetails());
-      dispatch(checkUserPaidStatus(userInfo.token.id));
-      dispatch(getPreferredGenre(userInfo.token.id));
-    }
-  }, [userInfo, dispatch]);
+  }, [books]);
 
   if (!userInfo) {
     return <Navigate to="/login" />;

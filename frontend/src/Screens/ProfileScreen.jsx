@@ -29,13 +29,16 @@ const ProfileScreen = () => {
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
   const userInfo = userLoginInfo || userRegisterInfo;
 
-  const [updatedName, setUpdatedName] = useState(user.name || "");
-  const [updatedBio, setUpdatedBio] = useState(user.bio || "");
-
+  // Load input values from local storage or default to user data
+  const [updatedName, setUpdatedName] = useState(
+    localStorage.getItem("updatedName") || user.name || ""
+  );
+  const [updatedBio, setUpdatedBio] = useState(
+    localStorage.getItem("updatedBio") || user.bio || ""
+  );
   const [profilePicture, setProfilePicture] = useState(null);
   const [coverPhoto, setCoverPhoto] = useState(null);
   const [fileName, setFileName] = useState("");
-  console.log(fileName);
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
@@ -60,11 +63,17 @@ const ProfileScreen = () => {
   };
 
   const handleNameChange = (e) => {
-    setUpdatedName(e.target.value);
+    const value = e.target.value;
+    setUpdatedName(value);
+    // Save the input value to local storage
+    localStorage.setItem("updatedName", value);
   };
 
   const handleBioChange = (e) => {
-    setUpdatedBio(e.target.value);
+    const value = e.target.value;
+    setUpdatedBio(value);
+    // Save the input value to local storage
+    localStorage.setItem("updatedBio", value);
   };
 
   const handleProfilePictureChange = (e) => {
