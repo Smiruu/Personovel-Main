@@ -246,6 +246,7 @@ class CheckPaidStatusView(APIView):
             return JsonResponse({'error': 'User does not have required methods'}, status=400)
         
 @api_view(['GET'])
+
 def get_user_profile_by_user_id(request, user_id):
     # Retrieve the user by user ID or return 404 if not found
     user = get_object_or_404(User, pk=user_id)
@@ -261,3 +262,56 @@ def get_user_profile_by_user_id(request, user_id):
     
     # Return the response data
     return Response(response_data)
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def get_user_log(request):
+            users = User.objects.all()
+        # Serialize the user objects to get profile information for each user
+            serializer = UserWithProfileSerializer(users, many=True)
+            return Response(serializer.data)
+
+@api_view([ 'DELETE', 'PATCH'])
+@permission_classes([IsAdminUser])
+def user_detail(request, user_pk):
+
+    if request.method == 'DELETE':
+        # Check if a user primary key is provided
+        if user_pk is not None:
+            # Get the user object by primary key
+            user = get_object_or_404(User, pk=user_pk)
+            # Delete the user
+            user.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'User primary key is required for deletion.'})
+
+    elif request.method == 'PATCH':
+            # Check if a user primary key is provided
+        if user_pk is not None:
+        # Get the user object by primary key
+            user = get_object_or_404(User, pk=user_pk)
+            # Update user permissions
+            is_active = request.data.get('is_active')
+            is_admin = request.data.get('is_admin')
+            is_paid = request.data.get('is_paid')
+
+            if is_active is not None:
+                user.is_active = is_active
+            if is_admin is not None:
+                user.is_admin = is_admin
+            if is_paid is not None:
+                if is_paid:  # If is_paid is set to True
+                    user.is_paid = is_paid
+                    # Set paid_at to current date and time
+                    user.paid_at = datetime.now()
+                else:  # If is_paid is set to False
+                    user.is_paid = is_paid
+                    # Remove paid_at
+                    user.paid_at = None
+
+            user.save()
+            serializer = UserWithProfileSerializer(user)
+        return Response(serializer.data)
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'User primary key is required for updating permissions.'})

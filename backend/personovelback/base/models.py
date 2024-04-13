@@ -5,6 +5,7 @@ from django.conf import settings
 from django.db.models import Avg
 from user.models import User
 from collections import Counter
+from django.core.exceptions import ValidationError
 def get_filename_ext(filepath):
     base_name = os.path.basename(filepath)
     name, ext = os.path.splitext(base_name)
@@ -67,7 +68,9 @@ class Book(models.Model):
     
     @property
     def mean_rating(self):
-        return self.rating.aggregate(Avg('rating'))['rating__avg']
+        rating_aggregate = self.rating.aggregate(Avg('rating'))
+        avg_rating = rating_aggregate['rating__avg']
+        return avg_rating if avg_rating is not None else 0.0
 
     @mean_rating.setter
     def mean_rating(self, value):
@@ -125,8 +128,28 @@ class ReadingHistory(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.book.title} - {self.read_at}"
-    
+class UserPreferredGenre(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='preferred_genres')
+    genres = models.ManyToManyField('Genre', related_name='users_with_preference', blank=True)
 
+    def __str__(self):
+        return f"{self.user.username}'s Preferred Genres: {[genre.name for genre in self.genres.all()]}"
+
+    def save(self, *args, **kwargs):
+        # Check if the user already has a set of preferred genres
+        existing_instance = UserPreferredGenre.objects.filter(user=self.user).first()
+        if existing_instance:
+            # Update existing instance
+            existing_instance.genres.set(self.genres.all())
+            existing_instance.save()
+        else:
+            # Create new instance
+            super().save(*args, **kwargs)
+
+    def clean(self):
+        # Check if the user already has a set of preferred genres
+        if UserPreferredGenre.objects.exclude(pk=self.pk).filter(user=self.user).exists():
+            raise ValidationError("User already has a set of preferred genres.")
 class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)

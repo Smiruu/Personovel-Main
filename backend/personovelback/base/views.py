@@ -21,6 +21,8 @@ from .permissions import IsPaidUserOrAdmin
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from .models import Comment, Reply
+from rest_framework.exceptions import ValidationError
+from django.db import transaction
 # Create your views here.
 @api_view(['GET'])
 def getRoutes(request):
@@ -268,7 +270,7 @@ def getInteraction(request, pk):
         return Response({'detail': 'Invalid Interaction ID'}, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['GET'])
-@permission_classes([IsAuthenticated, IsPaidUserOrAdmin])
+@permission_classes([IsAuthenticated, IsAdminUser])
 def getInteractionsByBook(request, book_id):
     try:
         interactions = Interaction.objects.filter(book_id=book_id)
@@ -463,8 +465,9 @@ def latest_user_reading_history(request, user_id):
     # Return the serialized data in the response
     return Response(serializer.data)
 
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
-def get_preferred_genre(request, user_id):
+def get_recommended_books(request, user_id):
     try:
         print("Received GET request for get_preferred_genre")
         print("User ID:", user_id)
@@ -488,28 +491,129 @@ def get_preferred_genre(request, user_id):
         most_common_genre = genre_counts.order_by('-total_reads').first()
 
         if most_common_genre:
-            # Get all books belonging to the preferred genre
-            books_in_genre = Book.objects.filter(genre=most_common_genre)
+            # Annotate the queryset with mean rating for both preferred genre and other genres
+            books_in_genre = Book.objects.filter(genre=most_common_genre).annotate(mean_rating=Avg('rating__rating'))
+            other_books = Book.objects.exclude(genre=most_common_genre).annotate(mean_rating=Avg('rating__rating'))
 
-            # Sort the books based on their mean rating
-            sorted_books = sorted(books_in_genre, key=lambda x: x.mean_rating if x.mean_rating is not None else float('-inf'), reverse=True)
-            
+            # Combine preferred genre books and other genre books into a single list
+            combined_books = list(books_in_genre) + list(other_books)
+
+            # Sort the combined books based on their mean rating
+            sorted_books = sorted(combined_books, key=lambda x: x.mean_rating if x.mean_rating is not None else float('-inf'), reverse=True)
+
             # Serialize the sorted books
             serializer = BookSerializer(sorted_books, many=True)
-            
-            return Response(serializer.data, status=status.HTTP_200_OK)
+
+            return Response({
+                'recommended_books': serializer.data
+            }, status=status.HTTP_200_OK)
         else:
             # If there is no preferred genre, fetch all books and sort them based on mean rating
             all_books = Book.objects.all().annotate(mean_rating=Avg('rating__rating'))
             sorted_books = sorted(all_books, key=lambda x: x.mean_rating if x.mean_rating is not None else float('-inf'), reverse=True)
             serializer = BookSerializer(sorted_books, many=True)
             
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({
+                'recommended_books': serializer.data
+            }, status=status.HTTP_200_OK)
     
     except User.DoesNotExist:
         return Response({'detail': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)   
+    
+@api_view(['POST'])
+def set_preferred_genres(request, user_id):
+    try:
+        # Retrieve the authenticated user
+        user = get_object_or_404(User, pk=user_id)
+        
+        # Extract picked genres from request data
+        picked_genre_names = request.data.get('preferred_genres', [])
+        print("Received genres:", picked_genre_names)
+
+        # Check if the number of picked genres is more than three
+        if len(picked_genre_names) > 3:
+            raise ValidationError("You can only pick up to three genres.")
+
+        # Clear existing preferred genres for the user
+        user_preferred_genres, created = UserPreferredGenre.objects.get_or_create(user=user)
+        user_preferred_genres.genres.clear()
+
+        # Create or get existing genres and add them to the user's preferred genres
+        for genre_name in picked_genre_names:
+                genre = Genre.objects.filter(name=genre_name).first()
+                if genre:
+                    user_preferred_genres.genres.add(genre)
+                else:
+                    raise ValidationError(f"Genre '{genre_name}' does not exist.")
+
+        # Serialize the user's preferred genres and return the response
+        serializer = UserPreferredGenreSerializer(user_preferred_genres)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except ValidationError as ve:
+        return Response({'detail': str(ve)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+def get_preferred_genres(request, user_id):
+    try:
+        # Retrieve the user's preferred genres
+        user_preferred_genre = get_object_or_404(UserPreferredGenre, user_id=user_id)
+        
+        # Get the genre names associated with the user's preferred genres
+        genre_names = [genre.name for genre in user_preferred_genre.genres.all()]
+        
+        # Return the genre names in the response
+        return Response({'preferred_genres': genre_names}, status=status.HTTP_200_OK)
+    except UserPreferredGenre.DoesNotExist:
+        return Response({'detail': 'User preferred genres not found'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+@api_view(['GET'])
+def get_random_books(request, user_id):
+    try:
+        # Retrieve the user's preferred genres
+        user_preferred_genre = get_object_or_404(UserPreferredGenre, user_id=user_id)
+        
+        # Get the non-null preferred genres
+        preferred_genres = user_preferred_genre.genres.exclude(name__isnull=True)[:3]
+        
+        # Check if there are any preferred genres
+        if not preferred_genres:
+            return Response({'detail': 'No preferred genres found for the user'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Randomly select one genre from the non-null preferred genres
+        random_genre = random.choice(preferred_genres)
+        
+        # Retrieve all books belonging to the random genre
+        books = Book.objects.filter(genre=random_genre)
+        
+        # Sort the books by their mean_rating
+        sorted_books = books.annotate(mean_rating=Avg('rating__rating')).order_by('-mean_rating')
+        
+        # Serialize the sorted books
+        book_serializer = BookSerializer(sorted_books, many=True)
+        
+        # Serialize the random genre
+        genre_serializer = GenreSerializer(random_genre)
+        
+        # Construct the response data
+        response_data = {
+            'genre': genre_serializer.data,
+            'genre_books': book_serializer.data
+        }
+        
+        # Return the response
+        return Response(response_data, status=status.HTTP_200_OK)
+    except UserPreferredGenre.DoesNotExist:
+        return Response({'detail': 'User preferred genres not found'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsPaidUserOrAdmin])

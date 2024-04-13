@@ -158,7 +158,7 @@ function PaymentScreen() {
             <h2
               className="h4"
               style={{
-                color: "#495057",
+                color: "white",
                 fontWeight: "bold",
                 fontFamily: "Montserrat",
               }}
@@ -169,7 +169,7 @@ function PaymentScreen() {
               style={{
                 fontStyle: "italic",
                 fontSize: "1.1rem",
-                color: "#6c757d",
+                color: "white",
               }}
             >
               Transform your imagination into the different worlds of novels.
@@ -178,7 +178,7 @@ function PaymentScreen() {
           <div className="mb-4">
             <p
               className="lead"
-              style={{ color: "#495057", fontSize: "1.1rem" }}
+              style={{ color: "white", fontSize: "1.1rem" }}
             >
               <FaCheckCircle className="mr-2" style={{ color: "green" }} />{" "}
               Unlimited Access to Novels.
@@ -199,7 +199,7 @@ function PaymentScreen() {
             <span
               style={{
                 fontSize: "1.2rem",
-                color: "#6c757d",
+                color: "white",
                 fontFamily: "Montserrat",
               }}
             >
@@ -293,7 +293,7 @@ function PaymentScreen() {
             style={{
               fontSize: "0.9rem",
               fontStyle: "italic",
-              color: "#6c757d",
+              color: "white",
               fontFamily: "Montserrat",
             }}
           >

@@ -81,6 +81,13 @@ const OTPScreen = () => {
   }, [countdownActive]);
 
   useEffect(() => {
+    // Redirect based on verifyOtpState and userInfo.token.is_active
+    if (userInfo.token.is_active) {
+      navigate("/home");
+    } 
+  }, [userInfo.token.is_active]);
+
+  useEffect(() => {
     // Check if resend button was clicked before
     const resendClicked = localStorage.getItem("resendClicked") === "true";
     if (resendClicked) {

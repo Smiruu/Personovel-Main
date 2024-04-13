@@ -4,31 +4,39 @@ import Book from "../Components/Book";
 import { Link, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { checkUserPaidStatus } from "../actions/userActions";
-import { getPreferredGenre } from "../actions/preferenceActions";
+import { getRandomBooks, getRecommendedBooks } from "../actions/preferenceActions";
 import { getUserDetails } from "../actions/profileActions";
 import Loader from "../Components/Loader";
 import { listBooks } from "../actions/bookActions";
 
 function LandingScreen() {
-  const [hasClickedNext, setHasClickedNext] = useState(false);
   const [recommendedIndex, setRecommendedIndex] = useState(0);
   const [popularIndex, setPopularIndex] = useState(0);
   const [latestIndex, setLatestIndex] = useState(0);
+  const [genreBooksIndex, setGenreBooksIndex] = useState(0);
 
   const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
   const userInfo = userLoginInfo || userRegisterInfo;
   const dispatch = useDispatch();
-  const booksInPreferredGenre = useSelector(
-    (state) => state.preference.booksInPreferredGenre
+  const booksInRecommendedBooks = useSelector(
+    (state) => state.preference.booksInRecommendedBooks
   );
+  const { recommended_books } = booksInRecommendedBooks;
+  console.log("Recommended:", recommended_books);
+  const randomBooks= useSelector((state) => state.randomBooks);
+  console.log("Got",randomBooks)
+  const {genre_books, genre} = randomBooks
+  console.log("Got Genre", genre)
   const userDetails = useSelector((state) => state.userDetails);
   const { loading, error, user } = userDetails;
   const bookList = useSelector((state) => state.bookList);
   const { books } = bookList;
-  const [preferredBooks, setPreferredBooks] = useState([]);
+  const [genreBooks, setGenreBooks] = useState([]);
+  const [recommendedBooks, setRecommendedBooks] = useState([]);
   const [popularBooks, setPopularBooks] = useState([]);
   const [latestBooks, setLatestBooks] = useState([]);
+
 
   useEffect(() => {
     if (!userInfo) {
@@ -37,15 +45,19 @@ function LandingScreen() {
 
     dispatch(getUserDetails());
     dispatch(checkUserPaidStatus(userInfo.token.id));
-    dispatch(getPreferredGenre(userInfo.token.id));
+    dispatch(getRecommendedBooks(userInfo.token.id));
     dispatch(listBooks());
+    dispatch(getRandomBooks(userInfo.token.id));
   }, [userInfo, dispatch]);
 
   useEffect(() => {
-    if (booksInPreferredGenre) {
-      setPreferredBooks(booksInPreferredGenre);
+    if (recommended_books) {
+      setRecommendedBooks(recommended_books);
     }
-  }, [booksInPreferredGenre]);
+    if(genre_books){
+      setGenreBooks(genre_books);
+    }
+  }, [recommended_books, genre_books]);
 
   useEffect(() => {
     if (books.length > 0) {
@@ -96,7 +108,7 @@ function LandingScreen() {
                 className="g-1 d-flex justify-content-center"
                 style={{ marginBottom: "10px" }}
               >
-                {preferredBooks
+                {recommendedBooks
                   .slice(recommendedIndex, recommendedIndex + 4)
                   .map((book) => (
                     <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
@@ -162,15 +174,15 @@ function LandingScreen() {
                 textTransform: "uppercase",
               }}
             >
-              Preferred Genres
+              Preferred Genres: {genre ? genre.name : ""}
             </h1>
             <div>
               <Row
                 className="g-1 d-flex justify-content-center"
                 style={{ marginBottom: "10px" }}
               >
-                {preferredBooks
-                  .slice(recommendedIndex, recommendedIndex + 4)
+                {genreBooks
+                  .slice(genreBooksIndex, genreBooksIndex + 4)
                   .map((book) => (
                     <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
                       <Book book={book} />

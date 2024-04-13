@@ -9,7 +9,16 @@ import {
   USER_UPDATE_PAID_FAIL,
   USER_LIST_REQUEST,
   USER_LIST_SUCCESS,
-  USER_LIST_FAIL
+  USER_LIST_FAIL,
+  GET_USER_INFO_FAILURE,
+  GET_USER_INFO_SUCCESS,
+  GET_USER_INFO_REQUEST,
+  DELETE_USER_FAILURE,
+  DELETE_USER_SUCCESS,
+  DELETE_USER_REQUEST,
+  UPDATE_USER_FAILURE,
+  UPDATE_USER_REQUEST,
+  UPDATE_USER_SUCCESS
 } from "../constants/userConstants";
 
 const instance = axios.create({
@@ -163,6 +172,103 @@ export const listUsers = () => async (dispatch) => {
         error.response && error.response.data.detail
           ? error.response.data.detail
           : error.message
+    });
+  }
+};
+
+export const getUserInfo = (userId) => async (dispatch) => {
+  try {
+    dispatch({ type: GET_USER_INFO_REQUEST });
+    
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const token = userInfo ? userInfo.token : null;
+    const config = token
+      ? {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Bearer ${token.access}`,
+          },
+        }
+      : {};
+    
+    const { data } = await instance.get(`api/user/detail/`, config);
+    
+    dispatch({
+      type: GET_USER_INFO_SUCCESS,
+      payload: data,
+    });
+
+    console.log(data)
+  } catch (error) {
+    dispatch({
+      type: GET_USER_INFO_FAILURE,
+      payload: error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message,
+    });
+  }
+};
+
+export const deleteUser = (userId) => async (dispatch) => {
+  try {
+    dispatch({ type: DELETE_USER_REQUEST });
+    
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const token = userInfo ? userInfo.token : null;
+    const config = token
+      ? {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            "Authorization": `Bearer ${token.access}`,
+          },
+        }
+      : {};
+    
+    await instance.delete(`api/user/detail/${userId}/`, config);
+    
+    dispatch({
+      type: DELETE_USER_SUCCESS,
+    });
+  } catch (error) {
+    dispatch({
+      type: DELETE_USER_FAILURE,
+      payload: error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message,
+    });
+  }
+};
+
+export const updateUser = (userId, userData) => async (dispatch) => {
+  try {
+    dispatch({ type: UPDATE_USER_REQUEST });
+    
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const token = userInfo ? userInfo.token : null;
+    const config = token
+      ? {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            "Authorization": `Bearer ${token.access}`,
+          },
+        }
+      : {};
+    
+    const { data } = await instance.patch(`api/user/detail/${userId}/`, userData, config);
+    
+    dispatch({
+      type: UPDATE_USER_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: UPDATE_USER_FAILURE,
+      payload: error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message,
     });
   }
 };

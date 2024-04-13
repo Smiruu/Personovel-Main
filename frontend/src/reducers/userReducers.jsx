@@ -13,6 +13,15 @@ import {
   USER_LIST_REQUEST,
   USER_LIST_SUCCESS,
   USER_LIST_FAIL,
+  GET_USER_INFO_FAILURE,
+  GET_USER_INFO_REQUEST,
+  GET_USER_INFO_SUCCESS,
+  DELETE_USER_FAILURE,
+  DELETE_USER_SUCCESS,
+  DELETE_USER_REQUEST,
+  UPDATE_USER_FAILURE,
+  UPDATE_USER_REQUEST,
+  UPDATE_USER_SUCCESS
 } from "../constants/userConstants";
 
 export const userLoginReducer = (state = {}, action) => {
@@ -53,6 +62,8 @@ const initialState = {
   loading: false,
   isExpired: null,
   error: null,
+  userDetail: {},
+  users: [],
 };
 export const checkPaidStatusreducer = (state = initialState, action) => {
   switch (action.type) {
@@ -89,6 +100,46 @@ export const userListReducer = (state = { users: [] }, action) => {
       return { loading: false, users: action.payload };
     case USER_LIST_FAIL:
       return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const userDetailReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case GET_USER_INFO_REQUEST:
+    case DELETE_USER_REQUEST:
+    case UPDATE_USER_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+      case GET_USER_INFO_SUCCESS:
+        return {
+          ...state,
+          users: action.payload,
+          loading: false,
+        };
+    case DELETE_USER_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+      };
+    case UPDATE_USER_SUCCESS:
+      return {
+        ...state,
+        userDetail: action.payload,
+        loading: false,
+      };
+    case GET_USER_INFO_FAILURE:
+    case DELETE_USER_FAILURE:
+    case UPDATE_USER_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
     default:
       return state;
   }

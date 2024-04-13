@@ -100,3 +100,8 @@ class LogSerializer(serializers.ModelSerializer):
     class Meta:
         model = Log
         fields = '__all__'
+
+class UserPreferredGenreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserPreferredGenre
+        fields = '__all__'

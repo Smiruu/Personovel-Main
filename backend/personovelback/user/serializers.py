@@ -35,12 +35,13 @@ class UserLoginSerializer(serializers.ModelSerializer):
         fields = ['email', 'password']
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    user_email = serializers.EmailField(source='user.email', read_only=True)
     user_created_at = serializers.DateTimeField(source='user.created_at', read_only=True)
 
     class Meta:
         model = Profile
-        fields = ['id', 'user', 'image', 'cover_photo', 'name', 'bio', 'user_created_at']
-        read_only_fields = ['user']
+        fields = ['id', 'user', 'user_email', 'image', 'cover_photo', 'name', 'bio', 'user_created_at']
+        read_only_fields = ['user', 'user_email']
         extra_kwargs = {
             'name': {'required': False}  # Setting name field as not required
         }

@@ -20,5 +20,8 @@ urlpatterns = [
 
     path('pay/<str:pk>/', update_user_to_paid, name='update_user_to_paid'),
     path('check-paid-status/<int:user_id>/', CheckPaidStatusView.as_view(), name='check_paid_status'),
+
+    path('detail/', views.get_user_log, name='get_user_log'),
+    path('detail/<int:user_pk>/', views.user_detail, name='user_detail'),
    
 ]

@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import {thunk} from 'redux-thunk';
 import { combineReducers } from 'redux';
 import { userRegisterReducer } from './reducers/registerReducers';
-import { checkPaidStatusreducer, userListReducer, userLoginReducer,  userUpdatePaidReducer, } from './reducers/userReducers';
+import { checkPaidStatusreducer, userListReducer, userLoginReducer,  userUpdatePaidReducer, userDetailReducer  } from './reducers/userReducers';
 import { genreListReducer, genreCreateReducer, genreUpdateReducer, genreDeleteReducer } from './reducers/genreReducers';
 import { interactionListReducer, interactionDetailsReducer, interactionListByBookReducer, interactionCreateReducer, interactionDeleteReducer, interactionUpdateReducer} from './reducers/interactionReducers'; 
 import { authorListReducer, authorDetailsReducer, authorCreateReducer, authorDeleteReducer, authorUpdateReducer} from './reducers/authorReducers';
@@ -21,7 +21,7 @@ import {
     fetchMeanRatingsReducer,
   } from "./reducers/ratingReducers";
   import { latestUserReadingHistoryReducer, userDetailsReducer, userProfileByIdReducer, userProfileUpdateReducer } from "./reducers/profileReducers";
-  import preferenceReducer from './reducers/preferenceReducers'; 
+  import preferenceReducer, { preferredGenresReducer, randomBooksReducer, setPrefferedreducer } from './reducers/preferenceReducers'; 
 import { CommentandReplyUserReducer, commentReducer, createReplyReducer } from './reducers/commentReducers';
 import favoriteReducer from './reducers/favoriteReducers';
 
@@ -38,6 +38,7 @@ const reducer = combineReducers({
     confirmChangePasswordReducer: ConfirmChangePasswordReducer,    
     userUpdatePaid: userUpdatePaidReducer,
     userDetails: userDetailsReducer,
+    userAccountDetail : userDetailReducer, 
     userProfileUpdate: userProfileUpdateReducer,
     checkPaid: checkPaidStatusreducer,
     userList: userListReducer,
@@ -81,6 +82,9 @@ const reducer = combineReducers({
     authorUpdate: authorUpdateReducer,
 
     preference: preferenceReducer,
+    setPreffered: setPrefferedreducer,
+    preferredGenres : preferredGenresReducer,
+    randomBooks: randomBooksReducer,
 
     comment: commentReducer,
     createReply: createReplyReducer,

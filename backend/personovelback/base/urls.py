@@ -41,9 +41,12 @@ urlpatterns = [
     
    
     path('add_to_reading_history/', views.add_to_reading_history, name='add_to_reading_history'),
-    path('get_preferred_genre/<int:user_id>/', views.get_preferred_genre, name='get_preferred_genre'),  
+    path('get_recommended_books/<int:user_id>/', views.get_recommended_books, name='get_preferred_genre'),  
     path('reading-history/<int:user_id>/', views.latest_user_reading_history, name='latest_user_reading_history'),
-    
+    path('users/<int:user_id>/preferred-genre/', views.set_preferred_genres, name='set_preferred_genre'),
+    path('users/<int:user_id>/get-preferred-genres/', views.get_preferred_genres, name='get_preferred_genres'),
+    path('users/<int:user_id>/random-books/', views.get_random_books, name='get_random_books'),
+
     path('comments/create/', views.create_comment, name='create_comment'),
     path('comments/book/<int:book_id>/', views.get_comments_for_book, name='get_comments_for_book'),
 

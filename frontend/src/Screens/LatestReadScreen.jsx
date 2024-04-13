@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getLatestUserReadingHistory } from "../actions/profileActions";
 import Loader from "../Components/Loader";
 import { FaBookOpen } from "react-icons/fa";
-
+import { Link } from "react-router-dom";
 function LatestReadScreen({ userId }) {
   const dispatch = useDispatch();
 
@@ -17,6 +17,7 @@ function LatestReadScreen({ userId }) {
   const { loading, error, history } = useSelector(
     (state) => state.latestUserReadingHistory
   );
+
 
   return (
     <div
@@ -59,6 +60,7 @@ function LatestReadScreen({ userId }) {
                   })}
                 </p>
               </div>
+              <Link to={`/books/${history.book._id}`}>
               <img
                 src={history.book.image}
                 alt="Book cover"
@@ -68,6 +70,7 @@ function LatestReadScreen({ userId }) {
                   marginLeft: "20px",
                 }}
               />
+              </Link>
             </div>
           ) : (
             <div style={{ fontStyle: "italic", color: "#888" }}>
