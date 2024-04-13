@@ -1,21 +1,27 @@
-import React, { useState } from "react";
+// SearchPage.jsx
+
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { searchBooks } from "../actions/searchActions";
 import Book from "../Components/Book";
-import Loader from "../Components/Loader";
 import Message from "../Components/Message";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 
 const SearchPage = () => {
   const [query, setQuery] = useState("");
   const [showSortOptions, setShowSortOptions] = useState(false);
+  const [loadingTimeout, setLoadingTimeout] = useState(null); // State to manage loading delay
   const dispatch = useDispatch();
   const { loading, books, error } = useSelector((state) => state.search);
   const [searchedBooks, setSearchedBooks] = useState([]);
 
   const handleSearch = () => {
-    dispatch(searchBooks({ query }));
+    clearTimeout(loadingTimeout); // Clear previous loading timeout
     setShowSortOptions(true); // Display sort options after search
+    const timeout = setTimeout(() => {
+      dispatch(searchBooks({ query }));
+    }, 300); // Set a delay of 300 milliseconds before dispatching searchBooks
+    setLoadingTimeout(timeout); // Save the loading timeout
   };
 
   const handleSort = (sortBy) => {
@@ -30,12 +36,10 @@ const SearchPage = () => {
         });
         break;
       case "Latest":
-        sorted = [...searchedBooks].sort((a, b) => new Date(b.date_added) - new Date(a.date_added))
+        sorted = [...searchedBooks].sort((a, b) => new Date(b.date_added) - new Date(a.date_added));
         break;
       case "Popularity":
-        sorted = [...searchedBooks].sort(
-          (a, b) => b.mean_rating - a.mean_rating
-        );
+        sorted = [...searchedBooks].sort((a, b) => b.mean_rating - a.mean_rating);
         break;
       default:
         sorted = [...searchedBooks];
@@ -46,9 +50,14 @@ const SearchPage = () => {
   };
 
   // Update searchedBooks when books change
-  React.useEffect(() => {
+  useEffect(() => {
     setSearchedBooks(books);
   }, [books]);
+
+  const handleInputChange = (e) => {
+    setQuery(e.target.value); // Update query state on input change
+    handleSearch(); // Call handleSearch function on input change
+  };
 
   return (
     <Container>
@@ -80,7 +89,7 @@ const SearchPage = () => {
                 type="text"
                 placeholder="Enter search query"
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={handleInputChange}
                 style={{
                   borderRadius: "50px",
                   border: "3px solid #002960",
@@ -202,9 +211,7 @@ const SearchPage = () => {
           </div>
 
           <Row className="g-3">
-            {loading ? (
-              <Loader />
-            ) : error ? (
+            {loading ? null : error ? (
               <Message variant="danger">{error}</Message>
             ) : searchedBooks.length > 0 ? (
               searchedBooks.map((book) => (
@@ -216,7 +223,7 @@ const SearchPage = () => {
                   xl={3}
                   className="mb-4"
                 >
-                  <Book book={book} />
+                  <Book book={book} searchQuery={query} /> {/* Pass query prop to Book component */}
                 </Col>
               ))
             ) : (

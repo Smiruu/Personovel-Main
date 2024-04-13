@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import { Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Rating from "./Rating";
+import Highlighter from "react-highlight-words";
 
-function Book({ book }) {
+function Book({ book, searchQuery }) {
   const [isHovered, setIsHovered] = useState(false);
+
+  console.log(searchQuery)
 
   const bookContainerStyle = {
     border: "2px solid #6F1D1B",
@@ -57,18 +60,45 @@ function Book({ book }) {
             textTransform: "uppercase",
           }}
         >
-          <strong>{book.title}</strong>
+          <strong>
+            <Highlighter
+              searchWords={[searchQuery]}
+              autoEscape={true}
+              textToHighlight={book.title}
+            />
+          </strong>
         </Card.Title>
 
         <Card.Text as="div" style={textStyle}>
           <div className="">
-            <strong>Author:</strong> {book.author}
+            <strong>Author:</strong>{" "}
+            <Highlighter
+              searchWords={[searchQuery]}
+              autoEscape={true}
+              textToHighlight={book.author}
+            />
           </div>
         </Card.Text>
 
         <Card.Text as="div" style={textStyle}>
           <div className="">
-            <strong>Genre:</strong> {book.genre}
+            <strong>Genre:</strong>{" "}
+            <Highlighter
+              searchWords={[searchQuery]}
+              autoEscape={true}
+              textToHighlight={book.genre}
+            />
+          </div>
+        </Card.Text>
+
+        <Card.Text as="div" style={textStyle}>
+          <div className="">
+            <strong>Language:</strong>{" "}
+            <Highlighter
+              searchWords={[searchQuery]}
+              autoEscape={true}
+              textToHighlight={book.language}
+            />
           </div>
         </Card.Text>
 

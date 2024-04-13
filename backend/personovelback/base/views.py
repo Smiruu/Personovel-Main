@@ -48,9 +48,10 @@ def search(request):
     books_by_title = Book.objects.filter(title__icontains=query)
     books_by_author = Book.objects.filter(author__name__icontains=query)
     books_by_genre = Book.objects.filter(genre__name__icontains=query)
+    books_by_language = Book.objects.filter(language__icontains=query)
     
     # Combine the querysets and remove duplicates
-    books = (books_by_title | books_by_author | books_by_genre).distinct()
+    books = (books_by_title | books_by_author | books_by_genre | books_by_language).distinct()
     
     # Serialize the results
     books_serializer = BookSerializer(books, many=True)
