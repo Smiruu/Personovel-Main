@@ -23,33 +23,34 @@ const OTPScreen = () => {
   const { verifyOtpLoading, verifyOtpError, resendOtpError } = otpState;
   const verifyOtpState = useSelector((state) => state.verifyOtp.success);
 
-  
-
-
   const handleVerifyOTP = async (event) => {
     event.preventDefault();
+    if (otpCode.trim() === "") {
+      alert("Please put your OTP.");
+      return;
+    }
+    
     try {
       const success = await dispatch(verifyOTP(userId, otpId, otpCode));
-      console.log('success:', success);
       if (success) {
-        console.log('navigating to home');
-        navigate("/home");
-        alert("Welcome to Personovel! Please refresh the page to see the changes.");
+        navigate("/genre");
+        alert("Please select your preferred genres.");
       } else {
-        alert("Wrong OTP. Please try again.");
+        alert("Wrong OTP or account has been activated. Please try again.");
       }
     } catch (error) {
       console.error("userId or otpId is not set in userInfo");
     }
   };
   
+
   const handleResendOTP = async () => {
     try {
       if (userId && otpId) {
         dispatch(resendOTP(userId, otpId, otpCode));
-        setResendDisabled(true); // Disable the resend button immediately
-        setCountdown(60); // Set countdown to 60 seconds
-        setCountdownActive(true); // Start the countdown
+        setResendDisabled(true);
+        setCountdown(60);
+        setCountdownActive(true);
       } else {
         console.error("userId or otpId is not set in userInfo");
       }
@@ -148,8 +149,8 @@ const OTPScreen = () => {
             marginLeft: "10px",
           }}
         >
-          Resend
-          {countdownActive && (
+          Resend <br />
+          {countdownActive && !verifyOtpState && (
             <span style={{ position: "relative" }}>{countdown} seconds</span>
           )}
           {resendOtpError && <p>Error: {resendOtpError}</p>}

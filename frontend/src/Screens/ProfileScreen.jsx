@@ -19,6 +19,7 @@ import FavoritesList from "../Components/FavoritesList";
 import LatestReadScreen from "./LatestReadScreen";
 import { FaUser, FaCalendarAlt, FaClock } from "react-icons/fa";
 import LogList from "../Components/LogList";
+import ProfileLogsScreen from "./ProfileLogsScreen";
 
 const ProfileScreen = () => {
   const dispatch = useDispatch();
@@ -342,6 +343,21 @@ const ProfileScreen = () => {
                 >
                   STATISTICS
                 </button>
+
+                <button
+                  style={{
+                    padding: "10px 15px",
+                    border: "1px solid #002960",
+                    backgroundColor:
+                      activeTab === "PROFILE LOGS" ? "#002960" : "white",
+                    color: activeTab === "PROFILE LOGS" ? "white" : "#002960",
+                    cursor: "pointer",
+                    transition: "background-color 0.3s ease",
+                  }}
+                  onClick={() => handleTabClick("PROFILE LOGS")}
+                >
+                  PROFILE LOGS
+                </button>
               </>
             ) : (
               <>
@@ -485,6 +501,14 @@ const ProfileScreen = () => {
               userInfo.token.is_admin && (
                 <div className="statistics-container">
                   <StatisticScreen />
+                </div>
+              )}
+
+            {activeTab === "PROFILE LOGS" &&
+              userInfo.token &&
+              userInfo.token.is_admin && (
+                <div className="profile-logs-container">
+                  <ProfileLogsScreen />
                 </div>
               )}
           </div>

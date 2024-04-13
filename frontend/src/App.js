@@ -24,6 +24,7 @@ import AdminScreen from "./Screens/AdminScreen";
 import VisitProfileScreen from "./Screens/VisitProfileScreen";
 import LoginScreen from "./Screens/LoginScreen";
 import RegistrationScreen from "./Screens/RegistrationScreen";
+import GenreScreen from "./Screens/GenreScreen";
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
               <Route path="/books/:_id" element={<BookScreen />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/otp" element={<OTPScreen />} />
+              <Route path="/genre" element={<GenreScreen />} />
               <Route path="api/user/reset/:uid/:token"element={<ConfirmChangePass />}/>
               <Route path="/reset-password" element={<RequestChangePass />} />
               <Route path="/subscription" element={<PaymentScreen />} />

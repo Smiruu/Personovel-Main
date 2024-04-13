@@ -29,6 +29,12 @@ function Book({ book }) {
     fontFamily: "Blinker",
   };
 
+  const ratingStyle = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  };
+
   return (
     <Card
       className="my-3 rounded"
@@ -66,11 +72,9 @@ function Book({ book }) {
           </div>
         </Card.Text>
 
-        <Card.Text as="div" style={textStyle}>
-          <div className="">
-            <strong>Rating:</strong>{" "}
-            <Rating value={book.mean_rating} color="#f8e825" />
-          </div>
+        <Card.Text as="div" style={ratingStyle}>
+          <strong className="me-1">Rating:</strong>{" "}
+          <Rating value={book.mean_rating} color="#f8e825" />
         </Card.Text>
       </Card.Body>
     </Card>

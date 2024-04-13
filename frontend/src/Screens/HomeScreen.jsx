@@ -67,8 +67,49 @@ function LandingScreen() {
 
   return (
     <Container fluid>
-      <Row className="mt-3">
-        <Col md={5} className="text-center">
+      <Row>
+        <Col md={4} className="order-2 order-md-1 text-start">
+          <div
+            className="mt-5"
+            style={{
+              backgroundColor: "#FCD5CE",
+              borderRadius: "10px",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+              padding: "20px",
+            }}
+          >
+            <h1
+              style={{
+                textAlign: "center",
+                marginTop: "2%",
+                fontWeight: "bold",
+                fontFamily: "Permanent Marker",
+                color: "#6F1D1B",
+                textDecoration: "underline",
+                textTransform: "uppercase",
+              }}
+            >
+              Recommended Novels
+            </h1>
+            <div>
+              <Row
+                className="g-1 d-flex justify-content-center"
+                style={{ marginBottom: "10px" }}
+              >
+                {preferredBooks
+                  .slice(recommendedIndex, recommendedIndex + 4)
+                  .map((book) => (
+                    <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
+                      <Book book={book} />
+                    </Col>
+                  ))}
+              </Row>
+            </div>
+          </div>
+        </Col>
+
+        <Col md={4} className="order-1 order-md-2 text-center">
+          {" "}
           <h1
             style={{
               color: "#002960",
@@ -100,25 +141,74 @@ function LandingScreen() {
           />
         </Col>
 
-        <Col md={7}>
-          <h1
+        <Col md={4} className="order-3 order-md-3 text-end">
+          <div
             className="mt-5"
             style={{
-              textAlign: "center",
-              marginTop: "2%",
-              fontWeight: "bold",
-              fontFamily: "Permanent Marker",
-              color: "#6F1D1B",
-              textDecoration: "underline",
+              backgroundColor: "#FCD5CE",
+              borderRadius: "10px",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+              padding: "20px",
             }}
           >
-            Recommended For You
-          </h1>
-          <div
-          >
+            <h1
+              style={{
+                textAlign: "center",
+                marginTop: "2%",
+                fontWeight: "bold",
+                fontFamily: "Permanent Marker",
+                color: "#6F1D1B",
+                textDecoration: "underline",
+                textTransform: "uppercase",
+              }}
+            >
+              Preferred Genres
+            </h1>
+            <div>
+              <Row
+                className="g-1 d-flex justify-content-center"
+                style={{ marginBottom: "10px" }}
+              >
+                {preferredBooks
+                  .slice(recommendedIndex, recommendedIndex + 4)
+                  .map((book) => (
+                    <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
+                      <Book book={book} />
+                    </Col>
+                  ))}
+              </Row>
+            </div>
+          </div>
+        </Col>
+      </Row>
+
+      <Col>
+        <div
+          className="mt-5"
+          style={{
+            backgroundColor: "#FCD5CE",
+            borderRadius: "10px",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+            padding: "20px",
+          }}
+        >
+          <Link to="/popular" className="link-no-underline">
+            <h1
+              style={{
+                textAlign: "center",
+                fontWeight: "bold",
+                color: "#00669B",
+                fontFamily: "Permanent Marker",
+                textDecoration: "underline",
+              }}
+            >
+              Popular Novels
+            </h1>
+          </Link>
+          <div>
             <Row className="g-1">
-              {preferredBooks
-                .slice(recommendedIndex, recommendedIndex + 4)
+              {popularBooks
+                .slice(popularIndex, popularIndex + 4)
                 .map((book) => (
                   <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
                     <Book book={book} />
@@ -133,75 +223,51 @@ function LandingScreen() {
               marginTop: "1rem",
             }}
           ></div>
-        </Col>
-      </Row>
-
-      <Col>
-        <Link to="/popular" className="link-no-underline">
-          <h1
-            style={{
-              textAlign: "center",
-              fontWeight: "bold",
-              color: "#00669B",
-              fontFamily: "Permanent Marker",
-              textDecoration: "underline",
-              marginTop: "5rem",
-            }}
-          >
-            Popular Novels
-          </h1>
-        </Link>
-        <div>
-          <Row className="g-1">
-            {popularBooks.slice(popularIndex, popularIndex + 4).map((book) => (
-              <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
-                <Book book={book} />
-              </Col>
-            ))}
-          </Row>
         </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "1rem",
-          }}
-        ></div>
       </Col>
 
-      <Col style={{ marginBottom: "10%" }}>
-        <section id="Latest">
-          <Link to="/latest" className="link-no-underline">
-            <h1
+      <Col style={{ marginBottom: "5%" }}>
+        <div
+          className="mt-5"
+          style={{
+            backgroundColor: "#FCD5CE",
+            borderRadius: "10px",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+            padding: "20px",
+          }}
+        >
+          <section id="Latest">
+            <Link to="/latest" className="link-no-underline">
+              <h1
+                style={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  color: "#BC1823",
+                  fontFamily: "Permanent Marker",
+                  textDecoration: "underline",
+                }}
+              >
+                Latest Novels
+              </h1>
+            </Link>
+            <div>
+              <Row className="g-1">
+                {latestBooks.slice(latestIndex, latestIndex + 4).map((book) => (
+                  <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
+                    <Book book={book} />
+                  </Col>
+                ))}
+              </Row>
+            </div>
+            <div
               style={{
-                textAlign: "center",
-                marginTop: "2rem",
-                fontWeight: "bold",
-                color: "#BC1823",
-                fontFamily: "Permanent Marker",
-                textDecoration: "underline",
+                display: "flex",
+                justifyContent: "center",
+                marginTop: "1rem",
               }}
-            >
-              Latest Novels
-            </h1>
-          </Link>
-          <div>
-            <Row className="g-1">
-              {latestBooks.slice(latestIndex, latestIndex + 4).map((book) => (
-                <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
-                  <Book book={book} />
-                </Col>
-              ))}
-            </Row>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              marginTop: "1rem",
-            }}
-          ></div>
-        </section>
+            ></div>
+          </section>
+        </div>
       </Col>
     </Container>
   );

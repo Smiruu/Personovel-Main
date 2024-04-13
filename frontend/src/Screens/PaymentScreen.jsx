@@ -5,6 +5,7 @@ import { updateUserToPaid } from "../actions/userActions";
 import { useSelector } from "react-redux";
 import { Modal, Button, Card } from "react-bootstrap";
 import Loader from "../Components/Loader";
+import { FaCheckCircle } from "react-icons/fa";
 
 function PaymentScreen() {
   const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
@@ -130,19 +131,38 @@ function PaymentScreen() {
     <div
       className="d-flex justify-content-center align-items-center"
       style={{
-        fontFamily: "Arial, sans-serif",
+        fontFamily: "Montserrat, sans-serif",
       }}
     >
-      <Card style={{ maxWidth: "500px", minWidth: "300px" }}>
+      <Card
+        style={{
+          maxWidth: "500px",
+          minWidth: "300px",
+          backgroundImage: 'url("/images/payment.gif")',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
         <Card.Body>
           <div className="text-center mb-4">
             <h1
               className="display-4"
-              style={{ color: "#007bff", fontWeight: "bold" }}
+              style={{
+                color: "#007bff",
+                fontWeight: "bold",
+                fontFamily: "Dancing Script",
+              }}
             >
               Subscribe Now!
             </h1>
-            <h2 className="h4" style={{ color: "#495057", fontWeight: "bold" }}>
+            <h2
+              className="h4"
+              style={{
+                color: "#495057",
+                fontWeight: "bold",
+                fontFamily: "Montserrat",
+              }}
+            >
               3-Month Plan Subscription
             </h2>
             <p
@@ -160,10 +180,7 @@ function PaymentScreen() {
               className="lead"
               style={{ color: "#495057", fontSize: "1.1rem" }}
             >
-              <i
-                className="fas fa-check-circle mr-2"
-                style={{ color: "green" }}
-              ></i>{" "}
+              <FaCheckCircle className="mr-2" style={{ color: "green" }} />{" "}
               Unlimited Access to Novels.
             </p>
           </div>
@@ -179,7 +196,13 @@ function PaymentScreen() {
             >
               $20
             </span>
-            <span style={{ fontSize: "1.2rem", color: "#6c757d" }}>
+            <span
+              style={{
+                fontSize: "1.2rem",
+                color: "#6c757d",
+                fontFamily: "Montserrat",
+              }}
+            >
               per 3 months
             </span>
           </div>
@@ -206,6 +229,7 @@ function PaymentScreen() {
                           fontSize: "0.9rem",
                           fontStyle: "italic",
                           color: "#6c757d",
+                          fontFamily: "Montserrat",
                         }}
                       >
                         Your subscription ends on:{" "}
@@ -270,9 +294,11 @@ function PaymentScreen() {
               fontSize: "0.9rem",
               fontStyle: "italic",
               color: "#6c757d",
+              fontFamily: "Montserrat",
             }}
           >
-            We strictly follow a no refund policy
+            We strictly follow a no refund policy. <br/>
+            Refresh the screen if you face any issues.
           </p>
         </Card.Body>
       </Card>

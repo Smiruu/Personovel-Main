@@ -134,7 +134,6 @@ function Header() {
         )}
 
         <Button
-          className="me-2"
           onClick={handleSearch}
           style={{
             backgroundColor: "#002960",
@@ -148,7 +147,7 @@ function Header() {
         {user && userInfo ? (
           <Link to="/Profile" className="link-no-underline">
             <Nav.Link
-              style={{ color: "#002960", marginLeft: "10px" }}
+              style={{ color: "#002960", marginLeft: "5px" }}
               href="#action2"
             >
               {user.image && (
