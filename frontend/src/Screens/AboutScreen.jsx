@@ -35,14 +35,34 @@ const AboutScreen = () => {
   const [objectives] = useState([
     {
       title: "Objective 1",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      description: "The primary objective of our eBook website is to enhance accessibility to literature by providing a digital platform where users can easily discover, access, and enjoy a wide range of books from various genres and authors.",
     },
     {
       title: "Objective 2",
       description:
-        "Suspendisse potenti. Donec iaculis, velit at luctus fringilla.",
+        "We aim to offer readers the convenience and portability of accessing their favorite books anytime, anywhere, using their electronic devices such as smartphones, tablets, or computer. This allows users to carry an entire library in their pocket and read at their convenience.",
     },
-    // Add more objectives as needed
+    {
+      title: "Objective 3",
+      description:
+        "Our goal is to expand the reading options available to users by offering a diverse collection of eBooks, including popular, and latest books. This ensures that there is something for every reader's taste and interest.",
+    },
+    {
+      title: "Objective 4",
+      description:
+        "We strive to leverage technology to innovate and enhance the reading experience. This includes features such as customizable reading settings, interactive multimedia content, and recommendation algorithms that help users discover new books tailored to their preferences.",
+    },
+    {
+      title: "Objective 5",
+      description:
+        "Our key goal is to ensure user satisfaction and trust by providing a smooth, user-friendly platform. We prioritize user experience and customer support to create a positive and rewarding eBook reading experience.",
+    },
+    {
+      title: "Objective 6",
+      description:
+        "Our eBook website offers a cost-effective alternative to traditional printed books. Our website is subscription base once you subscibred to us you have an access to all the books. This affordability ensures that more people can afford to indulge in their love for reading without breaking the bank.",
+    },
+    
   ]);
 
   const handleMemberClick = (index) => {
