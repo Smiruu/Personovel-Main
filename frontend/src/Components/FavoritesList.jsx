@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchFavorites } from "../actions/favoriteActions";
 import { FaHeart } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const FavoritesList = ({ userId }) => {
   const dispatch = useDispatch();
@@ -42,11 +43,13 @@ const FavoritesList = ({ userId }) => {
                 paddingBottom: "10px",
               }}
             >
+              <Link to={`/books/${book._id}`}>
               <img
                 src={book.image}
                 alt={book.title}
                 style={{ width: "100px", height: "150px", marginRight: "20px" }}
               />
+              </Link>
               <div style={{ display: "inline-block" }}>
                 <strong>{book.title}</strong><br/>
                 <span>{book.author}</span><br/>
