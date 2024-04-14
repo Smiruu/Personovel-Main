@@ -1,9 +1,18 @@
-import React from "react";
-import { Container, Row, Col, Nav } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Container, Row, Col, Nav, Modal, Button } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserDetails } from "../actions/profileActions";
+import { logout } from "../actions/userActions";
 import "./CSS/Footer.css";
 
 function Footer() {
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const dispatch = useDispatch();
+  const userDetails = useSelector((state) => state.userDetails);
+  const { user } = userDetails;
+  const navigate = useNavigate();
+
   const navLinkStyle = {
     color: "#BC1823",
     transition: "color 0.3s",
@@ -15,6 +24,19 @@ function Footer() {
   const redirectToPDF = (pdfPath) => {
     window.open(pdfPath, "_blank");
   };
+
+  const handleShowLogoutModal = () => setShowLogoutModal(true);
+  const handleCloseLogoutModal = () => setShowLogoutModal(false);
+
+  const logoutHandler = () => {
+    dispatch(logout());
+    navigate("/login");
+    setShowLogoutModal(false);
+  };
+
+  useEffect(() => {
+    dispatch(getUserDetails());
+  }, [dispatch]);
 
   return (
     <footer style={{ backgroundColor: "#F9DCC4" }}>
@@ -89,25 +111,37 @@ function Footer() {
             </Nav.Link>
           </Col>
 
-          <Col xs={12} md={1} className="mb-3 mb-md-0 mx-auto">
-            <span className="d-none d-md-inline" style={{ color: "#BC1823" }}>
-              {" "}
-              |{" "}
-            </span>
-          </Col>
-
-          <Col xs={12} md={1} className="mb-md-0 mx-auto">
-            <Link to="/" className="link-no-underline">
-              <Nav.Link
-                style={navLinkStyle}
-                href="#action2"
-                onMouseEnter={(e) => (e.target.style.color = "#002960")}
-                onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
+          {user && (
+            <>
+              <Col xs={12} md={1} className="mb-3 mb-md-0 mx-auto">
+                <span
+                  className="d-none d-md-inline"
+                  style={{ color: "#BC1823" }}
+                >
+                  {" "}
+                  |{" "}
+                </span>
+              </Col>
+              
+              <Col
+                xs={12}
+                md={1}
+                className="mb-md-0 mx-auto"
+                title={user.name}
+                id="username"
               >
-                LOGOUT
-              </Nav.Link>
-            </Link>
-          </Col>
+                <Nav.Link
+                  style={navLinkStyle}
+                  href="#action2"
+                  onClick={handleShowLogoutModal}
+                  onMouseEnter={(e) => (e.target.style.color = "#002960")}
+                  onMouseLeave={(e) => (e.target.style.color = "#BC1823")}
+                >
+                  LOGOUT
+                </Nav.Link>
+              </Col>
+            </>
+          )}
         </Row>
 
         <Row className="text-center">
@@ -120,6 +154,21 @@ function Footer() {
           </Col>
         </Row>
       </Container>
+
+      <Modal show={showLogoutModal} onHide={handleCloseLogoutModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Logout Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to logout?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseLogoutModal}>
+            No
+          </Button>
+          <Button variant="primary" onClick={logoutHandler}>
+            Yes
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </footer>
   );
 }

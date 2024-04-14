@@ -1,44 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { Col, Button, Collapse, Form, Row } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import Book from '../Components/Book'; // Import Book component
 import { listBooks } from '../actions/bookActions'; // Import listBooks action
+import { listGenres } from '../actions/genreActions'; // Import listGenres action
 import { useDispatch, useSelector } from 'react-redux'; // Import useDispatch and useSelector
 import Loader from '../Components/Loader';
 import Message from '../Components/Message';
+import { Link, Navigate } from "react-router-dom";
 
 function BrowseScreen() {
   const dispatch = useDispatch();
-  const bookList = useSelector((state) => state.bookList);
-  const { loading, error, books } = bookList;
+  const { loading: bookLoading, error: bookError, books } = useSelector((state) => state.bookList);
+  const { loading: genreLoading, error: genreError, genres } = useSelector((state) => state.genreList);
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [sortedBooks, setSortedBooks] = useState([]);
-  const [selectedGenre, setSelectedGenre] = useState("All"); // State to store the selected genre
+  const [selectedGenre, setSelectedGenre] = useState("All");
+
+  const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
+  const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
+  const userInfo = userLoginInfo || userRegisterInfo;
 
   const toggleFilter = () => {
     setIsFilterOpen(!isFilterOpen);
   };
 
-  const genres = [ // Include "All" as the first option
-    "Romance",
-    "Mystery/Thriller",
-    "Science Fiction",
-    "Fantasy",
-    "Historical",
-    "Crime",
-    "Horror",
-    "Adventure",
-    "Young Adult",
-    "Dystopian",
-    "Contemporary",
-    "Psychological",
-    "Tragedy",
-    "Comedy",
-  ];
-
   useEffect(() => {
     dispatch(listBooks()); // Fetch books data
+    dispatch(listGenres()); // Fetch genres data
   }, [dispatch]);
 
   useEffect(() => {
@@ -47,7 +36,7 @@ function BrowseScreen() {
 
   const handleSort = (sortBy) => {
     let sorted = [];
-  
+
     switch (sortBy) {
       case "A-Z":
         sorted = [...books].sort((a, b) => {
@@ -67,7 +56,7 @@ function BrowseScreen() {
         sorted = [...books];
         break;
     }
-  
+
     setSortedBooks(sorted);
   };
 
@@ -76,6 +65,10 @@ function BrowseScreen() {
     const filteredBooks = genre === "All" ? [...books] : books.filter(book => book.genre.includes(genre));
     setSortedBooks(filteredBooks);
   };
+
+  if (!userInfo) {
+    return <Navigate to="/login" />;
+  }
 
   return (
     <div className="mb-5">
@@ -155,63 +148,63 @@ function BrowseScreen() {
                   </Form.Label>
 
                   <div style={{ display: "flex", flexWrap: "wrap", marginLeft: "40px" }}>
-    <Button
-      key="All"
-      variant="outline-secondary"
-      className="me-2 mb-2"
-      style={{
-        color: "#6F1D1B",
-        borderColor: "#6F1D1B",
-        borderRadius: "50px",
-        fontFamily: "Blinker",
-        fontWeight: "1",
-        marginRight: "8px",
-        marginBottom: "8px",
-        padding: "10px 20px",
-        transition: "background-color 0.3s, color 0.3s",
-      }}
-      onClick={() => filterBooksByGenre("All")} // Filter by "All" genre
-    >
-      All
-    </Button>
-    {genres.map((genre) => (
-      <Button
-        key={genre}
-        variant="outline-secondary"
-        className="me-2 mb-2"
-        style={{
-          color: "#6F1D1B",
-          borderColor: "#6F1D1B",
-          borderRadius: "50px",
-          fontFamily: "Blinker",
-          fontWeight: "1",
-          marginRight: "8px",
-          marginBottom: "8px",
-          padding: "10px 20px",
-          transition: "background-color 0.3s, color 0.3s",
-        }}
-        onClick={() => filterBooksByGenre(genre)} // Filter by selected genre
-      >
-        {genre.toUpperCase()}
-      </Button>
-    ))}
-  </div>
+                    <Button
+                      key="All"
+                      variant="outline-secondary"
+                      className="me-2 mb-2"
+                      style={{
+                        color: "#6F1D1B",
+                        borderColor: "#6F1D1B",
+                        borderRadius: "50px",
+                        fontFamily: "Blinker",
+                        fontWeight: "1",
+                        marginRight: "8px",
+                        marginBottom: "8px",
+                        padding: "10px 20px",
+                        transition: "background-color 0.3s, color 0.3s",
+                      }}
+                      onClick={() => filterBooksByGenre("All")} // Filter by "All" genre
+                    >
+                      All
+                    </Button>
+                    {genres.map((genre) => (
+                      <Button
+  key={genre.id} // Assuming genre has an id property
+  variant="outline-secondary"
+  className="me-2 mb-2"
+  style={{
+    color: "#6F1D1B",
+    borderColor: "#6F1D1B",
+    borderRadius: "50px",
+    fontFamily: "Blinker",
+    fontWeight: "1",
+    marginRight: "8px",
+    marginBottom: "8px",
+    padding: "10px 20px",
+    transition: "background-color 0.3s, color 0.3s",
+  }}
+  onClick={() => filterBooksByGenre(genre.name)} // Assuming genre has a name property
+>
+  {typeof genre.name === 'string' ? genre.name.toUpperCase() : genre.name}
+</Button>
+                    ))}
+                  </div>
                 </Form.Group>
               </Form>
             </div>
           </Collapse>
 
           {isFilterOpen && (
-              <i
-                className="bi bi-dash-circle-fill"
-                style={{
-                  fontSize: "2rem",
-                  cursor: "pointer",
-                  color: "#6F1D1B",
-                }}
-                onClick={toggleFilter}
-              />
-            )}
+            <i
+              className="bi bi-dash-circle-fill"
+              style={{
+                fontSize: "2rem",
+                cursor: "pointer",
+                color: "#6F1D1B",
+              }}
+              onClick={toggleFilter}
+            />
+          )}
         </div>
       </Col>
 
@@ -303,10 +296,10 @@ function BrowseScreen() {
         </div>
 
         <Row className="g-3">
-          {loading ? (
+          {bookLoading ? (
             <Loader />
-          ) : error ? (
-            <Message variant="danger">{error}</Message>
+          ) : bookError ? (
+            <Message variant="danger">{bookError}</Message>
           ) : (
             sortedBooks.map((book) => (
               <Col key={book._id} sm={12} md={6} lg={4} xl={3} className="mb-4">

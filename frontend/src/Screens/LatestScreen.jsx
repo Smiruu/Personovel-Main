@@ -5,11 +5,15 @@ import { listBooks } from '../actions/bookActions';
 import Loader from '../Components/Loader';
 import Message from '../Components/Message';
 import Book from '../Components/Book';
-
+import { Link, Navigate } from "react-router-dom";
 function LatestScreen() {
   const dispatch = useDispatch();
   const bookList = useSelector((state) => state.bookList);
   const { loading, error, books } = bookList;
+
+  const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
+  const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
+  const userInfo = userLoginInfo || userRegisterInfo;
 
   useEffect(() => {
     dispatch(listBooks());
@@ -17,6 +21,10 @@ function LatestScreen() {
 
   // Sort books by date_added in descending order
   const sortedBooks = [...books].sort((a, b) => new Date(b.date_added) - new Date(a.date_added));
+
+  if (!userInfo) {
+    return <Navigate to="/login" />;
+  }
 
   return (
     <div className="mb-5">

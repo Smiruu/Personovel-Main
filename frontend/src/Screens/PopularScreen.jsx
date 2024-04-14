@@ -1,22 +1,33 @@
-import React, { useState, useEffect} from "react";
+import React, { useEffect } from "react";
 import { Row, Col } from 'react-bootstrap';
-import Book from '../Components/Book'; // Import Book component
-import axios from 'axios';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { listBooks } from '../actions/bookActions';
+import Loader from '../Components/Loader';
+import Message from '../Components/Message';
+import Book from '../Components/Book';
+import { Link, Navigate } from "react-router-dom";
 function PopularScreen() {
-  const [books, setBooks] = useState([]);
+  const dispatch = useDispatch();
+  const bookList = useSelector((state) => state.bookList);
+  const { loading, error, books } = bookList;
+
+  const userLoginInfo = useSelector((state) => state.userLogin.userInfo);
+  const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
+  const userInfo = userLoginInfo || userRegisterInfo;
 
   useEffect(() => {
-    async function fetchBooks() {
-      try {
-        const { data } = await axios.get('http://127.0.0.1:8000/api/books/');
-        setBooks(data);
-      } catch (error) {
-        console.error('Error fetching books:', error);
-      }
-    }
-    fetchBooks();
-  }, []);
+    dispatch(listBooks());
+  }, [dispatch]);
+
+  // Sort books by date_added in descending order
+
+  if (!userInfo) {
+    return <Navigate to="/login" />;
+  }
+  const sortedBooks = [...books].sort(
+    (a, b) => b.mean_rating - a.mean_rating
+  );
+
 
   return (
     <div className="mb-5">
@@ -28,17 +39,23 @@ function PopularScreen() {
           color: "#00669B",
           fontFamily: "Permanent Marker",
           textDecoration: "underline",
-          fontSize: "60px"
+          fontSize: "60px",
         }}
       >
         Popular Novels
       </h1>
-      <Row className="mx-2 g-2">
-        {books.map((book) => (
-          <Col key={book._id} sm={12} md={6} lg={4} xl={3} className="mb-4">
-            <Book book={book} />
-          </Col>
-        ))}
+      <Row>
+        {loading ? (
+          <Loader />
+        ) : error ? (
+          <Message variant="danger">{error}</Message>
+        ) : (
+          sortedBooks.map((books) => (
+            <Col key={books._id} sm={12} md={6} lg={4} xl={3}>
+              <Book book={books} />
+            </Col>
+          ))
+        )}
       </Row>
     </div>
   );

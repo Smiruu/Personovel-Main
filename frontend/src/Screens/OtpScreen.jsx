@@ -1,93 +1,168 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { verifyOTP, resendOTP } from "../actions/otpActions";
-import {
-  VERIFY_OTP_REQUEST,
-  RESEND_OTP_REQUEST,
-} from "../constants/otpConstants";
-import { useParams, useNavigate } from 'react-router-dom';
-
+import { useNavigate } from "react-router-dom";
 
 const OTPScreen = () => {
   const [otpCode, setOtpCode] = useState("");
-  const [resendDisabled, setResendDisabled] = useState(false);
-  const [countdown, setCountdown] = useState(300); // Countdown starts from 300 seconds
-  const [resendClicked, setResendClicked] = useState(false); // State to track if resend button has been clicked
+  const [resendDisabled, setResendDisabled] = useState(
+    localStorage.getItem("resendDisabled") === "true" // Check if button was disabled
+  );
+  const [countdown, setCountdown] = useState(
+    localStorage.getItem("countdown") || 300
+  );
+  const [countdownActive, setCountdownActive] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Retrieving userInfo from Redux store
   const userInfo = useSelector((state) => state.userRegister.userInfo);
   const userId = userInfo ? userInfo.user_id : null;
   const otpId = userInfo ? userInfo.otp_id : null;
 
   const otpState = useSelector((state) => state.otp);
-  const { verifyOtpLoading, verifyOtpError, resendOtpLoading, resendOtpError } =
-    otpState;
+  const { verifyOtpLoading, verifyOtpError, resendOtpError } = otpState;
+  const verifyOtpState = useSelector((state) => state.verifyOtp.success);
 
   const handleVerifyOTP = async (event) => {
     event.preventDefault();
+    if (otpCode.trim() === "") {
+      alert("Please put your OTP.");
+      return;
+    }
+    
     try {
-      await dispatch(verifyOTP(userId, otpId, otpCode));
-      navigate('/home');
+      const success = await dispatch(verifyOTP(userId, otpId, otpCode));
+      if (success) {
+        navigate("/genre");
+        alert("Please select your preferred genres.");
+      } else {
+        alert("Wrong OTP or account has been activated. Please try again.");
+      }
     } catch (error) {
       console.error("userId or otpId is not set in userInfo");
     }
   };
+  
 
-  const handleResendOTP = () => {
-    if (userId && otpId) {
-      dispatch(resendOTP(userId, otpId, otpCode));
-      setResendDisabled(true);
-      setResendClicked(true); // Set resendClicked to true when resend button is clicked
-      setCountdown(300);
-      localStorage.setItem("countdown", countdown); // Store countdown value in local storage
-    } else {
-      console.error("userId or otpId is not set in userInfo");
+  const handleResendOTP = async () => {
+    try {
+      if (userId && otpId) {
+        dispatch(resendOTP(userId, otpId, otpCode));
+        setResendDisabled(true);
+        setCountdown(60);
+        setCountdownActive(true);
+      } else {
+        console.error("userId or otpId is not set in userInfo");
+      }
+    } catch (error) {
+      alert("Wait for the timer to reset");
     }
   };
 
   useEffect(() => {
-    const storedCountdown = localStorage.getItem("countdown");
-    if (storedCountdown) {
-      setCountdown(parseInt(storedCountdown, 10)); // Retrieve countdown value from local storage
-    }
-
-    if (countdown > 0 && resendClicked) {
-      // Start countdown only if resend button has been clicked
+    if (countdownActive) {
       const interval = setInterval(() => {
-        setCountdown((prevCountdown) => prevCountdown - 1);
-        localStorage.setItem("countdown", countdown); // Update countdown value in local storage
+        setCountdown((prevCountdown) => {
+          if (prevCountdown === 0) {
+            setCountdownActive(false);
+            clearInterval(interval);
+            setResendDisabled(false);
+            localStorage.removeItem("resendDisabled"); // Remove button disabled flag
+            return 0;
+          } else {
+            localStorage.setItem("countdown", prevCountdown - 1);
+            return prevCountdown - 1;
+          }
+        });
       }, 1000);
 
       return () => clearInterval(interval);
     }
+  }, [countdownActive]);
 
-    // Update resendDisabled when countdown finishes
-    if (countdown === 0) {
-      setResendDisabled(false);
+  useEffect(() => {
+    // Redirect based on verifyOtpState and userInfo.token.is_active
+    if (userInfo.token.is_active) {
+      navigate("/home");
+    } 
+  }, [userInfo.token.is_active]);
+
+  useEffect(() => {
+    // Check if resend button was clicked before
+    const resendClicked = localStorage.getItem("resendClicked") === "true";
+    if (resendClicked) {
+      setResendDisabled(true);
+      setCountdownActive(true);
     }
-  }, [countdown, resendClicked]);
+  }, []);
 
   return (
-    <div>
-      <h2>OTP Verification</h2>
-      {verifyOtpLoading && <p>Verifying OTP...</p>}
-      {verifyOtpError && <p>Error: {verifyOtpError}</p>}
-      <input
-        type="text"
-        value={otpCode}
-        onChange={(e) => setOtpCode(e.target.value)}
-      />
-      <button onClick={handleVerifyOTP}>Verify OTP</button>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        margin: "20px auto",
+        maxWidth: "800px",
+      }}
+    >
+      <div style={{ textAlign: "center", maxWidth: "400px" }}>
+        <h2 style={{ fontWeight: "bold", color: "#6F1D1B" }}>
+          OTP Verification (Check Email)
+        </h2>
+        {verifyOtpLoading && <p>Verifying OTP...</p>}
+        {verifyOtpError && <p>Error: {verifyOtpError}</p>}
+        <input
+          type="text"
+          value={otpCode}
+          placeholder="Enter OTP code"
+          onChange={(e) => setOtpCode(e.target.value)}
+          style={{
+            padding: "10px",
+            margin: "10px 0",
+            width: "100%",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+          }}
+        />
+        <button
+          onClick={handleVerifyOTP}
+          style={{
+            padding: "10px 20px",
+            backgroundColor: "#6F1D1B",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Verify OTP
+        </button>
+      </div>
 
-      <h2>Resend OTP</h2>
-      <p>Resend OTP in: {countdown} seconds</p>
-      {resendOtpLoading && <p>Resending OTP...</p>}
-      {resendOtpError && <p>Error: {resendOtpError}</p>}
-      <button onClick={handleResendOTP} disabled={resendDisabled}>
-        Resend OTP
-      </button>
+      <div
+        style={{ textAlign: "center", maxWidth: "400px", marginTop: "20px" }}
+      >
+        <button
+          onClick={handleResendOTP}
+          disabled={resendDisabled}
+          style={{
+            padding: "10px 20px",
+            backgroundColor: resendDisabled ? "#ccc" : "#6F1D1B",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+            marginTop: "32px",
+            marginLeft: "10px",
+          }}
+        >
+          Resend <br />
+          {countdownActive && !verifyOtpState && (
+            <span style={{ position: "relative" }}>{countdown} seconds</span>
+          )}
+          {resendOtpError && <p>Error: {resendOtpError}</p>}
+        </button>
+      </div>
     </div>
   );
 };

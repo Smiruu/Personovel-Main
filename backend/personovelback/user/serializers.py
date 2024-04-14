@@ -5,7 +5,7 @@ from xml.dom import ValidationErr
 from django.utils.encoding import smart_str, force_bytes, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from .models import UserProfile
+from .models import *
 
 class UserRegistrationSerializers(serializers.ModelSerializer):
     # We are writing this because we need to confirm password field in our Registration Request
@@ -35,9 +35,35 @@ class UserLoginSerializer(serializers.ModelSerializer):
         fields = ['email', 'password']
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    user_email = serializers.EmailField(source='user.email', read_only=True)
+    user_created_at = serializers.DateTimeField(source='user.created_at', read_only=True)
+
+    class Meta:
+        model = Profile
+        fields = ['id', 'user', 'user_email', 'image', 'cover_photo', 'name', 'bio', 'user_created_at']
+        read_only_fields = ['user', 'user_email']
+        extra_kwargs = {
+            'name': {'required': False}  # Setting name field as not required
+        }
+
+    def update(self, instance, validated_data):
+        instance.image = validated_data.get('image', instance.image)
+        instance.cover_photo = validated_data.get('cover_photo', instance.cover_photo)
+        instance.name = validated_data.get('name', instance.name)
+        
+        # Only update bio if it is provided in the request data and not None
+        if 'bio' in validated_data and validated_data['bio'] is not None:
+            instance.bio = validated_data['bio']
+        
+        instance.save()
+        return instance
+
+class UserWithProfileSerializer(serializers.ModelSerializer):
+    profile = UserProfileSerializer()
+
     class Meta:
         model = User
-        fields = ['is_paid', 'name', 'created_at']
+        fields = ['id', 'email', 'name', 'is_active', 'is_admin', 'is_paid', 'paid_at', 'created_at', 'updated_at', 'profile']
 
 class UserChangePasswordSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=255, style={'input_type' : 'password'}, write_only=True)
@@ -105,19 +131,7 @@ class UserPasswordResetSerializer(serializers.Serializer):
 
 
 
-# In your Django views.py
-
-from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
-from .models import UserProfile
-from .serializers import UserProfileSerializer
-
-@login_required
-def update_user_profile(request):
-    user_profile = UserProfile.objects.get(user=request.user)
-    serializer = UserProfileSerializer(user_profile, data=request.data, partial=True)
-    if serializer.is_valid():
-        serializer.save()
-        return JsonResponse(serializer.data)
-    return JsonResponse(serializer.errors, status=400)
-
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['name', 'is_paid', 'paid_at']

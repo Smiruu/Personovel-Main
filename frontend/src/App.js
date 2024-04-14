@@ -9,19 +9,22 @@ import LatestScreen from "./Screens/LatestScreen";
 import AboutScreen from "./Screens/AboutScreen";
 import ContactScreen from "./Screens/ContactScreen";
 import LandingScreen from "./Screens/LandingScreen";
-import Start from "./Components/Start";
 import SampleScreen from "./Screens/SampleScreen";
 import BrowseScreen from "./Screens/BrowseScreen";
-import Profile from "./Screens/Profile";
 import Chapter from "./Screens/ChapterDropdown";
-import Login from "./Screens/Login";
 import ChapterDetailScreen from "./Screens/ChapterDetailScreen";
 import BookScreen from "./Screens/BookScreen";
 import SearchPage from "./Screens/SearchScreen";
 import OTPScreen from "./Screens/OtpScreen";
 import ConfirmChangePass from "./Screens/ConfirmChangePassScreen";
 import RequestChangePass from "./Screens/ReqChangePassScreen";
-
+import PaymentScreen from "./Screens/PaymentScreen";
+import ProfileScreen from "./Screens/ProfileScreen";
+import AdminScreen from "./Screens/AdminScreen";
+import VisitProfileScreen from "./Screens/VisitProfileScreen";
+import LoginScreen from "./Screens/LoginScreen";
+import RegistrationScreen from "./Screens/RegistrationScreen";
+import GenreScreen from "./Screens/GenreScreen";
 
 function App() {
   return (
@@ -33,7 +36,6 @@ function App() {
             <Routes>
               <Route path="/" element={<LandingScreen />} exact />
               <Route path="/home" element={<HomeScreen />} exact />
-              <Route path="/start" element={<Start />} />
               <Route path="/chapter" element={<Chapter />} />
               <Route path="/popular" element={<PopularScreen />} />
               <Route path="/latest" element={<LatestScreen />} />
@@ -41,15 +43,20 @@ function App() {
               <Route path="/contact" element={<ContactScreen />} />
               <Route path="/landing" element={<LandingScreen />} />
               <Route path="/sample" element={<SampleScreen />} />
-              <Route path="/Profile/:UserId" element={<Profile />} />
               <Route path="/browse" element={<BrowseScreen />} />
-              <Route path="/login" element={<Login />} />
               <Route path="/chapters/:id" element={<ChapterDetailScreen />} />
               <Route path="/books/:_id" element={<BookScreen />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/otp" element={<OTPScreen />} />
-              <Route path="api/user/reset/:uid/:token" element={<ConfirmChangePass />} />
+              <Route path="/genre" element={<GenreScreen />} />
+              <Route path="api/user/reset/:uid/:token"element={<ConfirmChangePass />}/>
               <Route path="/reset-password" element={<RequestChangePass />} />
+              <Route path="/subscription" element={<PaymentScreen />} />
+              <Route path="/profile" element={<ProfileScreen />} />
+              <Route path="/admin" element={<AdminScreen />} />
+              <Route path="/profile/:id" element={<VisitProfileScreen />} />
+              <Route path="/login" element={<LoginScreen />} />
+              <Route path="/register" element={<RegistrationScreen />} />
             </Routes>
           </Container>
         </main>

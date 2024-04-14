@@ -1,34 +1,99 @@
 import { configureStore } from '@reduxjs/toolkit';
 import {thunk} from 'redux-thunk';
 import { combineReducers } from 'redux';
-import { bookListReducer } from './reducers/bookReducers';
 import { userRegisterReducer } from './reducers/registerReducers';
-import { userLoginReducer } from './reducers/userReducers';
-import { genreListReducer } from './reducers/genreReducers';
-import { interactionListReducer, interactionDetailsReducer, interactionListByBookReducer} from './reducers/interactionReducers'; 
-import { authorListReducer } from './reducers/authorReducers';
-import { feedbackReducer } from './reducers/feedbackReducers';
-import { bookDetailsReducer } from './reducers/bookReducers';
+import { checkPaidStatusreducer, userListReducer, userLoginReducer,  userUpdatePaidReducer, userDetailReducer  } from './reducers/userReducers';
+import { genreListReducer, genreCreateReducer, genreUpdateReducer, genreDeleteReducer } from './reducers/genreReducers';
+import { interactionListReducer, interactionDetailsReducer, interactionListByBookReducer, interactionCreateReducer, interactionDeleteReducer, interactionUpdateReducer} from './reducers/interactionReducers'; 
+import { authorListReducer, authorDetailsReducer, authorCreateReducer, authorDeleteReducer, authorUpdateReducer} from './reducers/authorReducers';
+import { feedbackReducer, feedbackListReducer, feedbackDeleteReducer } from './reducers/feedbackReducers';
+import { bookListReducer, bookCreateReducer, bookDetailsReducer, bookDeleteReducer, bookUpdateReducer } from './reducers/bookReducers';
+
 import searchReducer from './reducers/searchReducers';
-import { otpReducer } from './reducers/otpReducers';
-import {SendChangePasswordReducer} from './reducers/resetpasswordReducers';
-import {ConfirmChangePasswordReducer} from './reducers/resetpasswordReducers'
+import { otpReducer, verifyOtpReducer } from './reducers/otpReducers';
+import {ConfirmChangePasswordReducer, SendChangePasswordReducer} from './reducers/resetpasswordReducers'
+import {
+    createRatingReducer,
+    deleteRatingReducer,
+    fetchRatingReducer,
+    getRatingIdReducer,
+    updateRatingReducer,
+    fetchMeanRatingsReducer,
+  } from "./reducers/ratingReducers";
+  import { latestUserReadingHistoryReducer, userDetailsReducer, userProfileByIdReducer, userProfileUpdateReducer } from "./reducers/profileReducers";
+  import preferenceReducer, { preferredGenresReducer, randomBooksReducer, setPrefferedreducer } from './reducers/preferenceReducers'; 
+import { CommentandReplyUserReducer, commentReducer, createReplyReducer } from './reducers/commentReducers';
+import favoriteReducer from './reducers/favoriteReducers';
+
+import { logListReducer, logCreateReducer } from './reducers/logReducers';
+
 
 const reducer = combineReducers({
-    bookList: bookListReducer,
     userRegister: userRegisterReducer,
     userLogin: userLoginReducer,
+    search: searchReducer,
+    otp: otpReducer, 
+    verifyOtp: verifyOtpReducer,
+    changePassword: SendChangePasswordReducer,
+    confirmChangePasswordReducer: ConfirmChangePasswordReducer,    
+    userUpdatePaid: userUpdatePaidReducer,
+    userDetails: userDetailsReducer,
+    userAccountDetail : userDetailReducer, 
+    userProfileUpdate: userProfileUpdateReducer,
+    checkPaid: checkPaidStatusreducer,
+    userList: userListReducer,
+    userProfileById: userProfileByIdReducer,
+    latestUserReadingHistory: latestUserReadingHistoryReducer,
+
+    fetchRating: fetchRatingReducer,
+    createRating: createRatingReducer,
+    deleteRating: deleteRatingReducer,
+    updateRating: updateRatingReducer,
+    getRatingId: getRatingIdReducer,
+    fetchMeanRatings: fetchMeanRatingsReducer,
+
+    bookList: bookListReducer,
+    bookDetails: bookDetailsReducer,
+    bookCreate: bookCreateReducer,
+    bookUpdate: bookUpdateReducer,
+    bookDelete: bookDeleteReducer,
+
     genreList: genreListReducer,
+    genreCreate: genreCreateReducer,
+    genreUpdate: genreUpdateReducer,
+    genreDelete: genreDeleteReducer,
+
     interactionListByBook: interactionListByBookReducer,
     interactionList: interactionListReducer,
     interactionDetails: interactionDetailsReducer, 
-    authorList: authorListReducer,
+    interactionCreate : interactionCreateReducer,
+    interactionDelete: interactionDeleteReducer,
+    interactionUpdate: interactionUpdateReducer,
+    
+
     feedback: feedbackReducer,
-    bookDetails: bookDetailsReducer,
-    search: searchReducer,
-    otp: otpReducer, 
-    changePassword: SendChangePasswordReducer,
-    confirmChangePasswordReducer: ConfirmChangePasswordReducer,
+    feedbackList: feedbackListReducer,
+    feedbackDelete: feedbackDeleteReducer,
+
+    authorList: authorListReducer,
+    authorDetails: authorDetailsReducer,
+    authorCreate: authorCreateReducer,
+    authorDelete: authorDeleteReducer,
+    authorUpdate: authorUpdateReducer,
+
+    preference: preferenceReducer,
+    setPreffered: setPrefferedreducer,
+    preferredGenres : preferredGenresReducer,
+    randomBooks: randomBooksReducer,
+
+    comment: commentReducer,
+    createReply: createReplyReducer,
+    CommentandReplyUser: CommentandReplyUserReducer,
+
+    favorite: favoriteReducer,
+
+    logList : logListReducer,
+    logCreate: logCreateReducer,
 
 });
 
