@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 import {
   AUTHOR_LIST_REQUEST,
   AUTHOR_LIST_SUCCESS,
@@ -18,14 +18,14 @@ import {
 } from "../constants/authorConstants";
 
 const instance = axios.create({
-  baseURL: 'http://127.0.0.1:8000/',
+  baseURL: "http://127.0.0.1:8000/",
 });
 
 export const listAuthors = () => async (dispatch) => {
   try {
     dispatch({ type: AUTHOR_LIST_REQUEST });
 
-    const { data } = await instance.get('api/authors/');
+    const { data } = await instance.get("api/authors/");
     dispatch({
       type: AUTHOR_LIST_SUCCESS,
       payload: data,
@@ -45,18 +45,20 @@ export const createAuthor = (authorData) => async (dispatch) => {
   try {
     dispatch({ type: AUTHOR_CREATE_REQUEST });
 
-    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     const token = userInfo ? userInfo.token.access : null;
 
-    const config = token ? {
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
-    } : {};
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
 
-    const { data } = await instance.post('api/authors/', authorData, config);
+    const { data } = await instance.post("api/authors/", authorData, config);
 
     dispatch({
       type: AUTHOR_CREATE_SUCCESS,
@@ -81,16 +83,18 @@ export const updateAuthor = (id, updatedAuthorData) => async (dispatch) => {
   try {
     dispatch({ type: AUTHOR_UPDATE_REQUEST });
 
-    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     const token = userInfo ? userInfo.token.access : null;
 
-    const config = token ? {
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
-    } : {};
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
 
     const { data } = await instance.put(
       `api/authors/${id}/update`,
@@ -121,16 +125,18 @@ export const deleteAuthor = (id) => async (dispatch) => {
   try {
     dispatch({ type: AUTHOR_DELETE_REQUEST });
 
-    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-        const token = userInfo ? userInfo.token.access : null;
-    
-        const config = token ? {
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.token.access : null;
+
+    const config = token
+      ? {
           headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        } : {};
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
 
     await instance.delete(`api/authors/${id}/delete`, config);
 

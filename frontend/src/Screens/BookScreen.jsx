@@ -1,11 +1,11 @@
-import React from 'react'
-import BookDetail from '../Components/BookDetail'
+import React from "react";
+import BookDetail from "../Components/BookDetail";
 function BookScreen() {
   return (
     <div>
-        <BookDetail />
+      <BookDetail />
     </div>
-  )
+  );
 }
 
-export default BookScreen
+export default BookScreen;

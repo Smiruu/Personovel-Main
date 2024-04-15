@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import { Row, Col } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
-import { listBooks } from '../actions/bookActions';
-import Loader from '../Components/Loader';
-import Message from '../Components/Message';
-import Book from '../Components/Book';
+import { Row, Col } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { listBooks } from "../actions/bookActions";
+import Loader from "../Components/Loader";
+import Message from "../Components/Message";
+import Book from "../Components/Book";
 import { Link, Navigate } from "react-router-dom";
 function PopularScreen() {
   const dispatch = useDispatch();
@@ -19,15 +19,10 @@ function PopularScreen() {
     dispatch(listBooks());
   }, [dispatch]);
 
-  // Sort books by date_added in descending order
-
   if (!userInfo) {
     return <Navigate to="/login" />;
   }
-  const sortedBooks = [...books].sort(
-    (a, b) => b.mean_rating - a.mean_rating
-  );
-
+  const sortedBooks = [...books].sort((a, b) => b.mean_rating - a.mean_rating);
 
   return (
     <div className="mb-5">

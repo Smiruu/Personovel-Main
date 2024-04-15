@@ -42,7 +42,7 @@ function LandingScreen() {
 
   useEffect(() => {
     if (!userInfo) {
-      return; // Exit early if userInfo is not available
+      return;
     }
 
     dispatch(getUserDetails());

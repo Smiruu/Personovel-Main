@@ -1,9 +1,9 @@
-import * as types from '../constants/preferenceConstants';
-import * as actionTypes from '../constants/preferenceConstants';
+import * as types from "../constants/preferenceConstants";
+import * as actionTypes from "../constants/preferenceConstants";
 const initialState = {
   loading: false,
   error: null,
-  preferredGenre: '',
+  preferredGenre: "",
   booksInRecommendedBooks: [],
   genres: [],
   genre: null,
@@ -67,7 +67,7 @@ export const preferredGenresReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: true,
-        error: '',
+        error: "",
       };
     case actionTypes.GET_PREFERRED_GENRES_SUCCESS:
       return {
@@ -88,26 +88,26 @@ export const preferredGenresReducer = (state = initialState, action) => {
 
 export const randomBooksReducer = (state = initialState, action) => {
   switch (action.type) {
-      case actionTypes.GET_RANDOM_BOOKS_REQUEST:
-          return {
-              ...state,
-              loading: true,
-              error: null
-          };
-      case actionTypes.GET_RANDOM_BOOKS_SUCCESS:
-          return {
-              ...state,
-              loading: false,
-              genre: action.payload.genre,
-              genre_books: action.payload.genre_books
-          };
-      case actionTypes.GET_RANDOM_BOOKS_FAILURE:
-          return {
-              ...state,
-              loading: false,
-              error: action.payload
-          };
-      default:
-          return state;
+    case actionTypes.GET_RANDOM_BOOKS_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    case actionTypes.GET_RANDOM_BOOKS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        genre: action.payload.genre,
+        genre_books: action.payload.genre_books,
+      };
+    case actionTypes.GET_RANDOM_BOOKS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+    default:
+      return state;
   }
 };

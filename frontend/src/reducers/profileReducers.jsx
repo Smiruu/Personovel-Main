@@ -1,5 +1,3 @@
-// profileReducers.js
-
 import {
   USER_DETAILS_REQUEST,
   USER_DETAILS_SUCCESS,
@@ -13,8 +11,8 @@ import {
   GET_USER_PROFILE_BY_ID_FAIL,
   LATEST_USER_READING_HISTORY_REQUEST,
   LATEST_USER_READING_HISTORY_SUCCESS,
-  LATEST_USER_READING_HISTORY_FAIL
-} from '../constants/profileConstants';
+  LATEST_USER_READING_HISTORY_FAIL,
+} from "../constants/profileConstants";
 
 export const userDetailsReducer = (state = { user: {} }, action) => {
   switch (action.type) {
@@ -57,7 +55,10 @@ export const userProfileByIdReducer = (state = { profile: {} }, action) => {
   }
 };
 
-export const latestUserReadingHistoryReducer = (state = { history: [] }, action) => {
+export const latestUserReadingHistoryReducer = (
+  state = { history: [] },
+  action
+) => {
   switch (action.type) {
     case LATEST_USER_READING_HISTORY_REQUEST:
       return { loading: true, history: [] };

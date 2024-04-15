@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const OTPScreen = () => {
   const [otpCode, setOtpCode] = useState("");
   const [resendDisabled, setResendDisabled] = useState(
-    localStorage.getItem("resendDisabled") === "true" // Check if button was disabled
+    localStorage.getItem("resendDisabled") === "true"
   );
   const [countdown, setCountdown] = useState(
     localStorage.getItem("countdown") || 300
@@ -29,7 +29,7 @@ const OTPScreen = () => {
       alert("Please put your OTP.");
       return;
     }
-    
+
     try {
       const success = await dispatch(verifyOTP(userId, otpId, otpCode));
       if (success) {
@@ -42,7 +42,6 @@ const OTPScreen = () => {
       console.error("userId or otpId is not set in userInfo");
     }
   };
-  
 
   const handleResendOTP = async () => {
     try {
@@ -67,7 +66,7 @@ const OTPScreen = () => {
             setCountdownActive(false);
             clearInterval(interval);
             setResendDisabled(false);
-            localStorage.removeItem("resendDisabled"); // Remove button disabled flag
+            localStorage.removeItem("resendDisabled");
             return 0;
           } else {
             localStorage.setItem("countdown", prevCountdown - 1);
@@ -81,14 +80,12 @@ const OTPScreen = () => {
   }, [countdownActive]);
 
   useEffect(() => {
-    // Redirect based on verifyOtpState and userInfo.token.is_active
     if (userInfo.token.is_active) {
       navigate("/home");
-    } 
+    }
   }, [userInfo.token.is_active]);
 
   useEffect(() => {
-    // Check if resend button was clicked before
     const resendClicked = localStorage.getItem("resendClicked") === "true";
     if (resendClicked) {
       setResendDisabled(true);

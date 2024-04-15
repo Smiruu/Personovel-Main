@@ -4,8 +4,8 @@ import {
   VERIFY_OTP_FAILURE,
   RESEND_OTP_REQUEST,
   RESEND_OTP_SUCCESS,
-  RESEND_OTP_FAILURE
-} from '../constants/otpConstants';
+  RESEND_OTP_FAILURE,
+} from "../constants/otpConstants";
 
 const initialState = {
   verifyOtpLoading: false,
@@ -17,14 +17,16 @@ const initialState = {
 
 export const otpReducer = (state = initialState, action) => {
   switch (action.type) {
-
-
     case RESEND_OTP_REQUEST:
       return { ...state, resendOtpLoading: true, resendOtpError: null };
     case RESEND_OTP_SUCCESS:
       return { ...state, resendOtpLoading: false };
     case RESEND_OTP_FAILURE:
-      return { ...state, resendOtpLoading: false, resendOtpError: action.payload };
+      return {
+        ...state,
+        resendOtpLoading: false,
+        resendOtpError: action.payload,
+      };
 
     default:
       return state;
@@ -32,14 +34,14 @@ export const otpReducer = (state = initialState, action) => {
 };
 
 export const verifyOtpReducer = (state = {}, action) => {
-  switch(action.type){
-      case VERIFY_OTP_REQUEST:
-          return {loading: true}
-      case VERIFY_OTP_SUCCESS:
-          return {loading: false, success: true}
-      case VERIFY_OTP_FAILURE:
-          return {loading: false, error: action.payload}
-      default:
-          return state
+  switch (action.type) {
+    case VERIFY_OTP_REQUEST:
+      return { loading: true };
+    case VERIFY_OTP_SUCCESS:
+      return { loading: false, success: true };
+    case VERIFY_OTP_FAILURE:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
   }
-}
+};

@@ -11,7 +11,12 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { FaUsers, FaCheckCircle, FaTimesCircle, FaChartBar } from "react-icons/fa";
+import {
+  FaUsers,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaChartBar,
+} from "react-icons/fa";
 
 function StatisticScreen() {
   const dispatch = useDispatch();
@@ -30,7 +35,6 @@ function StatisticScreen() {
 
     const monthCounts = {};
 
-    // Initialize monthCounts with zero counts for all months
     const currentYear = new Date().getFullYear();
     const months = Array.from({ length: 12 }, (_, i) => {
       const month = new Date(currentYear, i);
@@ -43,7 +47,6 @@ function StatisticScreen() {
       monthCounts[month] = 0;
     });
 
-    // Update monthCounts with counts from users
     users.forEach((user) => {
       if (user.paid_at) {
         const paidAt = new Date(user.paid_at);
@@ -54,7 +57,6 @@ function StatisticScreen() {
       }
     });
 
-    // Convert monthCounts to statistics array
     const statistics = Object.entries(monthCounts).map(
       ([monthYear, count]) => ({ monthYear, paidUsers: count })
     );
@@ -66,10 +68,8 @@ function StatisticScreen() {
 
   const totalUsers = users ? users.length : 0;
 
-  // Calculate paid users count
   const paidUsers = users ? users.filter((user) => user.paid_at).length : 0;
 
-  // Calculate unpaid users count
   const unpaidUsers = totalUsers - paidUsers;
 
   return (
@@ -114,7 +114,7 @@ function StatisticScreen() {
       <ResponsiveContainer width="100%" height={400}>
         <ScatterChart
           data={statistics}
-          margin={{ top: 20, right: 30, left: 20, bottom: 20 }} // Adjust margins as needed
+          margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="monthYear" />

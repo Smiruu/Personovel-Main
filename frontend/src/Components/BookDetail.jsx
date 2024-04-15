@@ -317,65 +317,69 @@ function BookDetail() {
                   : "Synopsis not available"}
               </p>
             </h5>
-            {userInfo && (
-              <h5
-                style={{
-                  textAlign: "left",
-                  marginLeft: "3%",
-                  fontSize: "25px",
-                  color: "#6F1D1B",
-                  marginBottom: "5px",
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <strong style={{ fontFamily: "Blinker" }}>
-                    YOUR RATING:{" "}
-                  </strong>
-                  <span
-                    style={{
-                      fontStyle: "italic",
-                      fontFamily: "Blinker",
-                      marginLeft: "5px",
-                    }}
-                  >
-                    <Rating value={userRating} color="#f8e825" />
-                  </span>
-                </div>
-              </h5>
-            )}
+            {userInfo &&
+              userInfo.token &&
+              (userInfo.token.is_paid || userInfo.token.is_admin) && (
+                <h5
+                  style={{
+                    textAlign: "left",
+                    marginLeft: "3%",
+                    fontSize: "25px",
+                    color: "#6F1D1B",
+                    marginBottom: "5px",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <strong style={{ fontFamily: "Blinker" }}>
+                      YOUR RATING:{" "}
+                    </strong>
+                    <span
+                      style={{
+                        fontStyle: "italic",
+                        fontFamily: "Blinker",
+                        marginLeft: "5px",
+                      }}
+                    >
+                      <Rating value={userRating} color="#f8e825" />
+                    </span>
+                  </div>
+                </h5>
+              )}
             <Row className="justify-content-center mb-3">
               <Col>
-                {userInfo && (
-                  <Button
-                    className="btn-block customButton"
-                    type="button"
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      width: "100%",
-                      fontWeight: "1",
-                      fontSize: "30px",
-                      color: "white",
-                      fontFamily: "Protest Guerrilla",
-                      borderRadius: "50px",
-                      backgroundColor: "#6F1D1B",
-                      marginTop: "20px",
-                      marginRight: "10px",
-                    }}
-                    onClick={handleToggleFavorite}
-                    disabled={!userId}
-                  >
-                    <i
-                      className={`bi bi-suit-heart${
-                        isFavorite ? " text-danger" : ""
-                      }`}
-                      style={{ fontSize: "30px", marginRight: "10px" }}
+                {userInfo &&
+                  userInfo.token &&
+                  (userInfo.token.is_paid || userInfo.token.is_admin) && (
+                    <Button
+                      className="btn-block customButton"
+                      type="button"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%",
+                        fontWeight: "1",
+                        fontSize: "30px",
+                        color: "white",
+                        fontFamily: "Protest Guerrilla",
+                        borderRadius: "50px",
+                        backgroundColor: "#6F1D1B",
+                        marginTop: "20px",
+                        marginRight: "10px",
+                      }}
+                      onClick={handleToggleFavorite}
+                      disabled={!userId}
                     >
-                      ADD TO FAVORITE
-                    </i>
-                  </Button>
-                )}
+                      <i
+                        className={`bi bi-suit-heart${
+                          isFavorite ? " text-danger" : ""
+                        }`}
+                        style={{ fontSize: "30px", marginRight: "10px" }}
+                      >
+                        ADD TO FAVORITE
+                      </i>
+                    </Button>
+                  )}
                 <Button
                   className="btn-block customButton"
                   type="button"

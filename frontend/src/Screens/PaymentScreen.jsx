@@ -64,19 +64,19 @@ function PaymentScreen() {
       purchase_units: [
         {
           amount: {
-            value: "20.00", // Total amount
+            value: "20.00",
             currency_code: "USD",
             breakdown: {
               item_total: { currency_code: "USD", value: "20.00" },
             },
           },
-          description: "Personovel 3 months subscription plan", // Subscription description
+          description: "Personovel 3 months subscription plan",
           items: [
             {
               name: "Subscription",
               unit_amount: {
                 currency_code: "USD",
-                value: "16.00", // Subscription amount
+                value: "16.00",
               },
               quantity: "1",
             },
@@ -84,7 +84,7 @@ function PaymentScreen() {
               name: "Royalty",
               unit_amount: {
                 currency_code: "USD",
-                value: "4.00", // Royalty amount
+                value: "4.00",
               },
               quantity: "1",
             },

@@ -15,14 +15,15 @@ const ChapterByBook = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Get userInfo from Redux store
   const userInfo = useSelector((state) => state.userLogin.userInfo);
 
-  // Redirect to /login or /subscription based on user's authentication status
   useEffect(() => {
     if (!userInfo) {
       navigate("/login");
-    } else if (!userInfo.token || (!userInfo.token.is_paid && !userInfo.token.is_admin)) {
+    } else if (
+      !userInfo.token ||
+      (!userInfo.token.is_paid && !userInfo.token.is_admin)
+    ) {
       navigate("/subscription");
     } else {
       dispatch(listInteractionsByBook(id));
@@ -35,24 +36,24 @@ const ChapterByBook = () => {
   const { loading, error, interactions } = interactionListByBook;
 
   const [currentChapter, setCurrentChapter] = useState(1);
-  const [numPages, setNumPages] = useState(0); // Initialize numPages with 0
+  const [numPages, setNumPages] = useState(0);
 
   const handleNextChapter = () => {
     setCurrentChapter(currentChapter + 1);
-    setNumPages(0); // Reset numPages when changing chapters
-    window.scrollTo(0, 0); // Scroll to the top of the page
+    setNumPages(0);
+    window.scrollTo(0, 0);
   };
 
   const handlePreviousChapter = () => {
     setCurrentChapter(currentChapter - 1);
-    setNumPages(0); // Reset numPages when changing chapters
-    window.scrollTo(0, 0); // Scroll to the top of the page
+    setNumPages(0);
+    window.scrollTo(0, 0);
   };
 
   const handleChapterChange = (chapterNumber) => {
     setCurrentChapter(chapterNumber);
-    setNumPages(0); // Reset numPages when changing chapters
-    window.scrollTo(0, 0); // Scroll to the top of the page
+    setNumPages(0);
+    window.scrollTo(0, 0);
   };
 
   const bookDetails = useSelector((state) => state.bookDetails);
@@ -173,7 +174,7 @@ const ChapterByBook = () => {
                         marginBottom: "15px",
                         color: "#333",
                         textAlign: "center",
-                        fontWeight: "bold"
+                        fontWeight: "bold",
                       }}
                     >
                       CHAPTER {interaction.chapter_number}
@@ -219,7 +220,7 @@ const ChapterByBook = () => {
                           pageNumber={index + 1}
                           renderTextLayer={false}
                           renderAnnotationLayer={false}
-                          width={1300} // Set a fixed width for the pages
+                          width={1300}
                         />
                       ))}
                     </Document>

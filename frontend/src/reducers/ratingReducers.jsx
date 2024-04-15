@@ -1,4 +1,4 @@
-import * as types from '../constants/ratingConstants';
+import * as types from "../constants/ratingConstants";
 
 const initialState = {
   rating: null,
@@ -9,10 +9,9 @@ const initialState = {
     meanRating: null,
     numReviews: null,
   },
-  userRating:null,
+  userRating: null,
 };
 
-// Reducer for fetching ratings
 export const fetchMeanRatingsReducer = (state = initialState, action) => {
   switch (action.type) {
     case types.FETCH_RATINGS_REQUEST:
@@ -27,8 +26,8 @@ export const fetchMeanRatingsReducer = (state = initialState, action) => {
         loading: false,
         ratings: {
           ...state.ratings,
-          meanRating: action.payload.meanRating, // Update meanRating in ratings object
-          numReviews: action.payload.numReviews, // Update numReviews in ratings object
+          meanRating: action.payload.meanRating,
+          numReviews: action.payload.numReviews,
         },
       };
     case types.FETCH_RATINGS_FAILURE:
@@ -41,8 +40,7 @@ export const fetchMeanRatingsReducer = (state = initialState, action) => {
       return state;
   }
 };
-// Reducer for creating, updating, and deleting rating
-// Reducer for creating, updating, and deleting rating
+
 export const createRatingReducer = (state = initialState, action) => {
   switch (action.type) {
     case types.CREATE_RATING_REQUEST:
@@ -103,7 +101,7 @@ export const deleteRatingReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
-        // Clear ratingId after successful deletion
+
         ratingId: null,
       };
     case types.DELETE_RATING_FAILURE:
@@ -117,9 +115,6 @@ export const deleteRatingReducer = (state = initialState, action) => {
   }
 };
 
-
-
-// Reducer for getting rating ID
 export const getRatingIdReducer = (state = initialState, action) => {
   switch (action.type) {
     case types.GET_RATING_ID_REQUEST:
@@ -145,28 +140,27 @@ export const getRatingIdReducer = (state = initialState, action) => {
   }
 };
 
-// Reducer for fetching a single ratingexport const fetchRatingReducer = (state = initialState, action) => {
-  export const fetchRatingReducer = (state = initialState, action) => {
-    switch (action.type) {
-      case types.FETCH_RATING_REQUEST:
-        return {
-          ...state,
-          loading: true,
-          error: null,
-        };
-      case types.FETCH_RATING_SUCCESS:
-        return {
-          ...state,
-          loading: false,
-          userRating: action.payload.rating, // Extract rating from payload
-        };
-      case types.FETCH_RATING_FAILURE:
-        return {
-          ...state,
-          loading: false,
-          error: action.payload,
-        };
-      default:
-        return state;
-    }
-  };
+export const fetchRatingReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case types.FETCH_RATING_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    case types.FETCH_RATING_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        userRating: action.payload.rating,
+      };
+    case types.FETCH_RATING_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+    default:
+      return state;
+  }
+};

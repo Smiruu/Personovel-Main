@@ -1,6 +1,4 @@
-// reducer.jsx
-
-import * as actionTypes from '../constants/searchConstants';
+import * as actionTypes from "../constants/searchConstants";
 
 const initialState = {
   loading: false,

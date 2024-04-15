@@ -6,7 +6,7 @@ import {
   ChevronRight,
 } from "react-bootstrap-icons";
 
-// Sample book data
+
 const bookData = {
   name: "HARRY POTTER",
   author: "J.K. Rowling",

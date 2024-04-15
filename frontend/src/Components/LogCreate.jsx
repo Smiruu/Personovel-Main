@@ -18,12 +18,11 @@ const LogCreate = ({ user }) => {
     e.preventDefault();
     dispatch(createLog(logData));
 
-    // Delay reload by 1 second (adjust the timeout as needed)
     setTimeout(() => {
-      window.location.reload(); // Refresh the page after form submission
+      window.location.reload();
     }, 300);
   };
-  
+
   return (
     <div className="log-create">
       <form onSubmit={handleSubmit}>

@@ -10,7 +10,7 @@ import { listBooks } from "../../actions/bookActions";
 import { listInteractionsByBook } from "../../actions/interactionActions";
 import { Document, Page } from "react-pdf";
 import { Modal, Button, Form } from "react-bootstrap";
-import LogCreate from "../../Components/LogCreate"; // Import LogCreate component
+import LogCreate from "../../Components/LogCreate";
 
 const InteractionAdmin = () => {
   const dispatch = useDispatch();
@@ -29,8 +29,8 @@ const InteractionAdmin = () => {
   const [showPdf, setShowPdf] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [interactionToDelete, setInteractionToDelete] = useState(null);
-  const [showLogCreate, setShowLogCreate] = useState(false); // State for showing LogCreate modal
-  const [isLogCreateCompleted, setIsLogCreateCompleted] = useState(false); // State to track if LogCreate is completed
+  const [showLogCreate, setShowLogCreate] = useState(false);
+  const [isLogCreateCompleted, setIsLogCreateCompleted] = useState(false);
 
   useEffect(() => {
     dispatch(listBooks());
@@ -69,7 +69,7 @@ const InteractionAdmin = () => {
     }
     dispatch(listInteractionsByBook(formData.book));
     setShowPdf(false);
-    handleShowLogCreate(); // Show LogCreate modal after interaction creation/update
+    handleShowLogCreate();
   };
 
   const handleReset = () => {
@@ -128,7 +128,7 @@ const InteractionAdmin = () => {
     await dispatch(updateInteraction(selectedInteraction.id, formDataToSend));
     dispatch(listInteractionsByBook(formData.book));
     setIsEditing(false);
-    handleShowLogCreate(); // Show LogCreate modal after interaction update
+    handleShowLogCreate();
   };
 
   const sortedInteractions = interactions
@@ -145,7 +145,7 @@ const InteractionAdmin = () => {
       .then(() => {
         setShowConfirmation(false);
         dispatch(listInteractionsByBook(formData.book));
-        handleShowLogCreate(); // Show LogCreate modal after interaction deletion
+        handleShowLogCreate();
       })
       .catch((error) => console.error("Error deleting interaction:", error));
   };
@@ -166,7 +166,6 @@ const InteractionAdmin = () => {
     setPageNumber((prevPageNumber) => prevPageNumber - 1);
   };
 
-  // Function to handle showing the LogCreate modal
   const handleShowLogCreate = () => {
     setIsLogCreateCompleted(false);
     setShowLogCreate(true);
@@ -335,10 +334,9 @@ const InteractionAdmin = () => {
         </Modal.Footer>
       </Modal>
 
-      {/* LogCreate Modal */}
       <Modal
         show={showLogCreate && !isLogCreateCompleted}
-        onHide={() => setShowLogCreate(false)} // Close the modal when the user clicks outside
+        onHide={() => setShowLogCreate(false)}
         centered
       >
         <Modal.Header>
@@ -347,12 +345,11 @@ const InteractionAdmin = () => {
         <Modal.Body
           style={{
             display: "flex",
-            justifyContent: "center", // Center horizontally
-            alignItems: "center", // Center vertically
+            justifyContent: "center",
+            alignItems: "center",
             marginTop: "10%",
           }}
         >
-          {/* Pass handleCloseLogCreate function to LogCreate component */}
           <LogCreate onClose={() => setIsLogCreateCompleted(true)} />
         </Modal.Body>
       </Modal>

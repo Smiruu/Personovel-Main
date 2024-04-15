@@ -243,8 +243,8 @@ const AuthorAdmin = () => {
   <Modal.Body
     style={{
       display: 'flex',
-      justifyContent: 'center', // Center horizontally
-      alignItems: 'center', // Center vertically
+      justifyContent: 'center', 
+      alignItems: 'center', 
       marginTop: '10%',
     }}
   >

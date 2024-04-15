@@ -17,7 +17,6 @@ import {
   GENRE_DELETE_SUCCESS,
   GENRE_DELETE_FAIL,
   GENRE_DELETE_RESET,
-  
 } from "../constants/genreConstants";
 
 export const genreListReducer = (state = { genres: [] }, action) => {
@@ -49,7 +48,10 @@ export const genreDetailsReducer = (
   }
 };
 
-export const genreCreateReducer = (state = { loading: false, success: false, error: null }, action) => {
+export const genreCreateReducer = (
+  state = { loading: false, success: false, error: null },
+  action
+) => {
   switch (action.type) {
     case GENRE_CREATE_REQUEST:
       return { ...state, loading: true };
@@ -62,9 +64,12 @@ export const genreCreateReducer = (state = { loading: false, success: false, err
     default:
       return state;
   }
-}
+};
 
-export const genreUpdateReducer = (state = { loading: false, success: false, error: null }, action) => {
+export const genreUpdateReducer = (
+  state = { loading: false, success: false, error: null },
+  action
+) => {
   switch (action.type) {
     case GENRE_UPDATE_REQUEST:
       return { ...state, loading: true };
@@ -77,7 +82,7 @@ export const genreUpdateReducer = (state = { loading: false, success: false, err
     default:
       return state;
   }
-}
+};
 
 export const genreDeleteReducer = (state = {}, action) => {
   switch (action.type) {
@@ -92,4 +97,4 @@ export const genreDeleteReducer = (state = {}, action) => {
     default:
       return state;
   }
-}
+};

@@ -11,7 +11,6 @@ import ContactScreen from "./Screens/ContactScreen";
 import LandingScreen from "./Screens/LandingScreen";
 import SampleScreen from "./Screens/SampleScreen";
 import BrowseScreen from "./Screens/BrowseScreen";
-import Chapter from "./Screens/ChapterDropdown";
 import ChapterDetailScreen from "./Screens/ChapterDetailScreen";
 import BookScreen from "./Screens/BookScreen";
 import SearchPage from "./Screens/SearchScreen";
@@ -36,7 +35,6 @@ function App() {
             <Routes>
               <Route path="/" element={<LandingScreen />} exact />
               <Route path="/home" element={<HomeScreen />} exact />
-              <Route path="/chapter" element={<Chapter />} />
               <Route path="/popular" element={<PopularScreen />} />
               <Route path="/latest" element={<LatestScreen />} />
               <Route path="/about" element={<AboutScreen />} />
@@ -49,7 +47,7 @@ function App() {
               <Route path="/search" element={<SearchPage />} />
               <Route path="/otp" element={<OTPScreen />} />
               <Route path="/genre" element={<GenreScreen />} />
-              <Route path="api/user/reset/:uid/:token"element={<ConfirmChangePass />}/>
+              <Route path="api/user/reset/:uid/:token" element={<ConfirmChangePass />} />
               <Route path="/reset-password" element={<RequestChangePass />} />
               <Route path="/subscription" element={<PaymentScreen />} />
               <Route path="/profile" element={<ProfileScreen />} />

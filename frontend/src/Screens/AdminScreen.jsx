@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
-import { FaUser, FaComment, FaTags, FaBook, FaCog, FaHistory } from "react-icons/fa"; // Import icons
+import {
+  FaUser,
+  FaComment,
+  FaTags,
+  FaBook,
+  FaCog,
+  FaHistory,
+} from "react-icons/fa";
 import AuthorAdmin from "../Components/Admin/AuthorAdmin";
 import FeedbackAdmin from "../Components/Admin/FeedbackAdmin";
 import GenreAdmin from "../Components/Admin/GenreAdmin";

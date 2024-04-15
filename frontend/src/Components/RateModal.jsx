@@ -5,51 +5,39 @@ import {
   updateRating,
   getRatingId,
   deleteRating,
-} from "../actions/ratingActions"; // Import deleteRating action
+} from "../actions/ratingActions";
 import { useDispatch, useSelector } from "react-redux";
 
 const RateModal = ({ show, handleClose, bookId, userId }) => {
   const dispatch = useDispatch();
-  const createRatingState = useSelector((state) => state.createRating); // Get createRating state from Redux store
-  const getRatingIdState = useSelector((state) => state.getRatingId); // Get getRatingId state from Redux store
 
-  const ratingId = localStorage.getItem("ratingId"); // Extract ratingId from the getRatingId state
+  const ratingId = localStorage.getItem("ratingId");
 
   const [rating, setRating] = useState(0);
 
-  // Reset rating when modal is closed
   useEffect(() => {
     if (!show) {
       setRating(0);
     }
   }, [show]);
 
-  // Effect to fetch ratingId when the modal is opened
   useEffect(() => {
-    const fetchRatingId = async () => {
+    const fetchRatingId = () => {
       try {
-        // Dispatch the action and await its completion
-        await dispatch(getRatingId(userId, bookId));
+        dispatch(getRatingId(userId, bookId));
       } catch (error) {
         console.error("Error fetching rating ID:", error);
       }
     };
 
-    // If the modal is shown, fetch the ratingId
     if (show) {
       fetchRatingId();
     }
   }, [dispatch, show, userId, bookId]);
 
-  // Effect to update ratingId state when it changes in the Redux store
   useEffect(() => {
-    // If ratingId exists in the Redux store, update the local state
-    if (ratingId) {
-      // Do something with ratingId if needed
-      console.log("Rating ID:", ratingId); // Log the ratingId value
-    } else {
-      console.error("Rating ID not found in Redux store");
-      setRating(0); // Reset the rating value to 0 if no ratingId exists
+    if (!ratingId) {
+      setRating(0);
     }
   }, [ratingId]);
 
@@ -57,58 +45,42 @@ const RateModal = ({ show, handleClose, bookId, userId }) => {
     setRating(value);
   };
 
-  const handleRateSubmit = async () => {
-    // Prevent submission if rating is 0
-    if (rating === 0) {
-      console.error("Rating cannot be 0.");
-      return;
-    }
-
-    // Create rating data object
+  const handleRateSubmit = () => {
     const ratingData = {
       book: bookId,
       rating: rating,
       user: userId,
     };
 
-    console.log("Rating ID in handleRateSubmit:", ratingId); // Log the ratingId value
+    console.log("Rating ID in handleRateSubmit:", ratingId);
 
     try {
-      // Check if ratingId exists
-      if (!ratingId) {
-        // If ratingId doesn't exist, fetch it first
-        await dispatch(getRatingId(userId, bookId));
-      }
-      console.log("Rating ID after fetching:", ratingId); // Log the ratingId value after fetching
-      // Dispatch createRating action
-      await dispatch(createRating(ratingData));
+      dispatch(createRating(ratingData));
       window.location.reload();
-      handleClose(); // Close modal after rating submission
+      handleClose();
     } catch (error) {
       console.error("Error creating rating:", error);
     }
   };
 
-  const handleUpdateRating = async () => {
-    // Data to be dispatched in updateRating action
+  const handleUpdateRating = () => {
     const updateData = {
       rating: rating,
     };
 
     console.log("Data being dispatched in updateRating:", updateData);
 
-    // Dispatch the updateRating action with the updateData
-    await dispatch(updateRating(ratingId, updateData));
-    handleClose(); // Close modal after rating update
-    window.location.reload(); // Reload the page
+    dispatch(updateRating(ratingId, updateData));
+    handleClose();
+    window.location.reload();
   };
 
-  const handleDeleteRating = async () => {
+  const handleDeleteRating = () => {
     try {
-      await dispatch(deleteRating(ratingId)); // Dispatch deleteRating action'
+      dispatch(deleteRating(ratingId));
       localStorage.removeItem("ratingId");
-      handleClose(); // Close modal after rating deletion
-      window.location.reload(); // Reload the page after deleting rating
+      handleClose();
+      window.location.reload();
     } catch (error) {
       console.error("Error deleting rating:", error);
     }
@@ -129,7 +101,7 @@ const RateModal = ({ show, handleClose, bookId, userId }) => {
                 <span
                   key={index}
                   onClick={() => handleStarClick(index)}
-                  style={{ cursor: "pointer", color: "#ffc107" }} // Yellow color for stars
+                  style={{ cursor: "pointer", color: "#ffc107" }}
                 >
                   <i
                     className={index <= rating ? "fas fa-star" : "far fa-star"}

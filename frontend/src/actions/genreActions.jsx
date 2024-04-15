@@ -44,18 +44,20 @@ export const createGenre = (genreData) => async (dispatch) => {
   try {
     dispatch({ type: GENRE_CREATE_REQUEST });
 
-    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-        const token = userInfo ? userInfo.token.access : null;
-    
-        const config = token ? {
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        } : {};
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.token.access : null;
 
-    const { data } = await instance.post('api/genres/', genreData, config);
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
+
+    const { data } = await instance.post("api/genres/", genreData, config);
 
     dispatch({
       type: GENRE_CREATE_SUCCESS,
@@ -78,16 +80,18 @@ export const updateGenre = (id, updatedGenreData) => async (dispatch) => {
   try {
     dispatch({ type: GENRE_UPDATE_REQUEST });
 
-    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     const token = userInfo ? userInfo.token.access : null;
 
-    const config = token ? {
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
-    } : {};
+    const config = token
+      ? {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
 
     const { data } = await instance.put(
       `/api/genres/${id}/update`,
@@ -118,17 +122,19 @@ export const resetGenre = () => (dispatch) => {
 export const deleteGenre = (id) => async (dispatch) => {
   try {
     dispatch({ type: GENRE_DELETE_REQUEST });
-    
-    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-        const token = userInfo ? userInfo.token.access : null;
-    
-        const config = token ? {
+
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const token = userInfo ? userInfo.token.access : null;
+
+    const config = token
+      ? {
           headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        } : {};
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
 
     await instance.delete(`/api/genres/${id}/delete`, config);
 

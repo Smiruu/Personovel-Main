@@ -20,6 +20,8 @@ const FavoritesList = ({ userId }) => {
         padding: "20px",
         border: "1px solid #ccc",
         borderRadius: "5px",
+        maxHeight: "500px",
+        overflowY: "auto",
       }}
     >
       <h2
@@ -32,9 +34,9 @@ const FavoritesList = ({ userId }) => {
       >
         <FaHeart style={{ marginRight: "10px" }} /> Favorite Books
       </h2>
-      <ul style={{ listStyleType: "none", padding: 0 }}>
-        {favoriteBooks &&
-          favoriteBooks.map((book) => (
+      {favoriteBooks && favoriteBooks.length > 0 ? (
+        <ul style={{ listStyleType: "none", padding: 0 }}>
+          {favoriteBooks.map((book) => (
             <li
               key={book._id}
               style={{
@@ -44,20 +46,31 @@ const FavoritesList = ({ userId }) => {
               }}
             >
               <Link to={`/books/${book._id}`}>
-              <img
-                src={book.image}
-                alt={book.title}
-                style={{ width: "100px", height: "150px", marginRight: "20px" }}
-              />
+                <img
+                  src={book.image}
+                  alt={book.title}
+                  style={{
+                    width: "100px",
+                    height: "150px",
+                    marginRight: "20px",
+                  }}
+                />
               </Link>
               <div style={{ display: "inline-block" }}>
-                <strong>{book.title}</strong><br/>
-                <span>{book.author}</span><br/>
+                <strong>{book.title}</strong>
+                <br />
+                <span>{book.author}</span>
+                <br />
                 <span style={{ color: "#888" }}>(Genre: {book.genre})</span>
               </div>
             </li>
           ))}
-      </ul>
+        </ul>
+      ) : (
+        <p style={{ textAlign: "center", fontSize: "18px", color: "#888" }}>
+          No favorites currently
+        </p>
+      )}
     </div>
   );
 };

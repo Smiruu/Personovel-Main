@@ -17,7 +17,6 @@ import {
   AUTHOR_DELETE_SUCCESS,
   AUTHOR_DELETE_FAIL,
   AUTHOR_DELETE_RESET,
-
 } from "../constants/authorConstants";
 
 export const authorListReducer = (state = { authors: [] }, action) => {
@@ -44,8 +43,11 @@ export const authorDetailsReducer = (state = { author: {} }, action) => {
     default:
       return state;
   }
-}
-export const authorCreateReducer = (state = { loading: false, success: false, error: null }, action) => {
+};
+export const authorCreateReducer = (
+  state = { loading: false, success: false, error: null },
+  action
+) => {
   switch (action.type) {
     case AUTHOR_CREATE_REQUEST:
       return { ...state, loading: true };
@@ -60,7 +62,10 @@ export const authorCreateReducer = (state = { loading: false, success: false, er
   }
 };
 
-export const authorUpdateReducer = (state = { loading: false, success: false, error: null }, action) => {
+export const authorUpdateReducer = (
+  state = { loading: false, success: false, error: null },
+  action
+) => {
   switch (action.type) {
     case AUTHOR_UPDATE_REQUEST:
       return { loading: true };
@@ -73,9 +78,12 @@ export const authorUpdateReducer = (state = { loading: false, success: false, er
     default:
       return state;
   }
-}
+};
 
-export const authorDeleteReducer = (state = { loading: false, success: false, error: null }, action) => {
+export const authorDeleteReducer = (
+  state = { loading: false, success: false, error: null },
+  action
+) => {
   switch (action.type) {
     case AUTHOR_DELETE_REQUEST:
       return { loading: true };
@@ -88,7 +96,4 @@ export const authorDeleteReducer = (state = { loading: false, success: false, er
     default:
       return state;
   }
-}
-
-
-
+};

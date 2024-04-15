@@ -17,7 +17,9 @@ function LogList() {
     return date.toLocaleString();
   };
 
-  const sortedLogs = logs.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+  const sortedLogs = logs
+    .slice()
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
 
   return (
     <div>

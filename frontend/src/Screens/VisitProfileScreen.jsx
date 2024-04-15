@@ -4,13 +4,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getUserProfileById } from "../actions/profileActions";
 import { fetchFavorites } from "../actions/favoriteActions";
 import Loader from "../Components/Loader";
-import { Modal, Form, Button, Image } from "react-bootstrap";
+import { Image } from "react-bootstrap";
 import {
   MDBContainer,
   MDBRow,
   MDBCol,
   MDBCard,
-  MDBTypography,
 } from "mdb-react-ui-kit";
 import FavoritesList from "../Components/FavoritesList";
 import LatestScreen from "./LatestScreen";
@@ -101,7 +100,7 @@ function VisitProfileScreen() {
 
       <div className="about-container mt-3">
         <MDBRow>
-          <MDBCol size="6">
+          <MDBCol size="12" sm="6">
             <div
               className="bio-section bg-white p-2 d-flex flex-column justify-content-center align-items-center"
               style={{
@@ -124,7 +123,7 @@ function VisitProfileScreen() {
               </p>
             </div>
           </MDBCol>
-          <MDBCol size="6">
+          <MDBCol size="12" sm="6">
             <div
               className="favorite-books-section bg-white p-2"
               style={{ height: "100%" }}
@@ -136,7 +135,14 @@ function VisitProfileScreen() {
 
         <MDBCol size="12" className="mt-3">
           {profile.is_admin ? (
-            <div className="mt-3" style={{ height: "100%" }}>
+            <div
+              className="mt-3"
+              style={{
+                height: "100%",
+                maxHeight: "500px", 
+                overflowX: "auto",
+              }}
+            >
               <div
                 className="favorite-books-section bg-white p-2"
                 style={{ height: "100%" }}

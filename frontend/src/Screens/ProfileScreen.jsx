@@ -18,10 +18,12 @@ import LatestScreen from "./LatestScreen";
 import FavoritesList from "../Components/FavoritesList";
 import LatestReadScreen from "./LatestReadScreen";
 import { FaUser, FaCalendarAlt, FaClock } from "react-icons/fa";
-import LogList from "../Components/LogList";
 import ProfileLogsScreen from "./ProfileLogsScreen";
-import { listGenres } from '../actions/genreActions'; 
-import { getPreferredGenres, setPreferredGenre } from '../actions/preferenceActions'
+import { listGenres } from "../actions/genreActions";
+import {
+  getPreferredGenres,
+  setPreferredGenre,
+} from "../actions/preferenceActions";
 
 const ProfileScreen = () => {
   const dispatch = useDispatch();
@@ -32,7 +34,6 @@ const ProfileScreen = () => {
   const userRegisterInfo = useSelector((state) => state.userRegister.userInfo);
   const userInfo = userLoginInfo || userRegisterInfo;
 
-  // Load input values from local storage or default to user data
   const [updatedName, setUpdatedName] = useState(
     localStorage.getItem("updatedName") || user.name || ""
   );
@@ -43,10 +44,14 @@ const ProfileScreen = () => {
   const [coverPhoto, setCoverPhoto] = useState(null);
   const [fileName, setFileName] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-  const { loading: genreLoading, error: genreError, genres } = useSelector((state) => state.genreList);
-  const {prefGenres} = useSelector((state) => state.preferredGenres)
-  const preferredGenres = prefGenres.preferred_genres
-  console.log(preferredGenres)
+  const {
+    loading: genreLoading,
+    error: genreError,
+    genres,
+  } = useSelector((state) => state.genreList);
+  const { prefGenres } = useSelector((state) => state.preferredGenres);
+  const preferredGenres = prefGenres.preferred_genres;
+  console.log(preferredGenres);
   useEffect(() => {
     dispatch(getUserDetails());
     dispatch(listGenres());
@@ -55,27 +60,23 @@ const ProfileScreen = () => {
 
   const handleUpdateProfile = () => {
     const formData = new FormData();
-  
+
     formData.append("name", updatedName);
     formData.append("bio", updatedBio);
-  
+
     if (profilePicture) {
       formData.append("image", profilePicture);
     }
     if (coverPhoto) {
       formData.append("cover_photo", coverPhoto);
     }
-  
-    // Add selected genres to the form data
-  
-    // Dispatch updateUserProfile action
+
     dispatch(updateUserProfile(formData));
-    
-    console.log(selectedGenres)
-    // Dispatch setPreferredGenre action to update preferred genres
+
+    console.log(selectedGenres);
+
     dispatch(setPreferredGenre(userInfo.token.id, selectedGenres));
-    
-    // Close the edit profile modal
+
     handleCloseEditProfile();
   };
 
@@ -86,14 +87,14 @@ const ProfileScreen = () => {
   const handleNameChange = (e) => {
     const value = e.target.value;
     setUpdatedName(value);
-    // Save the input value to local storage
+
     localStorage.setItem("updatedName", value);
   };
 
   const handleBioChange = (e) => {
     const value = e.target.value;
     setUpdatedBio(value);
-    // Save the input value to local storage
+
     localStorage.setItem("updatedBio", value);
   };
 
@@ -144,34 +145,32 @@ const ProfileScreen = () => {
   const calculateRemainingDays = () => {
     if (userInfo.token && userInfo.token.paid_at) {
       const paidDate = new Date(userInfo.token.paid_at);
-      // Add 3 months to the paid date
+
       const threeMonthsLater = new Date(paidDate);
       threeMonthsLater.setMonth(threeMonthsLater.getMonth() + 3);
-      // Calculate difference in milliseconds
+
       const differenceMs = threeMonthsLater - Date.now();
-      // Convert milliseconds to days
+
       const remainingDays = Math.ceil(differenceMs / (1000 * 60 * 60 * 24));
       return remainingDays;
     }
-    return null; // Return null if paid_at date is not available
+    return null;
   };
 
   const remainingDays = calculateRemainingDays();
 
-  // Define options for date formatting
   const options = {
     year: "numeric",
-    month: "long", // Full month name (e.g., "February")
+    month: "long",
     day: "numeric",
   };
   const formattedDateJoined = dateJoined.toLocaleDateString("en-US", options);
 
-  const [selectedGenres, setSelectedGenres] = useState(preferredGenres|| []);
-  console.log(selectedGenres)
+  const [selectedGenres, setSelectedGenres] = useState(preferredGenres || []);
+  console.log(selectedGenres);
 
   const toggleGenre = (genre) => {
-    console.log(genre)
-    // Check if the user has already selected three genres
+    console.log(genre);
     if (selectedGenres.length === 3 && !selectedGenres.includes(genre)) {
       alert("You can only select up to three genres.");
       return;
@@ -338,39 +337,43 @@ const ProfileScreen = () => {
                   </Form.Group>
 
                   <Form.Group controlId="formGenres" className="mt-3">
-                  <Form.Label>Genres</Form.Label>
-<div className="genre-buttons">
-  {genres.map((genre) => (
-    <div
-      key={genre.id} // Assuming each genre has a unique identifier
-      className={
-        selectedGenres.includes(genre)
-          ? "genre selected"
-          : "genre not-selected"
-      }
-      onClick={() => toggleGenre(genre.name)}
-      style={{
-        display: "inline-block",
-        border: "2px solid",
-        fontFamily: "Blinker",
-        fontSize: "18px",
-        margin: "5px",
-        opacity: 0.5,
-        borderRadius: "50px",
-        minWidth: "100px",
-        padding: "8px 12px",
-        borderColor: selectedGenres.includes(genre.name) ? "green" : "red",
-        backgroundColor: selectedGenres.includes(genre.name) ? "green" : "red",
-        color: "white",
-        textAlign: "center",
-        cursor: "pointer",
-      }}
-    >
-      {selectedGenres.includes(genre.name) ? "✓" : ""}
-      {genre.name}
-    </div>
-  ))}
-</div>
+                    <Form.Label>Genres</Form.Label>
+                    <div className="genre-buttons">
+                      {genres.map((genre) => (
+                        <div
+                          key={genre.id}
+                          className={
+                            selectedGenres.includes(genre)
+                              ? "genre selected"
+                              : "genre not-selected"
+                          }
+                          onClick={() => toggleGenre(genre.name)}
+                          style={{
+                            display: "inline-block",
+                            border: "2px solid",
+                            fontFamily: "Blinker",
+                            fontSize: "18px",
+                            margin: "5px",
+                            opacity: 0.5,
+                            borderRadius: "50px",
+                            minWidth: "100px",
+                            padding: "8px 12px",
+                            borderColor: selectedGenres.includes(genre.name)
+                              ? "green"
+                              : "red",
+                            backgroundColor: selectedGenres.includes(genre.name)
+                              ? "green"
+                              : "red",
+                            color: "white",
+                            textAlign: "center",
+                            cursor: "pointer",
+                          }}
+                        >
+                          {selectedGenres.includes(genre.name) ? "✓" : ""}
+                          {genre.name}
+                        </div>
+                      ))}
+                    </div>
                   </Form.Group>
                 </Form>
               </Modal.Body>

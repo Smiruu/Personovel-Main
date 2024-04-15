@@ -16,14 +16,14 @@ import {
   GET_USER_COMMENTS_AND_REPLIES_REQUEST,
   GET_USER_COMMENTS_AND_REPLIES_SUCCESS,
   GET_USER_COMMENTS_AND_REPLIES_FAILURE,
-} from '../constants/commentConstants';
+} from "../constants/commentConstants";
 
 const initialState = {
   loading: false,
   error: null,
   comments: [],
   comment: null,
-  replies: {}
+  replies: {},
 };
 
 export const commentReducer = (state = initialState, action) => {
@@ -33,28 +33,28 @@ export const commentReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: true,
-        error: null
+        error: null,
       };
     case CREATE_COMMENT_SUCCESS:
       return {
         ...state,
         loading: false,
         comment: action.payload,
-        error: null
+        error: null,
       };
     case GET_COMMENTS_SUCCESS:
       return {
         ...state,
         loading: false,
         comments: action.payload,
-        error: null
+        error: null,
       };
     case CREATE_COMMENT_FAILURE:
     case GET_COMMENTS_FAILURE:
       return {
         ...state,
         loading: false,
-        error: action.payload
+        error: action.payload,
       };
     default:
       return state;
@@ -67,15 +67,15 @@ export const createReplyReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: true,
-        error: null
+        error: null,
       };
     case CREATE_REPLY_SUCCESS:
       const { comment_id, reply } = action.payload;
-      const updatedComments = state.comments.map(comment => {
+      const updatedComments = state.comments.map((comment) => {
         if (comment.id === comment_id) {
           return {
             ...comment,
-            replies: [...(comment.replies || []), reply]
+            replies: [...(comment.replies || []), reply],
           };
         }
         return comment;
@@ -84,13 +84,13 @@ export const createReplyReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         comments: updatedComments,
-        error: null
+        error: null,
       };
     case CREATE_REPLY_FAIL:
       return {
         ...state,
         loading: false,
-        error: action.payload
+        error: action.payload,
       };
     default:
       return state;
@@ -107,9 +107,9 @@ export const getRepliesReducer = (state = initialState, action) => {
           [action.commentId]: {
             loading: true,
             error: null,
-            data: []
-          }
-        }
+            data: [],
+          },
+        },
       };
     case GET_REPLIES_SUCCESS:
       return {
@@ -119,9 +119,9 @@ export const getRepliesReducer = (state = initialState, action) => {
           [action.commentId]: {
             loading: false,
             error: null,
-            data: action.payload
-          }
-        }
+            data: action.payload,
+          },
+        },
       };
     case GET_REPLIES_FAIL:
       return {
@@ -131,9 +131,9 @@ export const getRepliesReducer = (state = initialState, action) => {
           [action.commentId]: {
             loading: false,
             error: action.payload,
-            data: []
-          }
-        }
+            data: [],
+          },
+        },
       };
     default:
       return state;

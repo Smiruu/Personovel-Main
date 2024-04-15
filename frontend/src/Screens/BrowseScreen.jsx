@@ -1,17 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { Col, Button, Collapse, Form, Row } from "react-bootstrap";
-import Book from '../Components/Book'; // Import Book component
-import { listBooks } from '../actions/bookActions'; // Import listBooks action
-import { listGenres } from '../actions/genreActions'; // Import listGenres action
-import { useDispatch, useSelector } from 'react-redux'; // Import useDispatch and useSelector
-import Loader from '../Components/Loader';
-import Message from '../Components/Message';
+import Book from "../Components/Book";
+import { listBooks } from "../actions/bookActions";
+import { listGenres } from "../actions/genreActions";
+import { useDispatch, useSelector } from "react-redux";
+import Loader from "../Components/Loader";
+import Message from "../Components/Message";
 import { Link, Navigate } from "react-router-dom";
 
 function BrowseScreen() {
   const dispatch = useDispatch();
-  const { loading: bookLoading, error: bookError, books } = useSelector((state) => state.bookList);
-  const { loading: genreLoading, error: genreError, genres } = useSelector((state) => state.genreList);
+  const {
+    loading: bookLoading,
+    error: bookError,
+    books,
+  } = useSelector((state) => state.bookList);
+  const {
+    loading: genreLoading,
+    error: genreError,
+    genres,
+  } = useSelector((state) => state.genreList);
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [sortedBooks, setSortedBooks] = useState([]);
@@ -26,8 +34,8 @@ function BrowseScreen() {
   };
 
   useEffect(() => {
-    dispatch(listBooks()); // Fetch books data
-    dispatch(listGenres()); // Fetch genres data
+    dispatch(listBooks());
+    dispatch(listGenres());
   }, [dispatch]);
 
   useEffect(() => {
@@ -40,8 +48,7 @@ function BrowseScreen() {
     switch (sortBy) {
       case "A-Z":
         sorted = [...books].sort((a, b) => {
-          // Check if 'title' property exists and is not undefined
-          const titleA = (a.title || "").toUpperCase(); // Convert to uppercase for case-insensitive sorting
+          const titleA = (a.title || "").toUpperCase();
           const titleB = (b.title || "").toUpperCase();
           return titleA.localeCompare(titleB);
         });
@@ -50,7 +57,6 @@ function BrowseScreen() {
         sorted = [...books].sort((a, b) => new Date(b.date) - new Date(a.date));
         break;
       case "Popularity":
-        // Add sorting logic for popularity if needed
         break;
       default:
         sorted = [...books];
@@ -61,8 +67,11 @@ function BrowseScreen() {
   };
 
   const filterBooksByGenre = (genre) => {
-    setSelectedGenre(genre); 
-    const filteredBooks = genre === "All" ? [...books] : books.filter(book => book.genre.includes(genre));
+    setSelectedGenre(genre);
+    const filteredBooks =
+      genre === "All"
+        ? [...books]
+        : books.filter((book) => book.genre.includes(genre));
     setSortedBooks(filteredBooks);
   };
 
@@ -147,7 +156,13 @@ function BrowseScreen() {
                     <strong>GENRES</strong>
                   </Form.Label>
 
-                  <div style={{ display: "flex", flexWrap: "wrap", marginLeft: "40px" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      marginLeft: "40px",
+                    }}
+                  >
                     <Button
                       key="All"
                       variant="outline-secondary"
@@ -163,30 +178,32 @@ function BrowseScreen() {
                         padding: "10px 20px",
                         transition: "background-color 0.3s, color 0.3s",
                       }}
-                      onClick={() => filterBooksByGenre("All")} // Filter by "All" genre
+                      onClick={() => filterBooksByGenre("All")}
                     >
                       All
                     </Button>
                     {genres.map((genre) => (
                       <Button
-  key={genre.id} // Assuming genre has an id property
-  variant="outline-secondary"
-  className="me-2 mb-2"
-  style={{
-    color: "#6F1D1B",
-    borderColor: "#6F1D1B",
-    borderRadius: "50px",
-    fontFamily: "Blinker",
-    fontWeight: "1",
-    marginRight: "8px",
-    marginBottom: "8px",
-    padding: "10px 20px",
-    transition: "background-color 0.3s, color 0.3s",
-  }}
-  onClick={() => filterBooksByGenre(genre.name)} // Assuming genre has a name property
->
-  {typeof genre.name === 'string' ? genre.name.toUpperCase() : genre.name}
-</Button>
+                        key={genre.id}
+                        variant="outline-secondary"
+                        className="me-2 mb-2"
+                        style={{
+                          color: "#6F1D1B",
+                          borderColor: "#6F1D1B",
+                          borderRadius: "50px",
+                          fontFamily: "Blinker",
+                          fontWeight: "1",
+                          marginRight: "8px",
+                          marginBottom: "8px",
+                          padding: "10px 20px",
+                          transition: "background-color 0.3s, color 0.3s",
+                        }}
+                        onClick={() => filterBooksByGenre(genre.name)}
+                      >
+                        {typeof genre.name === "string"
+                          ? genre.name.toUpperCase()
+                          : genre.name}
+                      </Button>
                     ))}
                   </div>
                 </Form.Group>

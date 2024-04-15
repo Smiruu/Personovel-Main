@@ -126,8 +126,8 @@ function ContactScreen() {
         )}
         {feedbackState.error && (
           <p style={{ color: "red", marginTop: "10px" }}>
-            Error: {feedbackState.error}. 
-            Input the appropriate information needed
+            Error: {feedbackState.error}. Input the appropriate information
+            needed
           </p>
         )}
       </div>

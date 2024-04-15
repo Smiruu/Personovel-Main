@@ -159,10 +159,15 @@ function ConversationScreen() {
   };
 
   const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric" };
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+    };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
-  
 
   return (
     <Row
@@ -196,7 +201,23 @@ function ConversationScreen() {
             USER COMMENTS:
           </h1>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            {renderCommentCards()}
+            {comments.length > 0 ? (
+              renderCommentCards()
+            ) : (
+              <div
+                style={{
+                  fontSize: "16px",
+                  color: "red",
+                  textAlign: "center",
+                  backgroundColor: "#FCD5CE",
+                  padding: "10px",
+                  borderRadius: "5px",
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                No comments found
+              </div>
+            )}
           </div>
         </div>
       </Col>

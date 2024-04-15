@@ -21,7 +21,7 @@ function LandingScreen() {
           <Card.Img
             src="/images/book.gif"
             className="logo_book"
-            style={{ maxWidth: "85%", height: "85%", marginTop: "5%"}}
+            style={{ maxWidth: "85%", height: "85%", marginTop: "5%" }}
           />
         </Col>
 

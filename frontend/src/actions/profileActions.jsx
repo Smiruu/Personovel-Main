@@ -12,7 +12,7 @@ import {
   GET_USER_PROFILE_BY_ID_FAIL,
   LATEST_USER_READING_HISTORY_REQUEST,
   LATEST_USER_READING_HISTORY_SUCCESS,
-  LATEST_USER_READING_HISTORY_FAIL
+  LATEST_USER_READING_HISTORY_FAIL,
 } from "../constants/profileConstants";
 
 const instance = axios.create({
@@ -36,7 +36,6 @@ export const getUserDetails = () => async (dispatch, getState) => {
       },
     };
 
-    //   console.log('Access Token:', userInfo.token.access);
     const { data } = await instance.get("api/user/profile/", config);
     console.log("Response Data:", data);
 
@@ -88,7 +87,6 @@ export const updateUserProfile = (formData) => async (dispatch, getState) => {
       payload: data.profile_data,
     });
 
-    // Refetch user details after updating profile
     dispatch(getUserDetails());
   } catch (error) {
     dispatch({
@@ -104,7 +102,7 @@ export const getUserProfileById = (userId) => async (dispatch) => {
   try {
     dispatch({ type: GET_USER_PROFILE_BY_ID_REQUEST });
 
-    const { data } = await axios.get(`/api/user/profiles/user/${userId}`); // Corrected URL
+    const { data } = await axios.get(`/api/user/profiles/user/${userId}`);
 
     dispatch({
       type: GET_USER_PROFILE_BY_ID_SUCCESS,
@@ -121,8 +119,6 @@ export const getUserProfileById = (userId) => async (dispatch) => {
   }
 };
 
-
-
 export const getLatestUserReadingHistory = (userId) => async (dispatch) => {
   try {
     dispatch({ type: LATEST_USER_READING_HISTORY_REQUEST });
@@ -131,7 +127,7 @@ export const getLatestUserReadingHistory = (userId) => async (dispatch) => {
 
     dispatch({
       type: LATEST_USER_READING_HISTORY_SUCCESS,
-      payload: data
+      payload: data,
     });
   } catch (error) {
     dispatch({
@@ -139,7 +135,7 @@ export const getLatestUserReadingHistory = (userId) => async (dispatch) => {
       payload:
         error.response && error.response.data.detail
           ? error.response.data.detail
-          : error.message
+          : error.message,
     });
   }
 };

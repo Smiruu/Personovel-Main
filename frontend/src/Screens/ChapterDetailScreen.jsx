@@ -1,14 +1,12 @@
-import React from 'react'
-import ChapterByBook from '../Components/ChapterByBook'
+import React from "react";
+import ChapterByBook from "../Components/ChapterByBook";
 
 function ChapterDetailScreen() {
   return (
     <div>
-        
-        <ChapterByBook />
-     
+      <ChapterByBook />
     </div>
-  )
+  );
 }
 
-export default ChapterDetailScreen
+export default ChapterDetailScreen;

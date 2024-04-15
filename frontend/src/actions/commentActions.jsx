@@ -50,7 +50,7 @@ export const createComment = (commentData) => async (dispatch) => {
 };
 
 export const getCommentsForBook = (bookId) => async (dispatch) => {
-  console.log("GET_COMMENTS_REQUEST dispatched"); // Log dispatch
+  console.log("GET_COMMENTS_REQUEST dispatched"); 
   dispatch({ type: GET_COMMENTS_REQUEST });
   try {
     const userInfo = JSON.parse(localStorage.getItem('userInfo'));
@@ -65,9 +65,9 @@ export const getCommentsForBook = (bookId) => async (dispatch) => {
     } : {};
 
     const { data } = await instance.get(`/api/comments/book/${bookId}/`, config);
-    console.log("Received comments data:", data); // Log received data
+    console.log("Received comments data:", data); 
     dispatch({ type: GET_COMMENTS_SUCCESS, payload: data });
-    console.log("GET_COMMENTS_SUCCESS dispatched"); // Log success dispatch
+    console.log("GET_COMMENTS_SUCCESS dispatched"); 
   } catch (error) {
     dispatch({ type: GET_COMMENTS_FAILURE, payload: error.message });
   }

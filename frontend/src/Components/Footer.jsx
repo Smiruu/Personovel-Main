@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserDetails } from "../actions/profileActions";
 import { logout } from "../actions/userActions";
-import "./CSS/Footer.css";
 
 function Footer() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -122,7 +121,7 @@ function Footer() {
                   |{" "}
                 </span>
               </Col>
-              
+
               <Col
                 xs={12}
                 md={1}

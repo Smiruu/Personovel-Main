@@ -35,7 +35,8 @@ const AboutScreen = () => {
   const [objectives] = useState([
     {
       title: "Objective 1",
-      description: "The primary objective of our eBook website is to enhance accessibility to literature by providing a digital platform where users can easily discover, access, and enjoy a wide range of books from various genres and authors.",
+      description:
+        "The primary objective of our eBook website is to enhance accessibility to literature by providing a digital platform where users can easily discover, access, and enjoy a wide range of books from various genres and authors.",
     },
     {
       title: "Objective 2",
@@ -62,7 +63,6 @@ const AboutScreen = () => {
       description:
         "Our eBook website offers a cost-effective alternative to traditional printed books. Our website is subscription base once you subscibred to us you have an access to all the books. This affordability ensures that more people can afford to indulge in their love for reading without breaking the bank.",
     },
-    
   ]);
 
   const handleMemberClick = (index) => {

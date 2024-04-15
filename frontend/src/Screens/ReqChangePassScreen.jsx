@@ -48,7 +48,6 @@ function RequestChangePass() {
       e.preventDefault();
     }
 
-    // Check if email is empty
     if (!email.trim()) {
       setShowEmailWarning(true);
       return;
@@ -82,7 +81,7 @@ function RequestChangePass() {
   };
 
   const handleResendClick = () => {
-    // Check if email is empty
+
     if (!email.trim()) {
       setShowEmailWarning(true);
       return;

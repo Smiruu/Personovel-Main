@@ -25,7 +25,6 @@ function GenreScreen() {
   }, [dispatch]);
 
   const toggleGenre = (genre) => {
-    // Check if the user has already selected three genres
     if (selectedGenres.length === 3 && !selectedGenres.includes(genre)) {
       alert("You can only select up to three genres.");
       return;
@@ -42,7 +41,6 @@ function GenreScreen() {
     if (selectedGenres.length === 0) {
       alert("Please select at least one genre.");
     } else {
-      // Call setPreferredGenre action with only the first three selected genres
       const success = dispatch(
         setPreferredGenre(userId, selectedGenres.slice(0, 3))
       );
@@ -56,7 +54,6 @@ function GenreScreen() {
   };
 
   useEffect(() => {
-    // Navigate to home page if userLoginInfo is available
     if (userLoginInfo) {
       navigate("/home");
     }
@@ -93,19 +90,19 @@ function GenreScreen() {
         {genres.map((genre) => (
           <Button
             key={genre.id}
-            onClick={() => toggleGenre(genre.name)} // Use genre.name
+            onClick={() => toggleGenre(genre.name)}
             variant={
               selectedGenres.includes(genre.name) ? "primary" : "secondary"
-            } // Use genre.name
+            }
             style={{
               margin: "5px",
-              backgroundColor: selectedGenres.includes(genre.name) // Use genre.name
+              backgroundColor: selectedGenres.includes(genre.name)
                 ? "#BC1823"
                 : "#002960",
-              borderColor: selectedGenres.includes(genre.name) // Use genre.name
+              borderColor: selectedGenres.includes(genre.name)
                 ? "#BC1823"
                 : "#002960",
-              opacity: selectedGenres.includes(genre.name) ? 0.5 : 1, // Use genre.name
+              opacity: selectedGenres.includes(genre.name) ? 0.5 : 1,
               borderRadius: "20px",
               minWidth: "100px",
             }}

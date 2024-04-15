@@ -20,23 +20,21 @@ function ConfirmChangePass() {
 
     const newWarnings = [];
 
-    // Check if passwords match
     if (password !== password2) {
       newWarnings.push("Passwords do not match");
     }
 
-    // Check if password fields are empty or contain spaces
     if (!password.trim() || !password2.trim() || password.includes(" ")) {
       newWarnings.push("No spaces allowed in the password field");
     }
 
-    // Check password requirements
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
     if (!passwordRegex.test(password)) {
-      newWarnings.push("Password must contain at least 8 characters, including uppercase, lowercase, and number");
+      newWarnings.push(
+        "Password must contain at least 8 characters, including uppercase, lowercase, and number"
+      );
     }
 
-    // Show modal if there are any warnings
     if (newWarnings.length > 0) {
       setWarnings(newWarnings);
       setShowModal(true);
@@ -57,25 +55,15 @@ function ConfirmChangePass() {
         }
       );
 
-      // Handle the response as needed
       console.log("Confirm Reset Password Response:", response.data);
 
-      // Show success message
       setSuccessMessage("Password changed successfully");
 
-      // Redirect to the login page after successful confirmation
       navigate("/login");
     } catch (error) {
-      // Handle errors
       console.error("Error confirming reset password:", error.message);
     }
   };
-
-  useEffect(() => {
-    // Optional: You can add additional logic here if needed when the component mounts
-    // For example, check if uid and token are present in the URL
-    // and take appropriate actions
-  }, [navigate]);
 
   return (
     <div
@@ -95,7 +83,13 @@ function ConfirmChangePass() {
           boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
         }}
       >
-        <h1 style={{ textAlign: "center", color: "#002960", marginBottom: "30px" }}>
+        <h1
+          style={{
+            textAlign: "center",
+            color: "#002960",
+            marginBottom: "30px",
+          }}
+        >
           <FaLock style={{ marginRight: "10px" }} />
           CONFIRM CHANGE PASSWORD
         </h1>
@@ -145,7 +139,9 @@ function ConfirmChangePass() {
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title>
-            <FaExclamationCircle style={{ marginRight: "10px", color: "#ff6b6b" }} />
+            <FaExclamationCircle
+              style={{ marginRight: "10px", color: "#ff6b6b" }}
+            />
             Warning
           </Modal.Title>
         </Modal.Header>

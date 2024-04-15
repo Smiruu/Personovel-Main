@@ -16,7 +16,7 @@ function RegistrationScreen() {
   const [showRegistrationErrorsModal, setShowRegistrationErrorsModal] =
     useState(false);
   const userInfo = useSelector((state) => state.userRegister.userInfo);
-  
+
   useEffect(() => {
     if (userInfo) {
       navigate("/home");
@@ -34,7 +34,7 @@ function RegistrationScreen() {
       setShowEmptyFieldsModal(true);
       return;
     }
-    // Password requirements without special characters
+
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
     if (!passwordRegex.test(password)) {
       setShowRegistrationErrorsModal(true);
@@ -73,8 +73,6 @@ function RegistrationScreen() {
     setShowEmptyFieldsModal(false);
     setShowRegistrationErrorsModal(false);
   };
-
-  
 
   return (
     <Container fluid>
