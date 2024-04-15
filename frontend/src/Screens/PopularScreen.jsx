@@ -40,17 +40,33 @@ function PopularScreen() {
         Popular Novels
       </h1>
       <Row>
-        {loading ? (
-          <Loader />
-        ) : error ? (
-          <Message variant="danger">{error}</Message>
-        ) : (
-          sortedBooks.map((books) => (
-            <Col key={books._id} sm={12} md={6} lg={4} xl={3}>
-              <Book book={books} />
-            </Col>
-          ))
-        )}
+      <div
+          style={{
+            overflowX: "auto",
+            marginBottom: "10px",
+            display: "flex",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "nowrap",
+              marginBottom: "30px",
+            }}
+          >
+            {loading ? (
+              <Loader />
+            ) : error ? (
+              <Message variant="danger">{error}</Message>
+            ) : (
+              sortedBooks.map((book) => (
+                <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
+                  <Book book={book} />
+                </Col>
+              ))
+            )}
+          </div>
+        </div>
       </Row>
     </div>
   );

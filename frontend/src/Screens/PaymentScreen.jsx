@@ -17,6 +17,7 @@ function PaymentScreen() {
   const [subscriptionEndDate, setSubscriptionEndDate] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
+  
   const onError = (err) => {
     console.error("PayPal SDK error:", err);
   };
@@ -298,8 +299,10 @@ function PaymentScreen() {
             We strictly follow a no refund policy. <br />
             Refresh the screen if you face any issues.
           </p>
+
         </Card.Body>
       </Card>
+      
       <div
         style={{
           position: "fixed",
