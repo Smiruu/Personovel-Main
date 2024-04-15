@@ -20,6 +20,8 @@ import LatestReadScreen from "./LatestReadScreen";
 import { FaUser, FaCalendarAlt, FaClock } from "react-icons/fa";
 import LogList from "../Components/LogList";
 import ProfileLogsScreen from "./ProfileLogsScreen";
+import { listGenres } from '../actions/genreActions'; 
+import { getPreferredGenres, setPreferredGenre } from '../actions/preferenceActions'
 
 const ProfileScreen = () => {
   const dispatch = useDispatch();
@@ -41,27 +43,45 @@ const ProfileScreen = () => {
   const [coverPhoto, setCoverPhoto] = useState(null);
   const [fileName, setFileName] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-
+  const { loading: genreLoading, error: genreError, genres } = useSelector((state) => state.genreList);
+  const {prefGenres} = useSelector((state) => state.preferredGenres)
+  const preferredGenres = prefGenres.preferred_genres
+  console.log(preferredGenres)
   useEffect(() => {
     dispatch(getUserDetails());
-  }, [dispatch]);
+    dispatch(listGenres());
+    dispatch(getPreferredGenres(userInfo.token.id));
+  }, [dispatch, userInfo.token.id]);
 
   const handleUpdateProfile = () => {
     const formData = new FormData();
-
+  
     formData.append("name", updatedName);
     formData.append("bio", updatedBio);
-
+  
     if (profilePicture) {
       formData.append("image", profilePicture);
     }
     if (coverPhoto) {
       formData.append("cover_photo", coverPhoto);
     }
-
+  
+    // Add selected genres to the form data
+  
+    // Dispatch updateUserProfile action
     dispatch(updateUserProfile(formData));
+    
+    console.log(selectedGenres)
+    // Dispatch setPreferredGenre action to update preferred genres
+    dispatch(setPreferredGenre(userInfo.token.id, selectedGenres));
+    
+    // Close the edit profile modal
     handleCloseEditProfile();
   };
+
+  useEffect(() => {
+    setSelectedGenres(preferredGenres || []);
+  }, [preferredGenres]);
 
   const handleNameChange = (e) => {
     const value = e.target.value;
@@ -146,9 +166,17 @@ const ProfileScreen = () => {
   };
   const formattedDateJoined = dateJoined.toLocaleDateString("en-US", options);
 
-  const [selectedGenres, setSelectedGenres] = useState(user.genres || []);
+  const [selectedGenres, setSelectedGenres] = useState(preferredGenres|| []);
+  console.log(selectedGenres)
 
-  const handleGenreSelection = (genre) => {
+  const toggleGenre = (genre) => {
+    console.log(genre)
+    // Check if the user has already selected three genres
+    if (selectedGenres.length === 3 && !selectedGenres.includes(genre)) {
+      alert("You can only select up to three genres.");
+      return;
+    }
+
     if (selectedGenres.includes(genre)) {
       setSelectedGenres(selectedGenres.filter((g) => g !== genre));
     } else {
@@ -156,18 +184,6 @@ const ProfileScreen = () => {
     }
   };
 
-  const genres = [
-    "Action",
-    "Adventure",
-    "Comedy",
-    "Drama",
-    "Fantasy",
-    "Horror",
-    "Mystery",
-    "Romance",
-    "Sci-Fi",
-    "Thriller",
-  ];
   return (
     <div>
       {loading ? (
@@ -322,43 +338,39 @@ const ProfileScreen = () => {
                   </Form.Group>
 
                   <Form.Group controlId="formGenres" className="mt-3">
-                    <Form.Label>Genres</Form.Label>
-                    <div className="genre-buttons">
-                      {genres.map((genre) => (
-                        <div
-                          key={genre}
-                          className={
-                            selectedGenres.includes(genre)
-                              ? "genre selected"
-                              : "genre not-selected"
-                          }
-                          onClick={() => handleGenreSelection(genre)}
-                          style={{
-                            display: "inline-block",
-                            border: "2px solid",
-                            fontFamily: "Blinker",
-                            fontSize: "18px",
-                            margin: "5px",
-                            opacity: 0.5,
-                            borderRadius: "50px",
-                            minWidth: "100px",
-                            padding: "8px 12px",
-                            borderColor: selectedGenres.includes(genre)
-                              ? "green"
-                              : "red",
-                            backgroundColor: selectedGenres.includes(genre)
-                              ? "green"
-                              : "red",
-                            color: "white",
-                            textAlign: "center",
-                            cursor: "pointer",
-                          }}
-                        >
-                          {selectedGenres.includes(genre) ? "✓" : ""}
-                          {genre}
-                        </div>
-                      ))}
-                    </div>
+                  <Form.Label>Genres</Form.Label>
+<div className="genre-buttons">
+  {genres.map((genre) => (
+    <div
+      key={genre.id} // Assuming each genre has a unique identifier
+      className={
+        selectedGenres.includes(genre)
+          ? "genre selected"
+          : "genre not-selected"
+      }
+      onClick={() => toggleGenre(genre.name)}
+      style={{
+        display: "inline-block",
+        border: "2px solid",
+        fontFamily: "Blinker",
+        fontSize: "18px",
+        margin: "5px",
+        opacity: 0.5,
+        borderRadius: "50px",
+        minWidth: "100px",
+        padding: "8px 12px",
+        borderColor: selectedGenres.includes(genre.name) ? "green" : "red",
+        backgroundColor: selectedGenres.includes(genre.name) ? "green" : "red",
+        color: "white",
+        textAlign: "center",
+        cursor: "pointer",
+      }}
+    >
+      {selectedGenres.includes(genre.name) ? "✓" : ""}
+      {genre.name}
+    </div>
+  ))}
+</div>
                   </Form.Group>
                 </Form>
               </Modal.Body>

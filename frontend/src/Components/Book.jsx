@@ -7,8 +7,6 @@ import Highlighter from "react-highlight-words";
 function Book({ book, searchQuery }) {
   const [isHovered, setIsHovered] = useState(false);
 
-  console.log(searchQuery)
-
   const bookContainerStyle = {
     border: "2px solid #6F1D1B",
     borderRadius: "10px",

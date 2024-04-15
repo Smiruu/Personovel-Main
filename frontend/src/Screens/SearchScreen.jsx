@@ -8,13 +8,19 @@ import Message from "../Components/Message";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 
 const SearchPage = () => {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(
+    localStorage.getItem("searchQuery") || ""
+  );
   const [showSortOptions, setShowSortOptions] = useState(false);
   const [loadingTimeout, setLoadingTimeout] = useState(null); // State to manage loading delay
   const dispatch = useDispatch();
   const { loading, books, error } = useSelector((state) => state.search);
   const [searchedBooks, setSearchedBooks] = useState([]);
 
+  useEffect(() => {
+    // Save the query to local storage whenever it changes
+    localStorage.setItem("searchQuery", query);
+  }, [query]);
   const handleSearch = () => {
     clearTimeout(loadingTimeout); // Clear previous loading timeout
     setShowSortOptions(true); // Display sort options after search

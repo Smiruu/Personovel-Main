@@ -8,6 +8,7 @@ const initialState = {
   genres: [],
   genre: null,
   genre_books: [],
+  prefGenres: [],
 };
 
 const preferenceReducer = (state = initialState, action) => {
@@ -72,7 +73,7 @@ export const preferredGenresReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
-        genres: action.payload,
+        prefGenres: action.payload,
       };
     case actionTypes.GET_PREFERRED_GENRES_FAILURE:
       return {
