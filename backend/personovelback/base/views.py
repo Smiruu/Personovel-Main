@@ -271,7 +271,7 @@ def getInteraction(request, pk):
         return Response({'detail': 'Invalid Interaction ID'}, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['GET'])
-@permission_classes([IsAuthenticated, IsAdminUser])
+@permission_classes([IsAuthenticated, IsPaidUserOrAdmin])
 def getInteractionsByBook(request, book_id):
     try:
         interactions = Interaction.objects.filter(book_id=book_id)
