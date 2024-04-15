@@ -17,6 +17,8 @@ function LogList() {
     return date.toLocaleString();
   };
 
+  const sortedLogs = logs.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+
   return (
     <div>
       <h1
@@ -45,7 +47,7 @@ function LogList() {
         {error && <p>Error: {error}</p>}
         {!loading && !error && (
           <ul style={{ listStyleType: "none", padding: 0 }}>
-            {logs.map((log) => (
+            {sortedLogs.map((log) => (
               <li
                 key={log.id}
                 style={{

@@ -93,7 +93,7 @@ function ConversationScreen() {
                 {comment.user_profile_name}
               </p>
               <p style={{ margin: "0", fontSize: "14px", color: "#555" }}>
-                Created At: {comment.created_at}
+                Created At: {formatDate(comment.created_at)}
               </p>
               <p style={{ margin: "0", fontSize: "14px", color: "#555" }}>
                 Replied from: {comment.book_name}
@@ -145,7 +145,7 @@ function ConversationScreen() {
                 {reply.user_profile_name}
               </p>
               <p style={{ margin: "0", fontSize: "14px", color: "#555" }}>
-                Created At: {reply.created_at}
+                Created At: {formatDate(reply.created_at)}
               </p>
               <p style={{ margin: "0", fontSize: "14px", color: "#555" }}>
                 Replied from: {reply.book_name}
@@ -157,6 +157,12 @@ function ConversationScreen() {
       </Col>
     ));
   };
+
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+  
 
   return (
     <Row

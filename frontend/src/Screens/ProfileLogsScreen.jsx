@@ -12,11 +12,7 @@ function ProfileLogsScreen() {
     dispatch(getUserInfo());
   }, [dispatch]);
 
-  const handleDeleteUser = (userId) => {
-    setSelectedUserId(userId);
-    setShowDeleteConfirmationModal(true);
-  };
-
+  const [searchQuery, setSearchQuery] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [permissions, setPermissions] = useState({
@@ -24,6 +20,22 @@ function ProfileLogsScreen() {
     is_admin: false,
     is_paid: false,
   });
+  const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState(false);
+
+  const filteredUsers = users.filter((user) =>
+    `${user.id}`.includes(searchQuery.toLowerCase()) ||
+    user.profile.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleDeleteUser = (userId) => {
+    setSelectedUserId(userId);
+    setShowDeleteConfirmationModal(true);
+  };
 
   const handleManagePermissions = (userId) => {
     const currentUser = users.find((user) => user.id === userId);
@@ -61,8 +73,6 @@ function ProfileLogsScreen() {
     handleCloseModal();
   };
 
-  const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState(false);
-
   const handleConfirmDelete = () => {
     dispatch(deleteUser(selectedUserId));
     setShowDeleteConfirmationModal(false);
@@ -95,6 +105,15 @@ function ProfileLogsScreen() {
         >
           <i className="bi bi-people-fill"></i> User Management
         </h1>
+        <div className="mb-3">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search by user ID, username, or email"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+        </div>
         {loading ? (
           <p>Loading...</p>
         ) : (
@@ -106,7 +125,7 @@ function ProfileLogsScreen() {
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>ID</th> {/* New column for displaying user ID */}
+                  <th>ID</th>
                   <th style={{ textTransform: "uppercase" }}>Profile Picture</th>
                   <th style={{ textTransform: "uppercase" }}>Username</th>
                   <th style={{ textTransform: "uppercase" }}>Email</th>
@@ -115,10 +134,10 @@ function ProfileLogsScreen() {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user, index) => (
+                {filteredUsers.map((user, index) => (
                   <tr key={user.id}>
                     <td>{index + 1}</td>
-                    <td>{user.id}</td> {/* Display user ID */}
+                    <td>{user.id}</td>
                     <td>
                       <img
                         src={user.profile.image}
