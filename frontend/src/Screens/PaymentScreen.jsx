@@ -176,10 +176,7 @@ function PaymentScreen() {
             </p>
           </div>
           <div className="mb-4">
-            <p
-              className="lead"
-              style={{ color: "white", fontSize: "1.1rem" }}
-            >
+            <p className="lead" style={{ color: "white", fontSize: "1.1rem" }}>
               <FaCheckCircle className="mr-2" style={{ color: "green" }} />{" "}
               Unlimited Access to Novels.
             </p>
@@ -275,6 +272,7 @@ function PaymentScreen() {
               )}
             </>
           )}
+
           <Modal show={showConfirmation} onHide={handleCancelClose}>
             <Modal.Header closeButton>
               <Modal.Title>Thank You! </Modal.Title>
@@ -297,11 +295,33 @@ function PaymentScreen() {
               fontFamily: "Montserrat",
             }}
           >
-            We strictly follow a no refund policy. <br/>
+            We strictly follow a no refund policy. <br />
             Refresh the screen if you face any issues.
           </p>
         </Card.Body>
       </Card>
+      <div
+        style={{
+          position: "fixed",
+          bottom: "100px",
+          right: "20px",
+          zIndex: "9999",
+          width: "300px",
+          height: "250px",
+        }}
+      >
+        <img
+          src="/images/paypal-shit.gif"
+          alt="paypal"
+          className="img-fluid"
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+          }}
+        />
+      </div>
     </div>
   );
 }

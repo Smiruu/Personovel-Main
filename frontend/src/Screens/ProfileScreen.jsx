@@ -146,6 +146,28 @@ const ProfileScreen = () => {
   };
   const formattedDateJoined = dateJoined.toLocaleDateString("en-US", options);
 
+  const [selectedGenres, setSelectedGenres] = useState(user.genres || []);
+
+  const handleGenreSelection = (genre) => {
+    if (selectedGenres.includes(genre)) {
+      setSelectedGenres(selectedGenres.filter((g) => g !== genre));
+    } else {
+      setSelectedGenres([...selectedGenres, genre]);
+    }
+  };
+
+  const genres = [
+    "Action",
+    "Adventure",
+    "Comedy",
+    "Drama",
+    "Fantasy",
+    "Horror",
+    "Mystery",
+    "Romance",
+    "Sci-Fi",
+    "Thriller",
+  ];
   return (
     <div>
       {loading ? (
@@ -297,6 +319,46 @@ const ProfileScreen = () => {
                         style={{ marginTop: "10px", maxWidth: "100%" }}
                       />
                     )}
+                  </Form.Group>
+
+                  <Form.Group controlId="formGenres" className="mt-3">
+                    <Form.Label>Genres</Form.Label>
+                    <div className="genre-buttons">
+                      {genres.map((genre) => (
+                        <div
+                          key={genre}
+                          className={
+                            selectedGenres.includes(genre)
+                              ? "genre selected"
+                              : "genre not-selected"
+                          }
+                          onClick={() => handleGenreSelection(genre)}
+                          style={{
+                            display: "inline-block",
+                            border: "2px solid",
+                            fontFamily: "Blinker",
+                            fontSize: "18px",
+                            margin: "5px",
+                            opacity: 0.5,
+                            borderRadius: "50px",
+                            minWidth: "100px",
+                            padding: "8px 12px",
+                            borderColor: selectedGenres.includes(genre)
+                              ? "green"
+                              : "red",
+                            backgroundColor: selectedGenres.includes(genre)
+                              ? "green"
+                              : "red",
+                            color: "white",
+                            textAlign: "center",
+                            cursor: "pointer",
+                          }}
+                        >
+                          {selectedGenres.includes(genre) ? "✓" : ""}
+                          {genre}
+                        </div>
+                      ))}
+                    </div>
                   </Form.Group>
                 </Form>
               </Modal.Body>

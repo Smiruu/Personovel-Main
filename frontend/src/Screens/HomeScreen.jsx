@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Card, Container } from "react-bootstrap";
+import { Row, Col, Card, Container, Alert } from "react-bootstrap";
 import Book from "../Components/Book";
 import { Link, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { checkUserPaidStatus } from "../actions/userActions";
-import { getRandomBooks, getRecommendedBooks } from "../actions/preferenceActions";
+import {
+  getRandomBooks,
+  getRecommendedBooks,
+} from "../actions/preferenceActions";
 import { getUserDetails } from "../actions/profileActions";
 import Loader from "../Components/Loader";
 import { listBooks } from "../actions/bookActions";
@@ -24,10 +27,10 @@ function LandingScreen() {
   );
   const { recommended_books } = booksInRecommendedBooks;
   console.log("Recommended:", recommended_books);
-  const randomBooks= useSelector((state) => state.randomBooks);
-  console.log("Got",randomBooks)
-  const {genre_books, genre} = randomBooks
-  console.log("Got Genre", genre)
+  const randomBooks = useSelector((state) => state.randomBooks);
+  console.log("Got", randomBooks);
+  const { genre_books, genre } = randomBooks;
+  console.log("Got Genre", genre);
   const userDetails = useSelector((state) => state.userDetails);
   const { loading, error, user } = userDetails;
   const bookList = useSelector((state) => state.bookList);
@@ -36,7 +39,6 @@ function LandingScreen() {
   const [recommendedBooks, setRecommendedBooks] = useState([]);
   const [popularBooks, setPopularBooks] = useState([]);
   const [latestBooks, setLatestBooks] = useState([]);
-
 
   useEffect(() => {
     if (!userInfo) {
@@ -54,7 +56,7 @@ function LandingScreen() {
     if (recommended_books) {
       setRecommendedBooks(recommended_books);
     }
-    if(genre_books){
+    if (genre_books) {
       setGenreBooks(genre_books);
     }
   }, [recommended_books, genre_books]);
@@ -82,7 +84,7 @@ function LandingScreen() {
       <Row>
         <Col md={4} className="order-2 order-md-1 text-start">
           <div
-            className="mt-5"
+            className="mt-3"
             style={{
               backgroundColor: "#FCD5CE",
               borderRadius: "10px",
@@ -103,19 +105,26 @@ function LandingScreen() {
             >
               Recommended Novels
             </h1>
-            <div>
-              <Row
-                className="g-1 d-flex justify-content-center"
-                style={{ marginBottom: "10px" }}
+            <div
+              style={{
+                overflowX: "auto",
+                marginBottom: "10px",
+                display: "flex",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "nowrap",
+                  marginBottom: "30px",
+                }}
               >
-                {recommendedBooks
-                  .slice(recommendedIndex, recommendedIndex + 4)
-                  .map((book) => (
-                    <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
-                      <Book book={book} />
-                    </Col>
-                  ))}
-              </Row>
+                {recommendedBooks.map((book) => (
+                  <div key={book._id} style={{ marginRight: "5px" }}>
+                    <Book book={book} />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </Col>
@@ -127,8 +136,8 @@ function LandingScreen() {
               color: "#002960",
               fontSize: "80px",
               textAlign: "center",
-              marginBlockStart: "50px",
               fontFamily: "Dancing Script",
+              marginTop: "50px",
             }}
           >
             WELCOME,
@@ -154,43 +163,79 @@ function LandingScreen() {
         </Col>
 
         <Col md={4} className="order-3 order-md-3 text-end">
-          <div
-            className="mt-5"
-            style={{
-              backgroundColor: "#FCD5CE",
-              borderRadius: "10px",
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-              padding: "20px",
-            }}
-          >
-            <h1
+          {genre ? (
+            <div
+              className="mt-3"
               style={{
-                textAlign: "center",
-                marginTop: "2%",
-                fontWeight: "bold",
-                fontFamily: "Permanent Marker",
-                color: "#6F1D1B",
-                textDecoration: "underline",
-                textTransform: "uppercase",
+                backgroundColor: "#FCD5CE",
+                borderRadius: "10px",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                padding: "20px",
               }}
             >
-              Preferred Genres: {genre ? genre.name : ""}
-            </h1>
-            <div>
-              <Row
-                className="g-1 d-flex justify-content-center"
-                style={{ marginBottom: "10px" }}
+              <h1
+                style={{
+                  textAlign: "center",
+                  marginTop: "2%",
+                  fontWeight: "bold",
+                  fontFamily: "Permanent Marker",
+                  color: "#6F1D1B",
+                  textDecoration: "underline",
+                  textTransform: "uppercase",
+                }}
               >
-                {genreBooks
-                  .slice(genreBooksIndex, genreBooksIndex + 4)
-                  .map((book) => (
-                    <Col key={book._id} sm={12} md={6} lg={4} xl={3}>
+                Preferred Genres: {genre ? genre.name : ""}
+              </h1>
+              <div
+                style={{
+                  overflowX: "auto",
+                  marginBottom: "10px",
+                  display: "flex",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "nowrap",
+                    marginBottom: "30px",
+                  }}
+                >
+                  {genreBooks.map((book) => (
+                    <div key={book._id} style={{ marginRight: "5px" }}>
                       <Book book={book} />
-                    </Col>
+                    </div>
                   ))}
-              </Row>
+                </div>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div
+              className="mt-5"
+              style={{
+                backgroundColor: "#FCD5CE",
+                borderRadius: "10px",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                padding: "20px",
+              }}
+            >
+              <h1
+                style={{
+                  textAlign: "center",
+                  marginTop: "2%",
+                  fontWeight: "bold",
+                  fontFamily: "Permanent Marker",
+                  color: "#6F1D1B",
+                  textDecoration: "underline",
+                  textTransform: "uppercase",
+                }}
+              >
+                Preferred Genres: {genre ? genre.name : ""}
+              </h1>
+              <Alert variant="secondary" className="mt-5">
+                No genres chosen.
+              </Alert>
+            </div>
+          )}
         </Col>
       </Row>
 

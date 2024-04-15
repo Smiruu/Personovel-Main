@@ -20,12 +20,14 @@ function ProfileLogsScreen() {
     is_admin: false,
     is_paid: false,
   });
-  const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState(false);
+  const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] =
+    useState(false);
 
-  const filteredUsers = users.filter((user) =>
-    `${user.id}`.includes(searchQuery.toLowerCase()) ||
-    user.profile.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredUsers = users.filter(
+    (user) =>
+      `${user.id}`.includes(searchQuery.toLowerCase()) ||
+      user.profile.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleSearchChange = (e) => {
@@ -121,58 +123,74 @@ function ProfileLogsScreen() {
             className="table-responsive"
             style={{ overflowX: "auto", width: "100%" }}
           >
-            <Table striped bordered hover style={{ boxShadow: "0 4px 8px rgba(0, 0, 0, 0.5)" }}>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>ID</th>
-                  <th style={{ textTransform: "uppercase" }}>Profile Picture</th>
-                  <th style={{ textTransform: "uppercase" }}>Username</th>
-                  <th style={{ textTransform: "uppercase" }}>Email</th>
-                  <th style={{ textTransform: "uppercase" }}>Delete</th>
-                  <th style={{ textTransform: "uppercase" }}>Manage Permissions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredUsers.map((user, index) => (
-                  <tr key={user.id}>
-                    <td>{index + 1}</td>
-                    <td>{user.id}</td>
-                    <td>
-                      <img
-                        src={user.profile.image}
-                        alt={user.username}
-                        style={{
-                          width: "50px",
-                          height: "50px",
-                          borderRadius: "50%",
-                        }}
-                      />
-                    </td>
-                    <td>{user.profile.name}</td>
-                    <td>{user.email}</td>
-                    <td>
-                      <Button
-                        variant="danger"
-                        onClick={() => handleDeleteUser(user.id)}
-                      >
-                        <i className="bi bi-trash-fill"></i> Delete
-                      </Button>
-                    </td>
-                    <td>
-                      <Button
-                        onClick={() => handleManagePermissions(user.id)}
-                      >
-                        <i className="bi bi-shield-lock-fill"></i> Manage Permissions
-                      </Button>
-                    </td>
+            <div
+              className="table-responsive"
+              style={{ maxHeight: "400px", overflowY: "auto" }}
+            >
+              <Table
+                striped
+                bordered
+                hover
+                style={{ boxShadow: "0 4px 8px rgba(0, 0, 0, 0.5)" }}
+              >
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>ID</th>
+                    <th style={{ textTransform: "uppercase" }}>
+                      Profile Picture
+                    </th>
+                    <th style={{ textTransform: "uppercase" }}>Username</th>
+                    <th style={{ textTransform: "uppercase" }}>Email</th>
+                    <th style={{ textTransform: "uppercase" }}>Delete</th>
+                    <th style={{ textTransform: "uppercase" }}>
+                      Manage Permissions
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </Table>
+                </thead>
+                <tbody>
+                  {filteredUsers.map((user, index) => (
+                    <tr key={user.id}>
+                      <td>{index + 1}</td>
+                      <td>{user.id}</td>
+                      <td>
+                        <img
+                          src={user.profile.image}
+                          alt={user.username}
+                          style={{
+                            width: "50px",
+                            height: "50px",
+                            borderRadius: "50%",
+                          }}
+                        />
+                      </td>
+                      <td>{user.profile.name}</td>
+                      <td>{user.email}</td>
+                      <td>
+                        <Button
+                          variant="danger"
+                          onClick={() => handleDeleteUser(user.id)}
+                        >
+                          <i className="bi bi-trash-fill"></i> Delete
+                        </Button>
+                      </td>
+                      <td>
+                        <Button
+                          onClick={() => handleManagePermissions(user.id)}
+                        >
+                          <i className="bi bi-shield-lock-fill"></i> Manage
+                          Permissions
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
           </div>
         )}
       </div>
+
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title>Manage Permissions</Modal.Title>
@@ -217,15 +235,20 @@ function ProfileLogsScreen() {
           </Button>
         </Modal.Footer>
       </Modal>
-      <Modal show={showDeleteConfirmationModal} onHide={handleCloseDeleteConfirmationModal}>
+
+      <Modal
+        show={showDeleteConfirmationModal}
+        onHide={handleCloseDeleteConfirmationModal}
+      >
         <Modal.Header closeButton>
           <Modal.Title>Confirm Deletion</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          Are you sure you want to delete this user?
-        </Modal.Body>
+        <Modal.Body>Are you sure you want to delete this user?</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseDeleteConfirmationModal}>
+          <Button
+            variant="secondary"
+            onClick={handleCloseDeleteConfirmationModal}
+          >
             No
           </Button>
           <Button variant="danger" onClick={handleConfirmDelete}>
