@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-2zy!g&nsr&59fq#7b1x5al&i$%js!hp#6m^uukr^-g_l_8_!&h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.herokuapp.com']
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -66,7 +66,7 @@ ROOT_URLCONF = 'personovelback.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+         'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -175,7 +175,9 @@ PASSWORD_RESET_TIMEOUT = 900 # 900 SEC = 15 MIN
 
 STATIC_URL = 'static/'
 
-STATICFILES_DIRS = [BASE_DIR / "static_my_project", ]
+STATICFILES_DIRS = [BASE_DIR / "static_my_project",
+                    BASE_DIR / "templates" / "build",
+                     ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static_cdn", "static_root")
 
@@ -190,3 +192,6 @@ AWS_STORAGE_BUCKET_NAME = 'personovelbucket'
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+
+
