@@ -78,14 +78,11 @@ export const listBookDetails = (_id) => async (dispatch) => {
       : {};
 
     const { data } = await instance.get(`/api/books/${_id}`, config);
-    const updatedData = {
-      ...data,
-      image: `${instance.defaults.baseURL}${data.image}`,
-    };
-
+    
+    console.log("datadwasdawda : ", data);
     dispatch({
       type: BOOK_DETAILS_SUCCESS,
-      payload: updatedData,
+      payload: data,
     });
   } catch (error) {
     dispatch({

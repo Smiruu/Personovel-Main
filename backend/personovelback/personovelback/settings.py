@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'rest_framework_simplejwt', #Login
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -181,3 +182,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static_cdn", "static_root")
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "static_cdn", "media_root")
+
+AWS_ACCESS_KEY_ID = 'AKIAZI2LDWF7QUOKYKP6'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'personovelbucket'
+
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
