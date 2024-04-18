@@ -18,9 +18,9 @@ const LogCreate = ({ user }) => {
     e.preventDefault();
     dispatch(createLog(logData));
 
-    setTimeout(() => {
-      window.location.reload();
-    }, 300);
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 300);
   };
 
   return (

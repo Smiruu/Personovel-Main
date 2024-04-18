@@ -41,14 +41,11 @@ export const listBooks = () => async (dispatch) => {
       : {};
 
     const { data } = await instance.get("api/books/", config);
-    const updatedData = data.map((book) => ({
-      ...book,
-      image: `${instance.defaults.baseURL}${book.image}`,
-    }));
+        
 
     dispatch({
       type: BOOK_LIST_SUCCESS,
-      payload: updatedData,
+      payload: data,
     });
   } catch (error) {
     dispatch({

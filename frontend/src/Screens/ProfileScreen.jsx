@@ -132,8 +132,8 @@ const ProfileScreen = () => {
   };
 
   const backgroundImage = user.cover_photo || "";
-  const profileIcon = `${user.image}?${new Date().getTime()}`;
-
+  const profileIcon = user.image || "";
+  
   const [activeTab, setActiveTab] = useState("ABOUT");
 
   const handleTabClick = (tab) => {
