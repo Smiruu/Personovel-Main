@@ -17,7 +17,7 @@ import {
 } from '../constants/commentConstants';
 
 const instance = axios.create({
-  baseURL: 'http://127.0.0.1:8000/',
+  baseURL: 'https://dplsplsdeploy-be98d8b2fd29.herokuapp.com/',
 });
 
 export const createComment = (commentData) => async (dispatch) => {

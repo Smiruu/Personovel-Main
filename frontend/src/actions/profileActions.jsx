@@ -16,7 +16,7 @@ import {
 } from "../constants/profileConstants";
 
 const instance = axios.create({
-  baseURL: "http://127.0.0.1:8000/",
+  baseURL: "https://dplsplsdeploy-be98d8b2fd29.herokuapp.com/",
 });
 export const getUserDetails = () => async (dispatch, getState) => {
   try {
@@ -102,7 +102,7 @@ export const getUserProfileById = (userId) => async (dispatch) => {
   try {
     dispatch({ type: GET_USER_PROFILE_BY_ID_REQUEST });
 
-    const { data } = await axios.get(`/api/user/profiles/user/${userId}`);
+    const { data } = await instance.get(`/api/user/profiles/user/${userId}`);
 
     dispatch({
       type: GET_USER_PROFILE_BY_ID_SUCCESS,
@@ -123,7 +123,7 @@ export const getLatestUserReadingHistory = (userId) => async (dispatch) => {
   try {
     dispatch({ type: LATEST_USER_READING_HISTORY_REQUEST });
 
-    const { data } = await axios.get(`/api/reading-history/${userId}/`);
+    const { data } = await instance.get(`/api/reading-history/${userId}/`);
 
     dispatch({
       type: LATEST_USER_READING_HISTORY_SUCCESS,

@@ -2,7 +2,7 @@ import * as actionTypes from "../constants/preferenceConstants";
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "http://127.0.0.1:8000/api/",
+  baseURL: "https://dplsplsdeploy-be98d8b2fd29.herokuapp.com/",
 });
 
 export const addToReadingHistory = (bookId, userId) => async (dispatch) => {
