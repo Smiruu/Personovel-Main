@@ -65,10 +65,10 @@ function PaymentScreen() {
       purchase_units: [
         {
           amount: {
-            value: "20.00",
+            value: "14.00",
             currency_code: "USD",
             breakdown: {
-              item_total: { currency_code: "USD", value: "20.00" },
+              item_total: { currency_code: "USD", value: "14.00" },
             },
           },
           description: "Personovel 3 months subscription plan",
@@ -77,7 +77,7 @@ function PaymentScreen() {
               name: "Subscription",
               unit_amount: {
                 currency_code: "USD",
-                value: "16.00",
+                value: "11.20",
               },
               quantity: "1",
             },
@@ -85,7 +85,7 @@ function PaymentScreen() {
               name: "Royalty",
               unit_amount: {
                 currency_code: "USD",
-                value: "4.00",
+                value: "2.80",
               },
               quantity: "1",
             },
@@ -94,6 +94,7 @@ function PaymentScreen() {
       ],
     });
   };
+
 
   const onSuccessHandler = (details, data) => {
     console.log("Payment successful:", details);
@@ -183,7 +184,7 @@ function PaymentScreen() {
             </p>
           </div>
 
-          <div className="text-center mb-4">
+            <div className="text-center mb-4">
             <span
               style={{
                 fontSize: "1.5rem",
@@ -192,7 +193,7 @@ function PaymentScreen() {
                 marginRight: "0.5rem",
               }}
             >
-              $20
+              $14
             </span>
             <span
               style={{
